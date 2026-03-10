@@ -16,6 +16,21 @@ export const scanService = {
   },
   
   async getPredictionResult(id: string): Promise<PredictionResult> {
+    // Mock data for testing
+    if (id === '1') {
+      return {
+        id: '1',
+        url: 'https://example.com',
+        isMalicious: false,
+        accuracy: 0.95,
+        suggested: 'safe',
+        predictedBy: 'model',
+        usageBy: 'user',
+        fromService: 'service',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+    }
     return await apiClient.get<PredictionResult>(
       API_ENDPOINTS.PREDICT.GET_RESULT(id)
     );

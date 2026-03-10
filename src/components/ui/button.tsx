@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { tapScale, springTransition } from '@/lib/motion-variants';
 
@@ -27,7 +27,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       lg: 'px-6 py-3 text-lg',
     };
     
-    const Component = animated ? motion.button : 'button';
+    const Component: any = animated ? motion.button : 'button';
     const motionProps = animated ? {
       whileHover: { scale: 1.02, y: -2 },
       whileTap: tapScale,

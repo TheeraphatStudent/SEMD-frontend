@@ -12,9 +12,12 @@ export function useScan() {
     setError(null);
     
     try {
-      const response = await scanService.predictUrl(url);
-      setResult(response.prediction);
-      return response.prediction;
+      // const response = await scanService.predictUrl(url);
+      // setResult(response.prediction);
+      // return response.prediction;
+      const response = await scanService.getPredictionResult('1');
+      setResult(response);
+      return response;
     } catch (err: any) {
       const errorMessage = err.message || 'ไม่สามารถตรวจสอบ URL ได้';
       setError(errorMessage);

@@ -1,6 +1,6 @@
 import React from 'react';
-import { motion } from 'motion/react';
-import { fadeIn, smoothTransition } from '@/lib/motion-variants';
+import { motion } from 'framer-motion';
+import { fadeIn } from '@/lib/motion-variants';
 
 export interface AnimatedPageProps {
   children: React.ReactNode;
@@ -14,7 +14,7 @@ export const AnimatedPage: React.FC<AnimatedPageProps> = ({ children, className 
       initial={fadeIn.initial}
       animate={fadeIn.animate}
       exit={fadeIn.exit}
-      transition={smoothTransition}
+      transition={{ type: 'tween', duration: 0.3, ease: 'easeInOut' }}
     >
       {children}
     </motion.div>

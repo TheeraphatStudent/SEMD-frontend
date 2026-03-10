@@ -1,7 +1,7 @@
 import React from 'react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { fadeInUp, smoothTransition } from '@/lib/motion-variants';
+import { fadeInUp } from '@/lib/motion-variants';
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'elevated' | 'outlined';
@@ -17,39 +17,42 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
       elevated: 'bg-light shadow-xl',
       outlined: 'bg-transparent border-2 border-primary',
     };
-    
-    const Component = animated ? motion.div : 'div';
-    const motionProps = animated ? {
-      initial: fadeInUp.initial,
-      animate: fadeInUp.animate,
-      exit: fadeInUp.exit,
-      transition: { ...smoothTransition, delay },
-      whileHover: { 
-        y: -4, 
-        scale: 1.01,
-        boxShadow: '0 20px 40px rgba(0, 0, 0, 0.12)',
-        transition: { 
-          type: 'spring', 
-          stiffness: 400, 
-          damping: 20,
-          duration: 0.2 
-        }
-      },
-    } : {};
+
+    const baseClassName = cn(
+      'rounded-lg p-6 transition-shadow duration-200',
+      variants[variant],
+      className
+    );
+
+    if (!animated) {
+      return (
+        <div ref={ref} className={baseClassName} {...props}>
+          {children}
+        </div>
+      );
+    }
     
     return (
-      <Component
+      <motion.div
         ref={ref}
-        className={cn(
-          'rounded-lg p-6 transition-shadow duration-200',
-          variants[variant],
-          className
-        )}
-        {...motionProps}
-        {...props}
+        className={baseClassName}
+        initial={fadeInUp.initial}
+        animate={fadeInUp.animate}
+        exit={fadeInUp.exit}
+        transition={{ type: 'tween', duration: 0.3, ease: 'easeInOut', delay }}
+        whileHover={{ 
+          y: -4, 
+          scale: 1.01,
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.12)',
+          transition: { 
+            type: 'spring', 
+            stiffness: 400, 
+            damping: 20,
+          }
+        }}
       >
         {children}
-      </Component>
+      </motion.div>
     );
   }
 );

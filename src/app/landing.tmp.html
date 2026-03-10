@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SEMD — Suspicious URL Evaluation for Malicious Detection</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --p:#FFCE69;--pd:#9C7626;--pl:#FFF6E4;
+  --sec:#799EFF;--secd:#1E3E90;--secl:#D3DFFF;
+  --bg:#FFFCEB;--dark:#473100;--light:#FFFEF4;
+  --gray:#EBE1D5;--gd:#685D4F;--gl:#F0E9E2;
+  --safe:#5EB930;--safel:#D5FFC0;
+  --danger:#FF696C;--dangerl:#FFD7D7;
+  --warn:#FFBE69;--warnl:#FFEDD5;
+  --sh1:2px 2px 6px rgba(71,49,0,.1);
+  --sh2:0 4px 16px rgba(71,49,0,.14);
+  --sh3:0 8px 32px rgba(71,49,0,.18);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--dark);overflow-x:hidden;}
+
+/* ── PAGE VIEWS ── */
+#page-landing{display:block;}
+#page-loading{display:none;}
+#page-result{display:none;}
+
+/* ══════════════════════════════
+   NAV
+══════════════════════════════ */
+nav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(255,252,235,.9);backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(235,225,213,.7);
+  padding:0 48px;height:58px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-brand{display:flex;flex-direction:column;line-height:1;}
+.nav-brand b{font-size:17px;font-weight:800;letter-spacing:2px;}
+.nav-brand span{font-size:9px;color:var(--gd);letter-spacing:.5px;margin-top:1px;}
+.nav-links{display:flex;gap:28px;list-style:none;}
+.nav-links a{text-decoration:none;color:var(--gd);font-size:13.5px;font-weight:500;transition:color .2s;}
+.nav-links a:hover{color:var(--dark);}
+.btn-nav{
+  background:var(--p);color:var(--dark);
+  border:none;padding:7px 20px;border-radius:8px;
+  font-family:'Sarabun',sans-serif;font-size:13px;font-weight:700;
+  cursor:pointer;box-shadow:var(--sh1);transition:transform .15s,box-shadow .15s;
+}
+.btn-nav:hover{transform:translateY(-1px);box-shadow:var(--sh2);}
+
+/* ══════════════════════════════
+   HERO
+══════════════════════════════ */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:80px 24px 60px;text-align:center;
+  background:radial-gradient(ellipse 90% 60% at 50% -5%,#FFF0CC 0%,var(--bg) 65%);
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(71,49,0,.05) 1px,transparent 1px);
+  background-size:26px 26px;pointer-events:none;
+}
+.ldot{width:7px;height:7px;background:var(--safe);border-radius:50%;display:inline-block;animation:ldot 1.5s ease-in-out infinite;}
+@keyframes ldot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(1.6)}}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,246,228,.9);border:1px solid var(--p);
+  color:var(--pd);font-size:12px;font-weight:700;
+  padding:5px 16px;border-radius:999px;margin-bottom:28px;
+  animation:fu .6s ease both;letter-spacing:.3px;
+}
+@keyframes fu{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.hero h1{
+  font-size:clamp(40px,7vw,68px);font-weight:800;line-height:1.1;
+  color:var(--dark);margin-bottom:16px;
+  animation:fu .65s .08s ease both;
+}
+.hero h1 em{font-style:normal;color:var(--pd);}
+.hero-sub{
+  max-width:520px;font-size:16px;line-height:1.75;
+  color:var(--gd);margin-bottom:40px;
+  animation:fu .65s .16s ease both;
+}
+
+/* ── INPUT BOX ── */
+.checker-box{
+  width:100%;max-width:680px;
+  background:white;border-radius:16px;
+  border:1.5px solid var(--gray);
+  box-shadow:var(--sh3);
+  animation:fu .65s .24s ease both;
+  overflow:hidden;
+}
+.checker-top{
+  display:flex;align-items:stretch;
+  border-bottom:1px solid var(--gray);
+  padding:12px 14px;gap:8px;
+}
+
+/* Evaluator selector */
+.sel-wrap{position:relative;}
+.sel-btn{
+  display:flex;align-items:center;gap:8px;
+  background:var(--gl);border:1px solid var(--gray);
+  border-radius:9px;padding:8px 14px;
+  font-family:'Sarabun',sans-serif;font-size:13px;font-weight:600;
+  color:var(--dark);cursor:pointer;white-space:nowrap;
+  transition:background .15s;user-select:none;min-width:150px;
+}
+.sel-btn:hover{background:var(--gray);}
+.sel-btn .arrow{margin-left:auto;font-size:10px;transition:transform .2s;}
+.sel-btn.open .arrow{transform:rotate(180deg);}
+.dropdown{
+  position:absolute;top:calc(100% + 6px);left:0;min-width:200px;
+  background:white;border:1px solid var(--gray);border-radius:12px;
+  box-shadow:var(--sh3);z-index:50;overflow:hidden;
+  opacity:0;pointer-events:none;transform:translateY(-6px);
+  transition:opacity .18s,transform .18s;
+}
+.dropdown.show{opacity:1;pointer-events:all;transform:translateY(0);}
+.dd-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 16px;font-size:13px;font-weight:500;
+  cursor:pointer;transition:background .15s;
+  border-bottom:1px solid var(--gl);
+}
+.dd-item:last-child{border-bottom:none;}
+.dd-item:hover{background:var(--pl);}
+.dd-item.active{background:var(--pl);font-weight:700;color:var(--pd);}
+.dd-item .tag{font-size:10px;color:var(--gd);background:var(--gl);padding:2px 7px;border-radius:999px;}
+
+/* Input type selector */
+.itype-wrap{position:relative;}
+.itype-btn{
+  display:flex;align-items:center;gap:7px;
+  background:var(--gl);border:1px solid var(--gray);
+  border-radius:9px;padding:8px 12px;
+  font-family:'Sarabun',sans-serif;font-size:13px;font-weight:600;
+  color:var(--dark);cursor:pointer;white-space:nowrap;
+  transition:background .15s;user-select:none;
+}
+.itype-btn:hover{background:var(--gray);}
+.itype-btn.open .arrow{transform:rotate(180deg);}
+.itype-dropdown{
+  position:absolute;top:calc(100% + 6px);left:0;min-width:180px;
+  background:white;border:1px solid var(--gray);border-radius:12px;
+  box-shadow:var(--sh3);z-index:50;overflow:hidden;
+  opacity:0;pointer-events:none;transform:translateY(-6px);
+  transition:opacity .18s,transform .18s;
+}
+.itype-dropdown.show{opacity:1;pointer-events:all;transform:translateY(0);}
+.itype-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 16px;font-size:13px;font-weight:500;
+  cursor:pointer;transition:background .15s;
+  border-bottom:1px solid var(--gl);
+}
+.itype-item:last-child{border-bottom:none;}
+.itype-item:hover{background:var(--pl);}
+.itype-item.active{background:var(--pl);font-weight:700;color:var(--pd);}
+.itype-icon{font-size:14px;}
+.itype-desc{font-size:11px;color:var(--gd);}
+
+/* Input area */
+.input-area{flex:1;position:relative;}
+#urlInput{
+  width:100%;border:none;outline:none;
+  font-family:'IBM Plex Mono','Sarabun',monospace;
+  font-size:13px;color:var(--dark);
+  background:transparent;padding:8px 10px;
+  resize:none;
+}
+#txtArea{
+  width:100%;border:none;outline:none;
+  font-family:'IBM Plex Mono','Sarabun',monospace;
+  font-size:12px;color:var(--dark);
+  background:transparent;padding:8px 10px;
+  resize:vertical;min-height:80px;
+  display:none;
+}
+.input-hint{
+  position:absolute;bottom:-20px;left:10px;
+  font-size:10px;color:var(--gd);white-space:nowrap;
+}
+.btn-submit{
+  display:flex;align-items:center;gap:8px;
+  background:var(--dark);color:var(--p);
+  border:none;padding:8px 20px;border-radius:9px;
+  font-family:'Sarabun',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;transition:transform .15s,opacity .15s;white-space:nowrap;
+  align-self:center;
+}
+.btn-submit:hover{transform:translateY(-1px);opacity:.9;}
+.btn-submit svg{flex-shrink:0;}
+
+/* format helper */
+.checker-bottom{
+  padding:10px 16px;
+  display:flex;align-items:center;gap:12px;
+  background:var(--pl);flex-wrap:wrap;
+}
+.fmt-label{font-size:11px;color:var(--gd);font-weight:600;}
+.fmt-tag{
+  font-size:10.5px;background:white;border:1px solid var(--gray);
+  color:var(--gd);padding:2px 10px;border-radius:999px;cursor:default;
+}
+.fmt-tag b{color:var(--dark);}
+
+.hero-pills{display:flex;gap:8px;margin-top:28px;animation:fu .65s .32s ease both;flex-wrap:wrap;justify-content:center;}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 14px;border-radius:999px;font-size:12px;font-weight:700;}
+.pill.safe{background:var(--safel);color:var(--safe);border:1px solid var(--safe);}
+.pill.danger{background:var(--dangerl);color:var(--danger);border:1px solid var(--danger);}
+.pill.warn{background:var(--warnl);color:var(--pd);border:1px solid var(--warn);}
+
+/* ══════════════════════════════
+   SECTION COMMONS
+══════════════════════════════ */
+section{padding:80px 24px;}
+.container{max-width:1080px;margin:0 auto;}
+.slabel{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;letter-spacing:1.8px;color:var(--pd);text-transform:uppercase;margin-bottom:10px;}
+.stitle{font-size:clamp(26px,4vw,38px);font-weight:800;margin-bottom:12px;line-height:1.2;}
+.ssub{font-size:15px;color:var(--gd);line-height:1.75;max-width:520px;}
+
+/* ══════════════════════════════
+   PROBLEM
+══════════════════════════════ */
+.problem{background:var(--pl);}
+.prob-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:44px;}
+.prob-card{background:white;border-radius:14px;padding:28px 22px;border:1px solid var(--gray);box-shadow:var(--sh1);transition:transform .2s,box-shadow .2s;}
+.prob-card:hover{transform:translateY(-4px);box-shadow:var(--sh2);}
+.prob-icon{font-size:34px;margin-bottom:8px;}
+.acc-bar{width:28px;height:3px;background:var(--danger);border-radius:2px;margin-bottom:12px;}
+.acc-bar.w{background:var(--warn);}
+.prob-card h3{font-size:16px;font-weight:700;margin-bottom:7px;}
+.prob-card p{font-size:13.5px;color:var(--gd);line-height:1.65;}
+
+/* ══════════════════════════════
+   HOW IT WORKS
+══════════════════════════════ */
+.how{background:var(--bg);}
+.steps{display:flex;gap:0;margin-top:44px;position:relative;}
+.steps::before{content:'';position:absolute;top:27px;left:16.66%;right:16.66%;height:2px;background:var(--gray);z-index:0;}
+.step{flex:1;text-align:center;padding:0 16px;position:relative;z-index:1;}
+.step-n{width:54px;height:54px;border-radius:50%;background:var(--p);color:var(--dark);font-size:19px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:var(--sh1);border:3px solid var(--bg);}
+.step h3{font-size:15px;font-weight:700;margin-bottom:7px;}
+.step p{font-size:13px;color:var(--gd);line-height:1.6;}
+
+/* ══════════════════════════════
+   REPORT TABLE
+══════════════════════════════ */
+.report-sec{background:var(--bg);padding:80px 24px;}
+.table-shell{
+  background:white;border-radius:18px;overflow:hidden;
+  box-shadow:var(--sh3);border:1px solid var(--gray);margin-top:36px;
+}
+.browser-chrome{background:var(--gl);padding:9px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--gray);}
+.dot{width:10px;height:10px;border-radius:50%;}
+.dot.r{background:var(--danger);}.dot.y{background:var(--warn);}.dot.g{background:var(--safe);}
+.burl{flex:1;background:white;border:1px solid var(--gray);border-radius:6px;padding:3px 12px;font-size:11.5px;color:var(--gd);margin-left:8px;font-family:'IBM Plex Mono',monospace;}
+.t-toolbar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--gray);background:var(--light);gap:8px;flex-wrap:wrap;}
+.tl{display:flex;align-items:center;gap:10px;}
+.t-title{font-weight:700;font-size:14.5px;}
+.t-count{background:var(--pl);color:var(--pd);font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;}
+.tr-tools{display:flex;gap:6px;flex-wrap:wrap;}
+.fbtn{background:var(--gl);border:1px solid var(--gray);border-radius:7px;padding:5px 12px;font-size:12px;font-weight:600;color:var(--gd);cursor:pointer;font-family:'Sarabun',sans-serif;transition:all .15s;}
+.fbtn:hover,.fbtn.active{background:var(--p);color:var(--dark);border-color:var(--p);}
+
+.tw{overflow-y:auto;max-height:320px;scrollbar-width:thin;scrollbar-color:var(--p) var(--pl);}
+.tw::-webkit-scrollbar{width:5px;}.tw::-webkit-scrollbar-track{background:var(--pl);}.tw::-webkit-scrollbar-thumb{background:var(--p);border-radius:3px;}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+thead th{background:var(--p);color:var(--dark);padding:9px 14px;text-align:left;font-weight:700;position:sticky;top:0;z-index:2;white-space:nowrap;}
+thead th:first-child{width:40px;text-align:center;}
+tbody tr{border-bottom:1px solid var(--gl);cursor:pointer;transition:background .12s;}
+tbody tr:hover{background:#FFFBF0;}
+tbody tr.sel{background:#FFF6E4;}
+tbody tr.dr{border-left:3px solid var(--danger);}
+tbody tr.sr{border-left:3px solid var(--safe);}
+tbody tr.wr{border-left:3px solid var(--warn);}
+@keyframes ri{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+td{padding:9px 14px;vertical-align:middle;}
+td:first-child{text-align:center;color:var(--gd);font-size:11px;}
+.url-mono{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--secd);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;}
+.badge.safe{background:var(--safel);color:var(--safe);}
+.badge.danger{background:var(--dangerl);color:var(--danger);}
+.badge.warn{background:var(--warnl);color:var(--pd);}
+.badge.phishing,.badge.malware{background:var(--dangerl);color:#9C716F;}
+.badge.scam,.badge.suspicious{background:var(--warnl);color:var(--pd);}
+.badge.legit{background:var(--safel);color:#6D895F;}
+
+.cbar{display:flex;align-items:center;gap:7px;}
+.ctrack{width:55px;height:5px;background:var(--gray);border-radius:3px;overflow:hidden;}
+.cfill{height:100%;border-radius:3px;width:0%;transition:width .9s ease;}
+.cfill.h{background:var(--safe);}.cfill.m{background:var(--warn);}.cfill.l{background:var(--danger);}
+.cnum{font-size:11.5px;font-weight:700;}
+
+.tip-w{position:relative;display:inline-block;}
+.tip{position:absolute;bottom:calc(100% + 5px);left:0;background:var(--dark);color:var(--p);font-size:10.5px;padding:4px 10px;border-radius:6px;white-space:nowrap;max-width:300px;overflow:hidden;text-overflow:ellipsis;opacity:0;pointer-events:none;transform:translateY(3px);transition:opacity .15s,transform .15s;z-index:30;font-family:'IBM Plex Mono',monospace;}
+.tip-w:hover .tip{opacity:1;transform:translateY(0);}
+
+.exp-row td{padding:0;}
+.exp-inner{padding:14px 18px;background:var(--pl);border-top:1px dashed var(--gray);display:grid;grid-template-columns:repeat(3,1fr);gap:10px;animation:ei .2s ease;}
+@keyframes ei{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.ef label{font-size:9.5px;font-weight:800;color:var(--gd);text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:3px;}
+.ef span{font-size:12.5px;font-weight:600;}
+
+.t-footer{display:flex;align-items:center;justify-content:space-between;padding:9px 18px;border-top:1px solid var(--gray);background:var(--light);font-size:12px;color:var(--gd);}
+.pag{display:flex;gap:4px;}
+.pb{width:27px;height:27px;border-radius:6px;border:1px solid var(--gray);background:white;font-size:12px;cursor:pointer;font-family:'Sarabun',sans-serif;display:flex;align-items:center;justify-content:center;transition:background .12s;}
+.pb.active{background:var(--p);color:var(--dark);font-weight:700;border-color:var(--p);}
+.pb:hover:not(.active){background:var(--gl);}
+
+.scroll-wrap{position:relative;}
+.scroll-fade{position:absolute;bottom:0;left:0;right:0;height:44px;background:linear-gradient(transparent,rgba(255,246,228,.9));pointer-events:none;animation:breath 2s ease-in-out infinite;}
+@keyframes breath{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* ══════════════════════════════
+   FEATURES
+══════════════════════════════ */
+.feat-sec{background:var(--pl);}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:44px;}
+.fcard{background:white;border-radius:14px;padding:24px;border:1px solid var(--gray);box-shadow:var(--sh1);transition:transform .2s,box-shadow .2s;}
+.fcard:hover{transform:translateY(-3px);box-shadow:var(--sh2);}
+.fcard.big{grid-column:span 2;display:flex;gap:20px;align-items:flex-start;}
+.fi{font-size:26px;margin-bottom:9px;}
+.fa{width:22px;height:3px;border-radius:2px;margin-bottom:11px;}
+.fcard h3{font-size:14.5px;font-weight:700;margin-bottom:5px;}
+.fcard p{font-size:13px;color:var(--gd);line-height:1.65;}
+.acc-box{background:linear-gradient(135deg,#FFF6E4,#FFFCEB);border-radius:10px;padding:18px;min-width:140px;text-align:center;flex-shrink:0;border:1px solid var(--gray);}
+.acc-n{font-size:38px;font-weight:800;line-height:1;}
+.acc-s{font-size:11px;color:var(--gd);margin-top:4px;}
+
+/* ══════════════════════════════
+   STATS
+══════════════════════════════ */
+.stats-sec{background:linear-gradient(135deg,var(--p) 0%,var(--pl) 50%,var(--bg) 100%);text-align:center;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;margin-top:44px;}
+.sv{font-size:clamp(30px,5vw,46px);font-weight:800;line-height:1;}
+.sl{font-size:13.5px;font-weight:700;margin:5px 0 2px;}
+.ss{font-size:12px;color:var(--gd);}
+
+/* ══════════════════════════════
+   USE CASES
+══════════════════════════════ */
+.cases-sec{background:var(--bg);}
+.cases-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:44px;}
+.ccard{background:white;border-radius:14px;padding:22px;border:1px solid var(--gray);box-shadow:var(--sh1);transition:transform .2s,box-shadow .2s,border-color .2s;}
+.ccard:hover{transform:translateY(-3px);box-shadow:var(--sh2);border-color:var(--p);}
+.cicon{font-size:30px;margin-bottom:11px;}
+.ccard h3{font-size:14px;font-weight:700;margin-bottom:6px;}
+.ccard p{font-size:13px;color:var(--gd);line-height:1.6;margin-bottom:11px;}
+.ctag{font-size:11px;font-weight:700;color:var(--pd);background:var(--pl);padding:3px 10px;border-radius:999px;}
+
+/* ══════════════════════════════
+   FINAL CTA
+══════════════════════════════ */
+.cta-sec{background:linear-gradient(135deg,var(--gray) 0%,var(--pl) 40%,var(--light) 80%,var(--p) 100%);text-align:center;}
+.cta-sec h2{font-size:clamp(26px,5vw,44px);font-weight:800;margin-bottom:12px;}
+.cta-sec p{font-size:15.5px;color:var(--gd);max-width:460px;margin:0 auto 32px;line-height:1.75;}
+.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:18px;}
+.btn-p{background:var(--dark);color:var(--p);border:none;padding:13px 30px;border-radius:10px;font-family:'Sarabun',sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:var(--sh2);transition:transform .15s,box-shadow .15s;}
+.btn-p:hover{transform:translateY(-2px);box-shadow:var(--sh3);}
+.btn-o{background:transparent;color:var(--dark);border:1.5px solid var(--pd);padding:13px 30px;border-radius:10px;font-family:'Sarabun',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:background .15s;}
+.btn-o:hover{background:rgba(255,206,105,.15);}
+.trust{font-size:11.5px;color:var(--gd);}
+.trust span{margin:0 7px;}
+
+/* ══════════════════════════════
+   FOOTER
+══════════════════════════════ */
+footer{background:var(--dark);color:rgba(255,252,235,.6);padding:36px 48px;display:grid;grid-template-columns:2fr 1fr 1fr;gap:32px;}
+.f-brand b{color:var(--p);font-size:18px;font-weight:800;letter-spacing:2px;display:block;margin-bottom:4px;}
+.f-brand p{font-size:11.5px;line-height:1.6;margin-top:6px;}
+.f-col h4{color:rgba(255,252,235,.85);font-size:12.5px;font-weight:700;margin-bottom:10px;letter-spacing:.5px;}
+.f-col a{display:block;color:rgba(255,252,235,.5);font-size:12.5px;text-decoration:none;margin-bottom:7px;transition:color .2s;}
+.f-col a:hover{color:var(--p);}
+.f-copy{border-top:1px solid rgba(255,252,235,.12);margin-top:24px;padding-top:16px;font-size:11px;text-align:center;grid-column:1/-1;}
+
+/* ══════════════════════════════
+   LOADING PAGE
+══════════════════════════════ */
+#page-loading{
+  min-height:100vh;display:none;flex-direction:column;
+  align-items:center;justify-content:center;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,#FFF6E4,var(--bg));
+  gap:28px;padding:40px;
+}
+.load-card{
+  background:white;border-radius:20px;padding:48px 52px;
+  box-shadow:var(--sh3);border:1px solid var(--gray);
+  text-align:center;max-width:460px;width:100%;
+}
+.load-url{
+  font-family:'IBM Plex Mono',monospace;font-size:13px;
+  color:var(--secd);background:var(--gl);
+  padding:8px 16px;border-radius:8px;margin-bottom:28px;
+  word-break:break-all;text-align:left;line-height:1.5;
+}
+.load-ring{
+  width:80px;height:80px;border-radius:50%;
+  border:4px solid var(--gl);
+  border-top:4px solid var(--p);
+  border-right:4px solid var(--pd);
+  animation:spin 1s linear infinite;
+  margin:0 auto 24px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-title{font-size:20px;font-weight:800;margin-bottom:8px;}
+.load-sub{font-size:13.5px;color:var(--gd);line-height:1.6;margin-bottom:24px;}
+.load-steps{display:flex;flex-direction:column;gap:10px;text-align:left;}
+.ls{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--gd);}
+.ls-dot{width:8px;height:8px;border-radius:50%;background:var(--gray);flex-shrink:0;transition:background .3s;}
+.ls-dot.done{background:var(--safe);}
+.ls-dot.active{background:var(--p);animation:ldot 1s ease-in-out infinite;}
+.ls-dot.pend{background:var(--gl);}
+.ls span{flex:1;}
+.ls .ck{font-size:14px;}
+
+/* ══════════════════════════════
+   RESULT PAGE
+══════════════════════════════ */
+#page-result{
+  min-height:100vh;display:none;flex-direction:column;
+  align-items:center;justify-content:center;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,#FFF6E4,var(--bg));
+  padding:60px 24px;gap:20px;
+}
+.res-main-card{
+  width:100%;max-width:680px;
+  background:white;border-radius:20px;
+  padding:0;overflow:hidden;box-shadow:var(--sh3);
+  border:1px solid var(--gray);
+}
+.res-banner{
+  padding:36px 32px 28px;
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;position:relative;overflow:hidden;
+}
+.res-banner.safe-b{background:linear-gradient(135deg,var(--safel) 0%,white 40%,white 70%,var(--safel) 100%);}
+.res-banner.danger-b{background:linear-gradient(135deg,var(--dangerl) 0%,white 40%,white 70%,var(--dangerl) 100%);}
+.res-banner.warn-b{background:linear-gradient(135deg,var(--warnl) 0%,white 40%,white 70%,var(--warnl) 100%);}
+.res-icon-ring{
+  width:72px;height:72px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:34px;margin-bottom:16px;
+  box-shadow:0 0 0 6px rgba(255,255,255,.7);
+}
+.res-icon-ring.safe{background:var(--safel);}
+.res-icon-ring.danger{background:var(--dangerl);}
+.res-icon-ring.warn{background:var(--warnl);}
+.res-verdict{font-size:26px;font-weight:800;margin-bottom:4px;}
+.res-conf{font-size:15px;color:var(--gd);}
+.res-conf b{color:var(--dark);}
+.res-url{
+  display:flex;align-items:center;gap:6px;
+  margin-top:14px;font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;color:var(--secd);
+  background:rgba(255,255,255,.7);
+  padding:5px 14px;border-radius:8px;
+  max-width:100%;word-break:break-all;
+}
+.res-meta{font-size:11px;color:var(--gd);margin-top:6px;}
+
+.res-bottom{padding:24px 28px;display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.rcard{background:var(--gl);border-radius:12px;padding:18px;}
+.rcard h4{font-size:11px;font-weight:800;color:var(--gd);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;}
+.rrow{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;}
+.rrow:last-child{margin-bottom:0;}
+.rrow-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+.rrow-label{font-size:11px;color:var(--gd);}
+.rrow-val{font-size:13.5px;font-weight:700;}
+.rec-list{display:flex;flex-direction:column;gap:7px;}
+.rec-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--gd);line-height:1.5;}
+.rec-item .ri{flex-shrink:0;margin-top:1px;}
+
+.res-extra{
+  width:100%;max-width:680px;
+  background:white;border-radius:14px;padding:20px 24px;
+  box-shadow:var(--sh1);border:1.5px solid var(--p);
+}
+.res-extra h4{font-size:11px;font-weight:800;color:var(--pd);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+.res-extra p{font-size:13.5px;color:var(--gd);line-height:1.65;}
+
+.res-actions{display:flex;gap:12px;width:100%;max-width:680px;}
+.btn-back{flex:1;background:white;color:var(--dark);border:1.5px solid var(--gray);padding:12px;border-radius:10px;font-family:'Sarabun',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s;}
+.btn-back:hover{background:var(--gl);}
+.btn-share{flex:1;background:var(--secd);color:white;border:none;padding:12px;border-radius:10px;font-family:'Sarabun',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .15s;}
+.btn-share:hover{opacity:.88;}
+
+/* ══════════════════════════════
+   UTIL
+══════════════════════════════ */
+.avt{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:800;color:var(--dark);margin-right:4px;vertical-align:middle;}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════
+     LANDING PAGE
+═══════════════════════════════════ -->
+<div id="page-landing">
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand"><b>SEMD</b><span>Suspicious URL Evaluation for Malicious Detection</span></div>
+  <ul class="nav-links">
+    <li><a href="#how">วิธีการทำงาน</a></li>
+    <li><a href="#demo">รายงาน</a></li>
+    <li><a href="#features">ฟีเจอร์</a></li>
+    <li><a href="#usecases">กลุ่มผู้ใช้</a></li>
+  </ul>
+  <button class="btn-nav">เข้าสู่ระบบ</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge"><div class="ldot"></div>ขับเคลื่อนด้วย Machine Learning</div>
+  <h1>ให้ <em>SEMD</em> ตรวจก่อน</h1>
+  <p class="hero-sub">ระบบวิเคราะห์ URL ต้องสงสัยด้วย Machine Learning ตรวจจับเว็บไซต์อันตราย ได้แม่นยำ รวดเร็ว ใช้งานง่าย</p>
+
+  <!-- CHECKER BOX -->
+  <div class="checker-box">
+    <div class="checker-top">
+
+      <!-- Evaluator selector -->
+      <div class="sel-wrap">
+        <div class="sel-btn" id="evalBtn" onclick="toggleDrop('evalDrop','evalBtn')">
+          <span>🤖</span>
+          <span id="evalLabel">SEMD (ML · 0.2)</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="dropdown" id="evalDrop">
+          <div class="dd-item active" onclick="pickEval('SEMD (ML · 0.1)','🤖',this)">
+            <span>🤖</span><span>SEMD</span><span class="tag">ML · 0.1</span>
+          </div>
+          <div class="dd-item" onclick="pickEval('SEMD (ML · 0.2)','🤖',this)">
+            <span>🤖</span><span>SEMD</span><span class="tag">ML · 0.2</span>
+          </div>
+          <div class="dd-item" onclick="pickEval('Thaiphishtank','🐟',this)">
+            <span>🐟</span><span>Thaiphishtank</span>
+          </div>
+          <div class="dd-item" onclick="pickEval('URLhaus','🏚️',this)">
+            <span>🏚️</span><span>URLhaus</span>
+          </div>
+          <div class="dd-item" onclick="pickEval('Google Safebrowsing','🛡️',this)">
+            <span>🛡️</span><span>Google Safebrowsing</span>
+          </div>
+          <div class="dd-item" onclick="pickEval('URLVOID','🔍',this)">
+            <span>🔍</span><span>URLVOID</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input type selector -->
+      <div class="itype-wrap">
+        <div class="itype-btn" id="itypeBtn" onclick="toggleDrop('itypeDrop','itypeBtn')">
+          <span id="itypeIcon">🔗</span>
+          <span id="itypeLabel">URL</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="itype-dropdown" id="itypeDrop">
+          <div class="itype-item active" onclick="pickType('url','🔗','URL',this)">
+            <span class="itype-icon">🔗</span>
+            <div><div style="font-weight:700">URL</div><div class="itype-desc">ใส่ URL เดี่ยว เช่น https://… หรือ http://…</div></div>
+          </div>
+          <div class="itype-item" onclick="pickType('csv','📋','CSV',this)">
+            <span class="itype-icon">📋</span>
+            <div><div style="font-weight:700">CSV</div><div class="itype-desc">id,url หรือ url คั่นด้วย comma</div></div>
+          </div>
+          <div class="itype-item" onclick="pickType('txt','📄','TXT',this)">
+            <span class="itype-icon">📄</span>
+            <div><div style="font-weight:700">TXT</div><div class="itype-desc">URL แต่ละบรรทัด หรือคั่นด้วย space</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div class="input-area">
+        <input id="urlInput" type="text" placeholder="ระบุ URL เช่น https://example.com หรือ http://…"/>
+        <textarea id="txtArea" placeholder="วาง URL หลายรายการ&#10;https://example1.com&#10;https://example2.com&#10;&#10;หรือ CSV: id,url&#10;1,https://example.com"></textarea>
+      </div>
+
+      <button class="btn-submit" onclick="doCheck()">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/></svg>
+        ตรวจสอบ
+      </button>
+    </div>
+
+    <!-- Format hints -->
+    <div class="checker-bottom">
+      <span class="fmt-label">รองรับ:</span>
+      <span class="fmt-tag"><b>URL</b> https:// · http://</span>
+      <span class="fmt-tag"><b>CSV</b> id,url หรือ url,url</span>
+      <span class="fmt-tag"><b>TXT</b> บรรทัดละ 1 URL</span>
+      <span class="fmt-tag"><b>Batch</b> หลาย URL พร้อมกัน</span>
+    </div>
+  </div>
+
+  <div class="hero-pills">
+    <span class="pill safe">✅ Safe</span>
+    <span class="pill danger">🚨 Danger</span>
+    <span class="pill warn">⚠️ Warning</span>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="problem">
+  <div class="container">
+    <div class="slabel">⚠️ ปัญหาที่เจออยู่</div>
+    <h2 class="stitle">แค่คลิกเดียว อาจเปลี่ยนทุกอย่าง</h2>
+    <p class="ssub">ภัยคุกคามทางไซเบอร์เพิ่มขึ้นทุกปี และมักมาในรูปแบบลิงก์ธรรมดาที่ดูไม่ออก</p>
+    <div class="prob-grid">
+      <div class="prob-card">
+        <div class="prob-icon">🎣</div><div class="acc-bar"></div>
+        <h3>Phishing ที่ดูเหมือนของจริง</h3>
+        <p>หน้าเว็บปลอมเลียนแบบธนาคาร โซเชียล หรือองค์กรที่น่าเชื่อถือ หลอกให้กรอกข้อมูลส่วนตัว</p>
+      </div>
+      <div class="prob-card">
+        <div class="prob-icon">💀</div><div class="acc-bar"></div>
+        <h3>Malware แฝงในลิงก์</h3>
+        <p>เพียงเข้าเว็บไซต์อาจดาวน์โหลด Malware เข้าเครื่องโดยไม่รู้ตัว ขโมยข้อมูลหรือเรียกค่าไถ่</p>
+      </div>
+      <div class="prob-card">
+        <div class="prob-icon">😵</div><div class="acc-bar w"></div>
+        <h3>แยกไม่ออกด้วยตาเปล่า</h3>
+        <p>URL ปลอมอาจต่างจากของจริงเพียงตัวอักษรเดียว ยากมากที่จะสังเกตโดยเฉพาะบนมือถือ</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="container">
+    <div class="slabel">⚙️ วิธีการทำงาน</div>
+    <h2 class="stitle">ง่ายกว่าที่คิด ใน 3 ขั้นตอน</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <h3>วาง URL</h3>
+        <p>วางลิงก์ที่ต้องการตรวจ รองรับ URL เดี่ยว, CSV หรือ TXT หลายรายการพร้อมกัน</p>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <h3>ML วิเคราะห์</h3>
+        <p>ระบบดึง Feature จาก URL และส่งให้ Machine Learning Model ประเมินทันที</p>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <h3>รับผลทันที</h3>
+        <p>ได้รับผลลัพธ์พร้อม Confidence Score และคำแนะนำในการตัดสินใจ</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REPORT TABLE -->
+<section class="report-sec" id="demo">
+  <div class="container">
+    <div class="slabel"><div class="ldot" style="margin-right:4px"></div>Live Preview</div>
+    <h2 class="stitle">ดูตัวอย่างรายงาน URL จริง</h2>
+    <p class="ssub">วางเมาส์เพื่อดูรายละเอียด · คลิกแถวเพื่อขยายข้อมูล · กรองตามผลลัพธ์</p>
+    <div class="table-shell">
+      <div class="browser-chrome">
+        <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+        <div class="burl">semd.app/dashboard/reports</div>
+      </div>
+      <div class="t-toolbar">
+        <div class="tl">
+          <span class="t-title">รายงานล่าสุด</span>
+          <span class="t-count" id="tcount">10 รายการ</span>
+          <div class="ldot"></div>
+        </div>
+        <div class="tr-tools">
+          <button class="fbtn active" onclick="tFilter('all',this)">ทั้งหมด</button>
+          <button class="fbtn" onclick="tFilter('Safe',this)">✅ Safe</button>
+          <button class="fbtn" onclick="tFilter('Danger',this)">🚨 Danger</button>
+          <button class="fbtn" onclick="tFilter('Warning',this)">⚠️ Warning</button>
+          <button class="fbtn" style="background:var(--dark);color:var(--p);border-color:var(--dark)">+ เพิ่ม URL</button>
+        </div>
+      </div>
+      <div class="scroll-wrap">
+        <div class="tw" id="tw">
+          <table>
+            <thead><tr>
+              <th>#</th><th>URL</th><th>วันที่</th><th>ประเภท</th><th>ผลลัพธ์</th><th>ความมั่นใจ</th><th>ผู้รายงาน</th>
+            </tr></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+        <div class="scroll-fade" id="sfade"></div>
+      </div>
+      <div class="t-footer">
+        <span id="tfoot">แสดง 1–10 จาก 10 รายการ</span>
+        <div class="pag">
+          <button class="pb">‹</button>
+          <button class="pb active">1</button>
+          <button class="pb">2</button>
+          <button class="pb">›</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="feat-sec" id="features">
+  <div class="container">
+    <div class="slabel">✨ ความสามารถ</div>
+    <h2 class="stitle">ทำไมต้อง SEMD</h2>
+    <div class="feat-grid">
+      <div class="fcard big">
+        <div style="flex:1">
+          <div class="fi">🧠</div><div class="fa" style="background:var(--p)"></div>
+          <h3>ML-Powered Analysis</h3>
+          <p>ไม่ใช่แค่ Blacklist — ระบบเรียนรู้ pattern ของ URL อันตรายจาก Feature หลากหลาย อัปเดต Model อยู่เสมอ ตรวจจับภัยใหม่ได้แม้ยังไม่อยู่ใน database</p>
+        </div>
+        <div class="acc-box"><div class="acc-n">97.8<span style="font-size:20px">%</span></div><div class="acc-s">Model Accuracy</div></div>
+      </div>
+      <div class="fcard"><div class="fi">⚡</div><div class="fa" style="background:var(--sec)"></div><h3>Real-time Result</h3><p>วิเคราะห์และแสดงผลภายใน 2 วินาที รองรับ Batch URL หลายรายการพร้อมกัน</p></div>
+      <div class="fcard"><div class="fi">📊</div><div class="fa" style="background:var(--safe)"></div><h3>Dashboard & Report</h3><p>ติดตามและจัดการ URL ที่ตรวจแล้วทั้งหมด Export รายงาน PDF/CSV ได้ทุกเมื่อ</p></div>
+      <div class="fcard"><div class="fi">👥</div><div class="fa" style="background:var(--warn)"></div><h3>Team Management</h3><p>มอบหมายงาน ติดตามสถานะ และทำงานร่วมกันเป็นทีม พร้อมระบบสิทธิ์ Role-based</p></div>
+      <div class="fcard"><div class="fi">🎯</div><div class="fa" style="background:var(--danger)"></div><h3>Confidence Score</h3><p>บอกระดับความมั่นใจของ Model ช่วยตัดสินใจได้แม่นยำขึ้นกว่าแค่ Safe/Danger</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-sec">
+  <div class="container">
+    <div class="slabel">📈 ตัวเลขที่พิสูจน์ได้</div>
+    <h2 class="stitle">ความแม่นยำที่ไว้วางใจได้</h2>
+    <div class="stats-grid">
+      <div><div class="sv">97.8%</div><div class="sl">Accuracy</div><div class="ss">ของ ML Model</div></div>
+      <div><div class="sv">10K+</div><div class="sl">URL ที่ตรวจแล้ว</div><div class="ss">และเพิ่มขึ้นทุกวัน</div></div>
+      <div><div class="sv">&lt;2s</div><div class="sl">Response Time</div><div class="ss">เฉลี่ยต่อการตรวจ</div></div>
+      <div><div class="sv">3</div><div class="sl">ระดับการแจ้งเตือน</div><div class="ss">Safe · Warning · Danger</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section class="cases-sec" id="usecases">
+  <div class="container">
+    <div class="slabel">👤 กลุ่มผู้ใช้</div>
+    <h2 class="stitle">SEMD ช่วยได้ทุกกลุ่ม</h2>
+    <div class="cases-grid">
+      <div class="ccard"><div class="cicon">🔐</div><h3>SOC Team / IT Security</h3><p>ตรวจสอบ URL ต้องสงสัยจำนวนมากได้รวดเร็ว จัดการเป็นทีม Export รายงานได้</p><span class="ctag">Dashboard + Team</span></div>
+      <div class="ccard"><div class="cicon">🏢</div><h3>องค์กร / IT Admin</h3><p>ป้องกันพนักงานจากลิงก์อันตราย ตรวจสอบก่อน deploy หรือแชร์ภายในองค์กร</p><span class="ctag">Bulk Check + Report</span></div>
+      <div class="ccard"><div class="cicon">🎓</div><h3>นักวิจัย / นักศึกษา</h3><p>ศึกษา pattern URL อันตราย ดู Confidence Score และ Feature ที่ Model ใช้ตัดสิน</p><span class="ctag">Score + Insight</span></div>
+      <div class="ccard"><div class="cicon">👤</div><h3>บุคคลทั่วไป</h3><p>ตรวจลิงก์ก่อนกด ไม่ว่าจะมาจาก SMS, Line, อีเมล หรือโซเชียลมีเดีย</p><span class="ctag">Quick single URL</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-sec">
+  <div class="container">
+    <h2 class="stitle" style="max-width:none">อย่ารอให้โดนก่อน</h2>
+    <p>เริ่มตรวจสอบ URL ของคุณได้ฟรีวันนี้ ไม่ต้องสมัครสมาชิก ไม่ต้องติดตั้ง</p>
+    <div class="cta-row">
+      <button class="btn-p" onclick="document.querySelector('.hero').scrollIntoView({behavior:'smooth'})">เริ่มใช้งานเลย →</button>
+      <button class="btn-o">ดูตัวอย่างผลลัพธ์</button>
+    </div>
+    <div class="trust">🔒 ไม่เก็บข้อมูล URL ของคุณ<span>·</span>ใช้งานได้ฟรี<span>·</span>ไม่ต้องติดตั้ง</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-brand">
+    <b>SEMD</b>
+    <span style="font-size:10.5px;color:rgba(255,252,235,.5)">Suspicious URL Evaluation for Malicious Detection</span>
+    <p>ระบบวิเคราะห์ URL ต้องสงสัยด้วย Machine Learning เพื่อตรวจจับเว็บไซต์อันตราย</p>
+  </div>
+  <div class="f-col">
+    <h4>เมนู</h4>
+    <a href="#">หน้าหลัก</a><a href="#">วิธีการทำงาน</a><a href="#">รายงาน</a><a href="#">ฟีเจอร์</a>
+  </div>
+  <div class="f-col">
+    <h4>ติดต่อ</h4>
+    <a href="#">เอกสาร API</a><a href="#">Github</a><a href="#">ทีมงาน</a>
+  </div>
+  <div class="f-copy">© 2026 SEMD Project · All rights reserved</div>
+</footer>
+
+</div><!-- /page-landing -->
+
+
+<!-- ═══════════════════════════════════
+     LOADING PAGE
+═══════════════════════════════════ -->
+<div id="page-loading">
+  <nav style="position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,252,235,.9);backdrop-filter:blur(16px);border-bottom:1px solid rgba(235,225,213,.7);padding:0 48px;height:58px;display:flex;align-items:center;justify-content:space-between;">
+    <div class="nav-brand"><b>SEMD</b><span>Suspicious URL Evaluation for Malicious Detection</span></div>
+  </nav>
+  <div style="height:58px"></div>
+  <div class="load-card">
+    <div class="load-url" id="loadUrl">https://example.com</div>
+    <div class="load-ring"></div>
+    <div class="load-title">กำลังวิเคราะห์ URL</div>
+    <div class="load-sub">ระบบกำลังดึง Feature และประเมินด้วย Machine Learning<br>กรุณารอสักครู่…</div>
+    <div class="load-steps">
+      <div class="ls"><div class="ls-dot done" id="ls1"></div><span>ดึงข้อมูล URL และ Feature</span><span class="ck" id="lc1">✅</span></div>
+      <div class="ls"><div class="ls-dot active" id="ls2"></div><span>ส่งให้ ML Model ประเมิน</span><span class="ck" id="lc2"></span></div>
+      <div class="ls"><div class="ls-dot pend" id="ls3"></div><span>รวบรวมผลและสร้างรายงาน</span><span class="ck" id="lc3"></span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     RESULT PAGE
+═══════════════════════════════════ -->
+<div id="page-result">
+  <nav style="position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,252,235,.9);backdrop-filter:blur(16px);border-bottom:1px solid rgba(235,225,213,.7);padding:0 48px;height:58px;display:flex;align-items:center;justify-content:space-between;">
+    <div class="nav-brand"><b>SEMD</b><span>Suspicious URL Evaluation for Malicious Detection</span></div>
+    <button class="btn-nav" onclick="goBack()">← กลับหน้าหลัก</button>
+  </nav>
+  <div style="height:58px"></div>
+
+  <!-- Main result card -->
+  <div class="res-main-card" id="resCard">
+    <div class="res-banner" id="resBanner">
+      <div class="res-icon-ring" id="resIconRing"><span id="resIcon">✅</span></div>
+      <div class="res-verdict" id="resVerdict">URL ปลอดภัย</div>
+      <div class="res-conf">ความแม่นยำ: <b id="resConf">95.0%</b></div>
+      <div class="res-url">🔗 <span id="resUrl">https://example.com</span></div>
+      <div class="res-meta" id="resMeta">ตรวจสอบเมื่อ —</div>
+    </div>
+    <div class="res-bottom">
+      <div class="rcard">
+        <h4>รายละเอียดการตรวจสอบ</h4>
+        <div class="rrow"><span class="rrow-icon">🔘</span><div><div class="rrow-label">สถานะ</div><div class="rrow-val" id="rStatus">ปลอดภัย</div></div></div>
+        <div class="rrow"><span class="rrow-icon">👤</span><div><div class="rrow-label">ตรวจสอบโดย</div><div class="rrow-val" id="rModel">SEMD ML · 0.2</div></div></div>
+        <div class="rrow"><span class="rrow-icon">📅</span><div><div class="rrow-label">วันที่ตรวจสอบ</div><div class="rrow-val" id="rDate">—</div></div></div>
+      </div>
+      <div class="rcard">
+        <h4>คำแนะนำ</h4>
+        <div class="rec-list" id="recList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="res-extra" id="resExtra">
+    <h4>คำแนะนำเพิ่มเติม</h4>
+    <p id="resExtraText">—</p>
+  </div>
+
+  <div class="res-actions">
+    <button class="btn-back" onclick="goBack()">◀ หน้าหลัก</button>
+    <button class="btn-share">✈️ แชร์ผลลัพธ์</button>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     SCRIPT
+═══════════════════════════════════ -->
+<script>
+/* ── Table mock data ── */
+const rows=[
+  {id:1,url:'https://www.google.com',date:'28 Feb 2026',type:'Legitimate',verdict:'Safe',conf:98,rep:'john_doe'},
+  {id:2,url:'http://bank-secure-login.net/th/confirm',date:'28 Feb 2026',type:'Phishing',verdict:'Danger',conf:94,rep:'analyst_k'},
+  {id:3,url:'https://update-flash-player-now.com',date:'27 Feb 2026',type:'Malware',verdict:'Danger',conf:89,rep:'sec_team'},
+  {id:4,url:'http://promo-win-iphone16-free.xyz',date:'27 Feb 2026',type:'Scam',verdict:'Warning',conf:76,rep:'analyst_m'},
+  {id:5,url:'https://github.com/openai/gpt-4',date:'26 Feb 2026',type:'Legitimate',verdict:'Safe',conf:97,rep:'john_doe'},
+  {id:6,url:'http://verify-your-account-now.tk/login',date:'26 Feb 2026',type:'Phishing',verdict:'Danger',conf:92,rep:'sec_team'},
+  {id:7,url:'https://shop-discount-100percent.cc',date:'25 Feb 2026',type:'Suspicious',verdict:'Warning',conf:65,rep:'analyst_k'},
+  {id:8,url:'https://docs.anthropic.com/claude/api',date:'25 Feb 2026',type:'Legitimate',verdict:'Safe',conf:99,rep:'analyst_m'},
+  {id:9,url:'http://free-robux-generator.io/claim',date:'24 Feb 2026',type:'Scam',verdict:'Danger',conf:87,rep:'john_doe'},
+  {id:10,url:'https://mail.google.com/mail/u/0',date:'24 Feb 2026',type:'Legitimate',verdict:'Safe',conf:99,rep:'sec_team'},
+];
+const vc={Safe:'safe',Danger:'danger',Warning:'warn'};
+const tc={Phishing:'phishing',Malware:'malware',Scam:'scam',Legitimate:'legit',Suspicious:'suspicious'};
+const vi={Safe:'✅',Danger:'🚨',Warning:'⚠️'};
+const ac={john_doe:'#FFCE69',analyst_k:'#D3DFFF',sec_team:'#D5FFC0',analyst_m:'#FFEDD5'};
+
+function cf(v){return v>=80?'h':v>=60?'m':'l';}
+
+function renderTable(data){
+  const tb=document.getElementById('tbody');
+  tb.innerHTML='';
+  document.getElementById('tcount').textContent=`${data.length} รายการ`;
+  document.getElementById('tfoot').textContent=`แสดง 1–${data.length} จาก ${data.length} รายการ`;
+  data.forEach((r,i)=>{
+    const tr=document.createElement('tr');
+    tr.className=`${vc[r.verdict]}r`;
+    tr.style.cssText=`animation:ri .35s ${i*.055}s ease both`;
+    tr.innerHTML=`
+      <td>${r.id}</td>
+      <td><div class="tip-w"><div class="url-mono">${r.url}</div><div class="tip">${r.url}</div></div></td>
+      <td style="color:var(--gd);font-size:11.5px;white-space:nowrap">${r.date}</td>
+      <td><span class="badge ${tc[r.type]}">${r.type}</span></td>
+      <td><span class="badge ${vc[r.verdict]}">${vi[r.verdict]} ${r.verdict}</span></td>
+      <td><div class="cbar"><div class="ctrack"><div class="cfill ${cf(r.conf)}" data-w="${r.conf}" style="width:0%"></div></div><span class="cnum">${r.conf}%</span></div></td>
+      <td><span class="avt" style="background:${ac[r.rep]||'#EBE1D5'}">${r.rep[0].toUpperCase()}</span><span style="font-size:12px">${r.rep}</span></td>`;
+    tr.addEventListener('click',()=>toggleRow(r,tr));
+    tb.appendChild(tr);
+    const exp=document.createElement('tr');
+    exp.className='exp-row';exp.id=`exp-${r.id}`;exp.style.display='none';
+    exp.innerHTML=`<td colspan="7"><div class="exp-inner">
+      <div class="ef"><label>Full URL</label><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;word-break:break-all">${r.url}</span></div>
+      <div class="ef"><label>Submitted</label><span>${r.date}</span></div>
+      <div class="ef"><label>Reporter</label><span>${r.rep}</span></div>
+      <div class="ef"><label>ML Verdict</label><span class="badge ${vc[r.verdict]}">${vi[r.verdict]} ${r.verdict}</span></div>
+      <div class="ef"><label>Confidence</label><span style="font-size:18px;font-weight:800">${r.conf}%</span></div>
+      <div class="ef"><label>Threat Type</label><span class="badge ${tc[r.type]}">${r.type}</span></div>
+    </div></td>`;
+    tb.appendChild(exp);
+  });
+  requestAnimationFrame(()=>setTimeout(()=>{
+    document.querySelectorAll('.cfill').forEach(el=>el.style.width=el.dataset.w+'%');
+  },150));
+}
+
+function toggleRow(r,tr){
+  const exp=document.getElementById(`exp-${r.id}`);
+  const open=exp.style.display!=='none';
+  document.querySelectorAll('.exp-row').forEach(e=>e.style.display='none');
+  document.querySelectorAll('tbody tr:not(.exp-row)').forEach(t=>t.classList.remove('sel'));
+  if(!open){exp.style.display='';tr.classList.add('sel');}
+}
+function tFilter(v,btn){
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable(v==='all'?rows:rows.filter(r=>r.verdict===v));
+}
+document.getElementById('tw').addEventListener('scroll',function(){
+  document.getElementById('sfade').style.opacity=(this.scrollHeight-this.scrollTop<=this.clientHeight+4)?'0':'1';
+});
+renderTable(rows);
+
+/* ── Dropdown toggles ── */
+function toggleDrop(dropId,btnId){
+  const d=document.getElementById(dropId);
+  const b=document.getElementById(btnId);
+  const show=d.classList.contains('show');
+  document.querySelectorAll('.dropdown,.itype-dropdown').forEach(x=>x.classList.remove('show'));
+  document.querySelectorAll('.sel-btn,.itype-btn').forEach(x=>x.classList.remove('open'));
+  if(!show){d.classList.add('show');b.classList.add('open');}
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.sel-wrap')&&!e.target.closest('.itype-wrap')){
+    document.querySelectorAll('.dropdown,.itype-dropdown').forEach(x=>x.classList.remove('show'));
+    document.querySelectorAll('.sel-btn,.itype-btn').forEach(x=>x.classList.remove('open'));
+  }
+});
+
+function pickEval(label,icon,el){
+  document.getElementById('evalLabel').textContent=label;
+  document.querySelectorAll('#evalDrop .dd-item').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('evalDrop').classList.remove('show');
+  document.getElementById('evalBtn').classList.remove('open');
+}
+
+let currentType='url';
+function pickType(type,icon,label,el){
+  currentType=type;
+  document.getElementById('itypeIcon').textContent=icon;
+  document.getElementById('itypeLabel').textContent=label;
+  document.querySelectorAll('#itypeDrop .itype-item').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('itypeDrop').classList.remove('show');
+  document.getElementById('itypeBtn').classList.remove('open');
+  const url=document.getElementById('urlInput');
+  const txt=document.getElementById('txtArea');
+  if(type==='url'){url.style.display='';txt.style.display='none';}
+  else{url.style.display='none';txt.style.display='';}
+}
+
+/* ── Check flow ── */
+function doCheck(){
+  const urlVal=currentType==='url'
+    ?document.getElementById('urlInput').value.trim()
+    :document.getElementById('txtArea').value.trim();
+  if(!urlVal){
+    alert('กรุณาใส่ URL ก่อนครับ');return;
+  }
+  const model=document.getElementById('evalLabel').textContent;
+  showLoading(urlVal,model);
+}
+
+function showLoading(url,model){
+  document.getElementById('page-landing').style.display='none';
+  const lp=document.getElementById('page-loading');
+  lp.style.display='flex';
+  document.getElementById('loadUrl').textContent=url;
+
+  // Reset steps
+  ['ls1','ls2','ls3'].forEach(id=>document.getElementById(id).className='ls-dot pend');
+  ['lc1','lc2','lc3'].forEach(id=>document.getElementById(id).textContent='');
+
+  // Step 1 done immediately
+  setTimeout(()=>{
+    document.getElementById('ls1').className='ls-dot done';
+    document.getElementById('lc1').textContent='✅';
+    document.getElementById('ls2').className='ls-dot active';
+  },600);
+  // Step 2 done
+  setTimeout(()=>{
+    document.getElementById('ls2').className='ls-dot done';
+    document.getElementById('lc2').textContent='✅';
+    document.getElementById('ls3').className='ls-dot active';
+  },1500);
+  // Step 3 done → show result
+  setTimeout(()=>{
+    document.getElementById('ls3').className='ls-dot done';
+    document.getElementById('lc3').textContent='✅';
+  },2400);
+  setTimeout(()=>showResult(url,model),2800);
+}
+
+/* ── Mock result logic ── */
+function showResult(url,model){
+  document.getElementById('page-loading').style.display='none';
+  const rp=document.getElementById('page-result');
+  rp.style.display='flex';rp.style.flexDirection='column';rp.style.alignItems='center';rp.style.justifyContent='flex-start';
+
+  // Decide verdict from url heuristic (mock)
+  const isDanger=/(phish|malware|hack|free.*robux|win.*iphone|verify.*account|login\.(net|tk|xyz|io)|bank.*secure)/i.test(url);
+  const isWarn=/(discount|promo|shop.*cc|suspicious)/i.test(url);
+  let verdict,conf,bannerCls,iconCls,icon,vtext,recs,extra;
+
+  if(isDanger){
+    verdict='Danger';conf=Math.floor(Math.random()*15)+82;
+    bannerCls='danger-b';iconCls='danger';icon='🚨';vtext='URL อันตราย';
+    recs=['🚫 ห้ามเข้าเว็บไซต์นี้โดยเด็ดขาด','🔒 อย่ากรอกข้อมูลส่วนตัวหรือรหัสผ่าน','⚠️ แจ้งเตือนผู้ส่งลิงก์ให้ทราบ','🛡️ แสกน Malware บนเครื่องของคุณ'];
+    extra=`URL นี้มีลักษณะที่ตรงกับ Pattern ของเว็บไซต์ Phishing หรือ Malware ที่ระบบตรวจพบ ควรหลีกเลี่ยงและไม่แชร์ลิงก์นี้ต่อ`;
+  } else if(isWarn){
+    verdict='Warning';conf=Math.floor(Math.random()*20)+60;
+    bannerCls='warn-b';iconCls='warn';icon='⚠️';vtext='URL น่าสงสัย';
+    recs=['⚠️ URL มีลักษณะน่าสงสัย ควรระวัง','🔍 ตรวจสอบเว็บไซต์เพิ่มเติมก่อนใช้งาน','💡 อย่ากรอกข้อมูลสำคัญจนกว่าจะมั่นใจ'];
+    extra=`URL นี้มีบางลักษณะที่อาจเป็นอันตราย แต่ยังไม่แน่ชัด ควรตรวจสอบเพิ่มเติมก่อนตัดสินใจเข้าใช้งาน`;
+  } else {
+    verdict='Safe';conf=Math.floor(Math.random()*5)+94;
+    bannerCls='safe-b';iconCls='safe';icon='✅';vtext='URL ปลอดภัย';
+    recs=['✅ URL นี้ถูกตรวจสอบแล้วและปลอดภัย','✅ คุณสามารถเข้าชม URL นี้ได้','⚠️ แต่ควรระมัดระวังเสมอเมื่อกรอกข้อมูลส่วนตัว'];
+    extra=`URL นี้ผ่านการตรวจสอบจาก ML Model แล้วไม่พบลักษณะที่เป็นอันตราย อย่างไรก็ตามควรระมัดระวังการกรอกข้อมูลส่วนตัวทุกครั้ง`;
+  }
+
+  document.getElementById('resBanner').className=`res-banner ${bannerCls}`;
+  document.getElementById('resIconRing').className=`res-icon-ring ${iconCls}`;
+  document.getElementById('resIcon').textContent=icon;
+  document.getElementById('resVerdict').textContent=vtext;
+  document.getElementById('resConf').textContent=conf+'%';
+  document.getElementById('resUrl').textContent=url.length>60?url.substring(0,57)+'…':url;
+  const now=new Date();
+  document.getElementById('resMeta').textContent=`ตรวจสอบเมื่อ ${now.toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})} เวลา ${now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})}`;
+  document.getElementById('rStatus').textContent=vtext;
+  document.getElementById('rModel').textContent=model;
+  document.getElementById('rDate').textContent=`${now.toLocaleDateString('th-TH')} ${now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})}`;
+  document.getElementById('recList').innerHTML=recs.map(r=>`<div class="rec-item"><span class="ri">${r.substring(0,2)}</span><span>${r.substring(2)}</span></div>`).join('');
+  document.getElementById('resExtraText').textContent=extra;
+}
+
+function goBack(){
+  document.getElementById('page-result').style.display='none';
+  document.getElementById('page-loading').style.display='none';
+  document.getElementById('page-landing').style.display='block';
+}
+</script>
+</body>
+</html>

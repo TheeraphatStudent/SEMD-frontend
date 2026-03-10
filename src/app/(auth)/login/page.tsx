@@ -1,70 +1,146 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Card, CardHeader, CardTitle, CardContent, Input, Button } from '@/components/ui';
+import { ShieldCheck } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { toast } from '@/hooks/use-toast';
 import { ROUTES } from '@/constants/routes';
+import { Input, Button } from '@/components/ui';
+import { RecaptchaV3 } from '@/components/RecaptchaV3';
+import {
+  AuthBackground,
+  SEMDMascot,
+  SocialLoginRow,
+  StatsStrip,
+  URLTablePreview,
+} from '@/components/auth';
 
 export default function LoginPage() {
   const router = useRouter();
   const { login, isLoading } = useAuth();
   const [formData, setFormData] = useState({
-    email: '',
+    username: '',
     password: '',
   });
-  
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+
+  const handleRecaptchaVerify = useCallback((token: string) => {
+    setRecaptchaToken(token);
+  }, []);
+
+  const handleRecaptchaError = useCallback((error: string) => {
+    console.error('reCAPTCHA error:', error);
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
-      const result = await login(formData);
-      
+      const result = await login({ 
+        email: formData.username, 
+        password: formData.password,
+        recaptchaToken: recaptchaToken || undefined,
+      });
+
       if (result.requiresTwoFactor) {
         toast.info('กรุณายืนยันตัวตนด้วย 2FA');
-        router.push(`/two-factor?email=${encodeURIComponent(formData.email)}`);
+        router.push(`/two-factor?email=${encodeURIComponent(formData.username)}`);
         return;
       }
-      
+
       toast.success('เข้าสู่ระบบสำเร็จ');
       router.push(ROUTES.DASHBOARD.HOME);
     } catch (error: any) {
       toast.error(error.message || 'เข้าสู่ระบบไม่สำเร็จ');
     }
   };
-  
+
+  const loginStats = [
+    { value: '12K+', label: 'URLs Scanned' },
+    { value: '98%', label: 'Accuracy' },
+    { value: '2.4K', label: 'Threats Blocked' },
+  ];
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md" variant="elevated">
-        <CardHeader>
-          <div className="text-center mb-4">
-            <h1 className="text-3xl font-bold text-primary mb-2">SEMD</h1>
-            <p className="text-sm text-gray-primary-0">Security Email & Malicious URL Detection</p>
+    <AuthBackground>
+      <div className="w-full min-h-screen flex">
+        <div className="flex-1 flex flex-col items-center justify-center px-10 py-16 relative overflow-hidden animate-slide-left">
+          <div 
+            className="absolute inset-0 pointer-events-none opacity-50"
+            style={{
+              backgroundImage: 'radial-gradient(circle, rgba(61,43,31,0.1) 1px, transparent 1px)',
+              backgroundSize: '20px 20px',
+            }}
+          />
+
+          <div className="text-center mb-10 relative z-10">
+            <SEMDMascot size="md" showBadge />
+            <h1 className="font-display text-[68px] font-black text-brown tracking-tight leading-none mt-4 drop-shadow-[0_4px_0_rgba(61,43,31,0.15)]">
+              SEMD
+            </h1>
+            <p className="text-sm text-brown-mid font-medium max-w-[360px] leading-relaxed mt-2">
+              Suspicious-URL Evaluation for Malicious Detection
+            </p>
+            <div className="flex flex-wrap gap-2 justify-center mt-3">
+              <span className="px-3 py-1 rounded-full text-[11.5px] font-semibold bg-brown/10 text-brown">
+                🛡 URL Scanner
+              </span>
+              <span className="px-3 py-1 rounded-full text-[11.5px] font-semibold bg-amber/20 text-brown-mid">
+                ⚡ Real-time
+              </span>
+              <span className="px-3 py-1 rounded-full text-[11.5px] font-semibold bg-brown/10 text-brown">
+                🤖 AI-powered
+              </span>
+            </div>
           </div>
-          <CardTitle>เข้าสู่ระบบ</CardTitle>
-        </CardHeader>
-        <CardContent>
+
+          <StatsStrip stats={loginStats} />
+          <URLTablePreview />
+        </div>
+
+        <div className="w-[440px] min-w-[440px] bg-cream/95 backdrop-blur-xl border-l border-white/60 flex flex-col justify-center px-11 py-12 overflow-y-auto shadow-[-20px_0_60px_rgba(61,43,31,0.08)] animate-slide-right">
+          <p className="text-xs font-semibold tracking-widest uppercase text-amber-deep mb-1.5">
+            ยินดีต้อนรับ
+          </p>
+          <h2 className="font-display text-[34px] font-extrabold text-brown tracking-tight leading-tight mb-7">
+            เข้าสู่ระบบ
+          </h2>
+
+          <div className="flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold text-green-700 mb-5 w-fit"
+            style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)' }}
+          >
+            <ShieldCheck size={14} />
+            การเชื่อมต่อปลอดภัย SSL
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
-              label="อีเมล"
-              type="email"
-              placeholder="your@email.com"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              label="ชื่อผู้ใช้งาน"
+              type="text"
+              placeholder="ระบุชื่อผู้ใช้งาน"
+              value={formData.username}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, username: e.target.value })}
               required
             />
-            
+
             <Input
               label="รหัสผ่าน"
               type="password"
-              placeholder="••••••••"
+              placeholder="ระบุรหัสผ่าน"
               value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, password: e.target.value })}
               required
             />
-            
+
+            <Link
+              href="#"
+              className="block text-right text-[13px] text-amber-deep font-semibold hover:underline"
+            >
+              ลืมรหัสผ่าน?
+            </Link>
+
             <Button
               type="submit"
               variant="primary"
@@ -73,16 +149,30 @@ export default function LoginPage() {
             >
               เข้าสู่ระบบ
             </Button>
-            
-            <div className="text-center text-sm text-gray-primary-0">
-              ยังไม่มีบัญชี?{' '}
-              <Link href={ROUTES.AUTH.REGISTER} className="text-primary hover:underline font-medium">
-                ลงทะเบียน
-              </Link>
-            </div>
+
+            <RecaptchaV3
+              action="login"
+              onVerify={handleRecaptchaVerify}
+              onError={handleRecaptchaError}
+            />
           </form>
-        </CardContent>
-      </Card>
-    </div>
+
+          <div className="flex items-center gap-3 my-4 text-brown-mid/60 text-xs font-medium">
+            <span className="flex-1 h-px bg-brown/10" />
+            หรือ
+            <span className="flex-1 h-px bg-brown/10" />
+          </div>
+
+          <SocialLoginRow />
+
+          <p className="text-center text-[13.5px] text-brown-mid/70 mt-4">
+            ยังไม่มีบัญชี?{' '}
+            <Link href={ROUTES.AUTH.REGISTER} className="text-brown font-bold hover:underline">
+              สมัครตอนนี้เลย
+            </Link>
+          </p>
+        </div>
+      </div>
+    </AuthBackground>
   );
 }

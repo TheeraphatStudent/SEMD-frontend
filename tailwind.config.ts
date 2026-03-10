@@ -8,7 +8,22 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        display: ['Outfit', 'sans-serif'],
+        body: ['Sarabun', 'sans-serif'],
+      },
       colors: {
+        amber: {
+          DEFAULT: '#F5B942',
+          deep: '#E8A020',
+          light: '#FDD07A',
+          pale: '#FEF3D0',
+        },
+        brown: {
+          DEFAULT: '#3D2B1F',
+          mid: '#6B4226',
+        },
+        cream: '#FFFBF0',
         primary: {
           DEFAULT: '#FFCE69',
           dark: '#9C7626',
@@ -86,6 +101,41 @@ const config: Config = {
         'md': '8px',
         'lg': '12px',
         'xl': '16px',
+      },
+      animation: {
+        'drift': 'drift 18s ease-in-out infinite',
+        'float': 'floatMascot 4s ease-in-out infinite',
+        'slide-left': 'slideLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) both',
+        'slide-right': 'slideRight 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both',
+        'fade-up': 'fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both',
+        'fade-down': 'fadeDown 0.5s cubic-bezier(0.16, 1, 0.3, 1) both',
+      },
+      keyframes: {
+        drift: {
+          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+          '33%': { transform: 'translate(30px, -20px) scale(1.05)' },
+          '66%': { transform: 'translate(-20px, 30px) scale(0.95)' },
+        },
+        floatMascot: {
+          '0%, 100%': { transform: 'translateY(0) rotate(-1deg)' },
+          '50%': { transform: 'translateY(-10px) rotate(1deg)' },
+        },
+        slideLeft: {
+          from: { opacity: '0', transform: 'translateX(-40px)' },
+          to: { opacity: '1', transform: 'translateX(0)' },
+        },
+        slideRight: {
+          from: { opacity: '0', transform: 'translateX(40px)' },
+          to: { opacity: '1', transform: 'translateX(0)' },
+        },
+        fadeUp: {
+          from: { opacity: '0', transform: 'translateY(30px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        fadeDown: {
+          from: { opacity: '0', transform: 'translateY(-20px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
       },
     },
   },

@@ -2,12 +2,11 @@
 
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Card, CardHeader, CardTitle, CardContent, Button, Input } from '@/components/ui';
 import { useAuth } from '@/hooks/use-auth';
 import { toast } from '@/hooks/use-toast';
-import { Shield, ArrowLeft } from 'lucide-react';
 import { ROUTES } from '@/constants/routes';
-import Link from 'next/link';
+import { Button, OTPInput } from '@/components/ui';
+import { AuthBackground, SEMDMascot } from '@/components/auth';
 
 export default function TwoFactorPage() {
   const router = useRouter();
@@ -15,15 +14,15 @@ export default function TwoFactorPage() {
   const { verify2FA, loading } = useAuth();
   const [code, setCode] = useState('');
   const email = searchParams.get('email') || '';
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (code.length !== 6) {
       toast.error('กรุณากรอกรหัส 6 หลัก');
       return;
     }
-    
+
     try {
       await verify2FA(email, code);
       toast.success('ยืนยันตัวตนสำเร็จ');
@@ -32,79 +31,61 @@ export default function TwoFactorPage() {
       toast.error('รหัสยืนยันไม่ถูกต้อง');
     }
   };
-  
-  const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, '').slice(0, 6);
-    setCode(value);
+
+  const handleCancel = () => {
+    router.push(ROUTES.AUTH.LOGIN);
   };
-  
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card variant="elevated" className="w-full max-w-md">
-        <CardHeader>
-          <div className="flex items-center justify-center mb-4">
-            <div className="p-4 bg-primary-light rounded-full">
-              <Shield className="text-primary" size={40} />
-            </div>
-          </div>
-          <CardTitle className="text-center">ยืนยันตัวตนด้วย 2FA</CardTitle>
-          <p className="text-center text-gray-primary-0 text-sm mt-2">
-            กรุณากรอกรหัส 6 หลักจากแอปยืนยันตัวตนของคุณ
+    <AuthBackground>
+      <div className="min-h-screen flex flex-col items-center justify-center p-5">
+        <h1 className="font-display text-[62px] font-black text-brown tracking-tight leading-none mb-7 drop-shadow-[0_4px_0_rgba(61,43,31,0.12)] animate-fade-down">
+          SEMD
+        </h1>
+
+        <div className="bg-cream/95 backdrop-blur-xl border border-white/70 rounded-[28px] px-11 py-9 w-full max-w-[460px] shadow-xl animate-fade-up">
+          <p className="text-sm text-brown-mid text-center mb-6 leading-relaxed">
+            ป้อนคีย์การตั้งค่าจาก <strong className="font-display font-bold text-brown">Authenticator application</strong>
           </p>
-        </CardHeader>
-        
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <p className="text-sm text-gray-primary-0 mb-2">
-                อีเมล: <span className="font-medium text-dark">{email}</span>
-              </p>
-            </div>
-            
-            <div className="flex justify-center">
-              <input
-                type="text"
+
+          <div className="flex flex-col items-center gap-1.5 mb-6">
+            <SEMDMascot size="sm" showBadge={false} />
+            <span className="text-xs text-brown-mid/70 font-medium">
+              หรือ ป้อนคีย์การตั้งค่าผ่านแอปพลิเคชัน
+            </span>
+          </div>
+
+          <form onSubmit={handleSubmit}>
+            <div className="mb-6">
+              <OTPInput
+                length={6}
                 value={code}
-                onChange={handleCodeChange}
-                placeholder="000000"
-                className="w-48 text-center text-3xl font-bold tracking-widest px-4 py-3 border-2 border-gray-primary-1 rounded-lg focus:outline-none focus:border-primary transition-colors"
-                maxLength={6}
+                onChange={setCode}
                 autoFocus
               />
             </div>
-            
-            <Button
-              type="submit"
-              variant="primary"
-              className="w-full"
-              disabled={loading || code.length !== 6}
-            >
-              {loading ? 'กำลังตรวจสอบ...' : 'ยืนยันตัวตน'}
-            </Button>
-            
-            <div className="text-center space-y-2">
-              <p className="text-sm text-gray-primary-0">
-                ไม่ได้รับรหัส?{' '}
-                <button
-                  type="button"
-                  className="text-primary hover:underline font-medium"
-                  onClick={() => toast.info('ส่งรหัสใหม่แล้ว')}
-                >
-                  ส่งรหัสใหม่
-                </button>
-              </p>
-              
-              <Link
-                href={ROUTES.AUTH.LOGIN}
-                className="inline-flex items-center gap-2 text-sm text-gray-primary-0 hover:text-primary transition-colors"
+
+            <div className="flex justify-between items-center">
+              <Button
+                type="button"
+                variant="danger"
+                onClick={handleCancel}
               >
-                <ArrowLeft size={16} />
-                กลับไปหน้าเข้าสู่ระบบ
-              </Link>
+                ยกเลิก
+              </Button>
+
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={code.length !== 6}
+                isLoading={loading}
+              >
+                ยืนยัน OTP
+              </Button>
             </div>
           </form>
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </div>
+    </AuthBackground>
   );
 }

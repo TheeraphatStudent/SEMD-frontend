@@ -13,6 +13,7 @@ export interface User {
 export interface LoginRequest {
   email: string;
   password: string;
+  recaptchaToken?: string;
 }
 
 export interface LoginResponse {
@@ -27,6 +28,7 @@ export interface RegisterRequest {
   username: string;
   password: string;
   confirmPassword: string;
+  recaptchaToken?: string;
 }
 
 export interface RegisterResponse {

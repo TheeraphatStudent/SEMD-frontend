@@ -44,3 +44,6 @@ export * from './icon';
 
 export * from './animated-list';
 export * from './animated-page';
+
+export { OTPInput } from './otp-input';
+export type { OTPInputProps } from './otp-input';

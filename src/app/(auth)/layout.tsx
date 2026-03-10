@@ -1,17 +1,18 @@
 import type { Metadata } from 'next'
+
 export const metadata: Metadata = {
-  title: 'Auth layout',
-  description: 'For authenticate system',
+  title: 'SEMD — Authentication',
+  description: 'Secure authentication for SEMD platform',
 }
 
-export default function RootLayout({
+export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
+    <div className="font-body">
+      {children}
+    </div>
   )
 }

@@ -1,12 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Github } from 'lucide-react';
+import { signIn } from 'next-auth/react';
 import { Button } from '@/components/ui';
 
 interface SocialLoginRowProps {
-  onGoogleClick?: () => void;
-  onGithubClick?: () => void;
+  callbackUrl?: string;
 }
 
 const GoogleIcon = () => (
@@ -31,28 +31,62 @@ const GoogleIcon = () => (
 );
 
 export const SocialLoginRow: React.FC<SocialLoginRowProps> = ({
-  onGoogleClick,
-  onGithubClick,
+  callbackUrl = '/dashboard',
 }) => {
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isGithubLoading, setIsGithubLoading] = useState(false);
+
+  const handleGoogleLogin = async () => {
+    try {
+      setIsGoogleLoading(true);
+      await signIn('google', { callbackUrl });
+    } catch (error) {
+      console.error('Google login error:', error);
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
+  const handleGithubLogin = async () => {
+    try {
+      setIsGithubLoading(true);
+      await signIn('github', { callbackUrl });
+    } catch (error) {
+      console.error('GitHub login error:', error);
+    } finally {
+      setIsGithubLoading(false);
+    }
+  };
+
   return (
     <div className="flex gap-2.5">
       <Button
         type="button"
         variant="outline"
-        onClick={onGoogleClick}
+        onClick={handleGoogleLogin}
+        disabled={isGoogleLoading || isGithubLoading}
         className="flex-[3] h-[46px] gap-2"
       >
-        <GoogleIcon />
+        {isGoogleLoading ? (
+          <span className="w-[18px] h-[18px] border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+        ) : (
+          <GoogleIcon />
+        )}
         ดำเนินการด้วย Google
       </Button>
       <Button
         type="button"
         variant="outline"
-        onClick={onGithubClick}
+        onClick={handleGithubLogin}
+        disabled={isGoogleLoading || isGithubLoading}
         title="GitHub"
         className="h-[46px] w-[46px] p-0"
       >
-        <Github size={20} />
+        {isGithubLoading ? (
+          <span className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+        ) : (
+          <Github size={20} />
+        )}
       </Button>
     </div>
   );

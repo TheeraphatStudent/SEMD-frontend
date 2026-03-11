@@ -70,7 +70,7 @@ export const FeaturesSection: React.FC = () => {
     {
       icon: '🎯',
       title: 'Confidence Score',
-      description: 'บอกระดับความมั่นใจของ Model ในการตัดสิน ไม่ใช่แค่ Safe/Danger',
+      description: 'บอกระดับคค่าความถูกต้องของ Model ในการตัดสิน ไม่ใช่แค่ Safe/Danger',
     },
   ];
 

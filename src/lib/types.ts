@@ -2,7 +2,7 @@ export type View = 'landing' | 'loading' | 'result';
 
 export type InputType = 'url' | 'csv' | 'txt';
 
-export type Verdict = 'Safe' | 'Warning' | 'Danger';
+export type Verdict = 'Benign' | 'Malicious';
 
 export type ThreatType = 'Legitimate' | 'Phishing' | 'Malware' | 'Scam' | 'Suspicious';
 
@@ -33,7 +33,7 @@ export interface URLRow {
 export interface EvaluatorOption {
   label: string;
   tag?: string;
-  icon: string;
+  icon?: string;
   value: string;
 }
 

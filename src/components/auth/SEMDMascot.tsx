@@ -22,8 +22,9 @@ export const SEMDMascot: React.FC<SEMDMascotProps> = ({
   const svgSize = sizeMap[size];
 
   return (
-    <div className={`relative inline-block ${className}`}>
-      <svg
+    // <div className={`relative inline-block ${className}`}>
+    <div className={`${className}`}>
+      {/* <svg
         className="drop-shadow-lg animate-float"
         width={svgSize}
         height={svgSize}
@@ -84,7 +85,7 @@ export const SEMDMascot: React.FC<SEMDMascotProps> = ({
         <span className="absolute bottom-2 right-[-4px] bg-brown text-amber font-display text-[11px] font-extrabold px-2 py-0.5 rounded-full border-2 border-amber-pale">
           🔍 SEMD
         </span>
-      )}
+      )} */}
     </div>
   );
 };

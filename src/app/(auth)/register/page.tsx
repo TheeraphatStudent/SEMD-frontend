@@ -89,7 +89,7 @@ export default function RegisterPage() {
   return (
     <AuthBackground>
       <div className="w-full min-h-screen flex">
-        <div className="flex-1 flex flex-col items-center justify-center px-10 py-16 relative overflow-hidden animate-slide-left">
+        <div className="flex-1 flex flex-col items-center justify-center px-6 py-16 relative overflow-hidden animate-slide-left">
           <div
             className="absolute inset-0 pointer-events-none opacity-50"
             style={{
@@ -108,7 +108,7 @@ export default function RegisterPage() {
               <br />
               และช่วยทำให้อินเทอร์เน็ตปลอดภัยยิ่งขึ้น
             </p>
-            <div className="flex flex-wrap gap-2 justify-center mt-3">
+            {/* <div className="flex flex-wrap gap-2 justify-center mt-3">
               <span className="px-3 py-1 rounded-full text-[11.5px] font-semibold bg-brown/10 text-brown">
                 ✉️ Free Account
               </span>
@@ -118,11 +118,19 @@ export default function RegisterPage() {
               <span className="px-3 py-1 rounded-full text-[11.5px] font-semibold bg-brown/10 text-brown">
                 🌐 ชุมชนนักวิจัย
               </span>
-            </div>
+            </div> */}
           </div>
 
-          <StatsStrip stats={registerStats} />
-          <URLTablePreview />
+          {/* <StatsStrip stats={registerStats} /> */}
+          <URLTablePreview 
+            variant="full"
+            maxHeight="320px"
+            showBrowserBar={true}
+            showToolbar={true}
+            showPagination={true}
+            showFilters={true}
+            animated={true}
+          />
         </div>
 
         <div className="w-[440px] min-w-[440px] bg-cream/95 backdrop-blur-xl border-l border-white/60 flex flex-col justify-center px-11 py-12 overflow-y-auto shadow-[-20px_0_60px_rgba(61,43,31,0.08)] animate-slide-right">

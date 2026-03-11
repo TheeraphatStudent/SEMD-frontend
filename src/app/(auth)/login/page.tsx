@@ -85,19 +85,27 @@ export default function LoginPage() {
             </p>
             <div className="flex flex-wrap gap-2 justify-center mt-3">
               <span className="px-3 py-1 rounded-full text-[11.5px] font-semibold bg-brown/10 text-brown">
-                🛡 URL Scanner
+                URL Scanner
               </span>
-              <span className="px-3 py-1 rounded-full text-[11.5px] font-semibold bg-amber/20 text-brown-mid">
+              {/* <span className="px-3 py-1 rounded-full text-[11.5px] font-semibold bg-amber/20 text-brown-mid">
                 ⚡ Real-time
-              </span>
+              </span> */}
               <span className="px-3 py-1 rounded-full text-[11.5px] font-semibold bg-brown/10 text-brown">
-                🤖 AI-powered
+                AI-powered
               </span>
             </div>
           </div>
 
-          <StatsStrip stats={loginStats} />
-          <URLTablePreview />
+          {/* <StatsStrip stats={loginStats} /> */}
+          <URLTablePreview 
+            variant="full"
+            maxHeight="320px"
+            showBrowserBar={true}
+            showToolbar={true}
+            showPagination={true}
+            showFilters={true}
+            animated={true}
+          />
         </div>
 
         <div className="w-[440px] min-w-[440px] bg-cream/95 backdrop-blur-xl border-l border-white/60 flex flex-col justify-center px-11 py-12 overflow-y-auto shadow-[-20px_0_60px_rgba(61,43,31,0.08)] animate-slide-right">

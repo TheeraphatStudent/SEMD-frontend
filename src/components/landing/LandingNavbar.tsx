@@ -16,7 +16,7 @@ export const LandingNavbar: React.FC = () => {
       className="sticky top-0 z-50 bg-background/85 backdrop-blur-md border-b border-gray-primary-1 px-6 md:px-12 h-[60px] flex items-center justify-between"
     >
       <Link href="/" className="flex items-center gap-2 text-[22px] font-extrabold text-dark">
-        <Icon icon={Shield} variant="primary" size={28} />
+        {/* <Icon icon={Shield} variant="primary" size={28} /> */}
         <span className="text-primary-dark">SEMD</span>
       </Link>
 

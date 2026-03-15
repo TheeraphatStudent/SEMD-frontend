@@ -6,7 +6,6 @@ export { DemoTableSection } from './DemoTableSection';
 export { FeaturesSection } from './FeaturesSection';
 export { StatsSection } from './StatsSection';
 export { UseCasesSection } from './UseCasesSection';
-export { CTASection } from './CTASection';
 export { LandingFooter } from './LandingFooter';
 export { CheckerBox } from './CheckerBox';
 export { EvaluatorSelect } from './EvaluatorSelect';

@@ -21,7 +21,7 @@ const StatItem: React.FC<StatItemProps> = ({ value, label, sub, delay }) => {
       initial={{ opacity: 0, y: 24 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay }}
-      className="text-center py-6 px-4 relative"
+      className="flex flex-col items-center text-center py-6 px-8 min-w-[140px]"
     >
       <div className="text-4xl md:text-5xl font-extrabold text-dark leading-none">{value}</div>
       <div className="text-sm font-bold text-dark mt-[6px] mb-[2px]">{label}</div>
@@ -37,8 +37,7 @@ export const StatsSection: React.FC = () => {
   const stats = [
     { value: '97.8%', label: 'Accuracy', sub: 'ของ ML Model' },
     { value: '10K+', label: 'URL ตรวจแล้ว', sub: 'และเพิ่มขึ้นทุกวัน' },
-    { value: '<2s', label: 'Response Time', sub: 'เฉลี่ยต่อการตรวจ' },
-    { value: '3', label: 'ระดับการแจ้งเตือน', sub: 'Safe / Warning / Danger' },
+    { value: '<2s', label: 'Response Time', sub: 'เฉลี่ยต่อการตรวจ' }
   ];
 
   return (
@@ -51,9 +50,12 @@ export const StatsSection: React.FC = () => {
           animated={isInView}
         />
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-0 max-w-4xl mx-auto">
+        <div className="flex flex-wrap justify-center items-stretch gap-4 md:gap-0 max-w-5xl mx-auto">
           {stats.map((stat, index) => (
-            <div key={index} className="relative">
+            <div 
+              key={index} 
+              className="relative flex-1 min-w-[200px] max-w-[280px] sm:min-w-[180px]"
+            >
               {index > 0 && (
                 <div className="hidden md:block absolute left-0 top-[20%] bottom-[20%] w-px bg-dark/15" />
               )}

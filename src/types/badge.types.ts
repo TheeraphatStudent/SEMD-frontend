@@ -1,0 +1,1 @@
+export type BadgeVariant = 'benign' | 'malicious' | 'warning' | 'danger' | 'info' | 'safe' | 'admin' | 'master-admin';

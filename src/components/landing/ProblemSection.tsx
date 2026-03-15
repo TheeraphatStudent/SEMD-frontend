@@ -26,11 +26,11 @@ const ProblemCard: React.FC<ProblemCardProps> = ({ icon, title, description, ris
       transition={{ duration: 0.6, delay }}
       whileHover={{ y: -4 }}
     >
-      <Card className="p-7">
+      <Card className="flex flex-col h-full p-7">
         <div className="text-4xl mb-[14px]">{icon}</div>
         <Heading as="h3" variant="subtitle" className="mb-2">{title}</Heading>
-        <Text variant="small" className="leading-[1.65]">{description}</Text>
-        <Badge variant="danger" className="inline-block mt-3 rounded-full px-[10px] py-[2px] border">
+        <Text variant="small" className="leading-[1.65] h-full">{description}</Text>
+        <Badge variant="danger" className="inline-block w-fit mt-3 rounded-full px-[10px] py-[2px] border">
           {riskLevel}
         </Badge>
       </Card>

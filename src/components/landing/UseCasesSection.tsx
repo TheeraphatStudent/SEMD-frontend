@@ -23,12 +23,13 @@ const UseCaseCard: React.FC<UseCaseCardProps> = ({ icon, title, description, tag
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay }}
       whileHover={{ y: -3 }}
+      className="w-full h-full"
     >
-      <Card className="p-7 cursor-pointer">
+      <Card className="h-full p-7 cursor-pointer flex flex-col">
         <div className="text-[32px] mb-[14px]">{icon}</div>
         <Heading as="h3" variant="subtitle" className="mb-[6px]">{title}</Heading>
-        <Text variant="small" className="leading-[1.65]">{description}</Text>
-        <Badge variant="info" className="inline-block mt-[14px] rounded-full px-3 py-[3px] bg-secondary-light text-secondary-dark border border-secondary">
+        <Text variant="small" className="leading-[1.65] flex-1">{description}</Text>
+        <Badge variant="info" className="inline-block mt-[14px] rounded-full px-3 py-[3px] bg-secondary-light text-secondary-dark border border-secondary self-start">
           {tag}
         </Badge>
       </Card>
@@ -77,9 +78,14 @@ export const UseCasesSection: React.FC = () => {
           animated={isInView}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+        <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
           {useCases.map((useCase, index) => (
-            <UseCaseCard key={index} {...useCase} delay={0.1 * (index + 1)} />
+            <div 
+              key={index} 
+              className="w-full sm:w-[calc(50%-8px)] flex"
+            >
+              <UseCaseCard {...useCase} delay={0.1 * (index + 1)} />
+            </div>
           ))}
         </div>
       </Container>

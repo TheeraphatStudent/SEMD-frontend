@@ -129,7 +129,7 @@ export default function RegisterPage() {
             variant="full"
             maxHeight="320px"
             showBrowserBar={true}
-            showToolbar={true}
+            showToolbar={false}
             showPagination={true}
             showFilters={true}
             animated={true}

@@ -7,6 +7,29 @@ import { ROUTES } from '@/constants/routes';
 import { Button } from '@/components/ui';
 import { Icon, Shield } from '@/components/ui';
 
+interface NavLink {
+  href: string;
+  label: string;
+}
+
+const NAV_LINKS: NavLink[] = [
+  { href: '#how', label: 'วิธีทำงาน' },
+  { href: '#features', label: 'ฟีเจอร์' },
+  { href: '#demo', label: 'ดูตัวอย่าง' },
+  { href: '#usecases', label: 'ใครใช้ได้' },
+];
+
+const NavItem: React.FC<{ href: string; children: React.ReactNode }> = ({ href, children }) => (
+  <li>
+    <a 
+      href={href} 
+      className="text-gray-primary-0 text-sm font-medium hover:text-dark transition-colors"
+    >
+      {children}
+    </a>
+  </li>
+);
+
 export const LandingNavbar: React.FC = () => {
   return (
     <motion.nav
@@ -21,21 +44,11 @@ export const LandingNavbar: React.FC = () => {
       </Link>
 
       <ul className="hidden md:flex gap-8 list-none">
-        <li>
-          <a href="#how" className="text-gray-primary-0 text-sm font-medium hover:text-dark transition-colors">
-            วิธีทำงาน
-          </a>
-        </li>
-        <li>
-          <a href="#features" className="text-gray-primary-0 text-sm font-medium hover:text-dark transition-colors">
-            ฟีเจอร์
-          </a>
-        </li>
-        <li>
-          <a href="#usecases" className="text-gray-primary-0 text-sm font-medium hover:text-dark transition-colors">
-            ใครใช้ได้
-          </a>
-        </li>
+        {NAV_LINKS.map((link) => (
+          <NavItem key={link.href} href={link.href}>
+            {link.label}
+          </NavItem>
+        ))}
       </ul>
 
       <Link href={ROUTES.AUTH.LOGIN}>

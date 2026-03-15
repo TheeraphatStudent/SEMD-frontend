@@ -116,6 +116,7 @@ export const LandingFooter: React.FC = () => {
 
   return (
     <footer
+      id='footer'
       ref={ref}
       className="relative overflow-hidden"
       style={{ background: 'linear-gradient(135deg, #1a1206 0%, #2d1f08 40%, #1c2a1e 100%)' }}

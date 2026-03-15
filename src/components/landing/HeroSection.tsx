@@ -75,7 +75,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCheck }) => {
 
       <CheckerBox onCheck={handleCheck} />
 
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.65, delay: 0.32 }}
@@ -83,7 +83,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCheck }) => {
       >
         <Chip variant="safe">Benign</Chip>
         <Chip variant="malicious">Malicious</Chip>
-      </motion.div>
+      </motion.div> */}
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}

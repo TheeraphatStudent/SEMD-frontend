@@ -5,6 +5,4 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type PredictPredictionPostParams = {
-request: unknown;
-};
+export type TestThirdServiceSettingThirdServiceIdRestApiTestPost200 = { [key: string]: unknown };

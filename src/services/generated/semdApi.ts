@@ -12,6 +12,17 @@ import type {
 } from 'axios';
 
 import type {
+  AccessKeyAdminCreateRequest,
+  AccessKeyAdminUpdateRequest,
+  AccessKeyCreateRequest,
+  AccessKeyListResponse,
+  AccessKeyResponse,
+  AdminCreateUserRequest,
+  AdminGetAllKeysSettingAccessKeyAdminGetParams,
+  AdminGetUsageMonthlySettingAccessKeyAdminKeyIdUsageMonthlyGetParams,
+  AdminGetUsageYearlySettingAccessKeyAdminKeyIdUsageYearlyGetParams,
+  AdminPasswordResetRequest,
+  AdminUpdateUserRequest,
   ApiEndpointStatResponse,
   ApiKeyStatResponse,
   ApiKeyTrendResponse,
@@ -21,8 +32,18 @@ import type {
   BaseResponseModel,
   CreateUserRequest,
   CreateUserResponse,
+  ExecuteThirdServiceSettingThirdServiceIdExecutePost200,
+  GetAllFlagsSettingUrlFlagGetParams,
+  GetAllUsersAuthUsersGetParams,
   GetDefaultApiEndpoint,
   GetDefaultHealthCheck,
+  GetMyFlagsSettingUrlFlagMeGetParams,
+  GetMyKeysSettingAccessKeyMeGetParams,
+  GetMyReportsReportMeGetParams,
+  GetReportDataReportGetParams,
+  GetUsageMonthlySettingAccessKeyKeyIdUsageMonthlyGetParams,
+  GetUsageYearlySettingAccessKeyKeyIdUsageYearlyGetParams,
+  ListActiveServicesSettingServiceActiveListGetParams,
   MLServiceResponse,
   OAuthAuthorizationRequest,
   OAuthAuthorizationResponse,
@@ -31,13 +52,15 @@ import type {
   OAuthDevicePollRequest,
   OAuthProviderType,
   OauthCallbackAuthCallbackProviderGetParams,
+  PasswordResetRequest,
   PreAuthResponse,
-  PredictPredictionPostParams,
   PredictionByModelResponse,
   PredictionDetailResponse,
+  PredictionRequest,
   PredictionResponse,
   PredictionStatResponse,
   PredictionTrendResponse,
+  QueueListResponse,
   RefreshTokenRequest,
   RegisterRequest,
   RegisterResponse,
@@ -47,25 +70,44 @@ import type {
   ReportStatListResponse,
   ReportStatResponse,
   ReportStatTrendResponse,
+  ServiceConfModel,
+  SystemConfigListResponse,
+  SystemConfigResponse,
+  SystemConfigUpdateRequest,
   SystemHealthResponse,
   SystemPerformanceResponse,
   SystemStatResponse,
+  TestThirdServiceSettingThirdServiceIdRestApiTestPost200,
   ThirdPartyErrorResponse,
   ThirdPartyServiceResponse,
   ThirdPartyStatResponse,
   ThirdPartyTrendResponse,
+  ThirdServiceCreateRequest,
+  ThirdServiceExecuteRequest,
+  ThirdServiceResponse,
+  ThirdServiceUpdateRequest,
   TokenPairResponse,
   TopUserResponse,
   TwoFAEnableRequest,
   TwoFASetupResponse,
   TwoFAVerifyRequest,
   UrlFlagCategoryResponse,
+  UrlFlagCreateRequest,
   UrlFlagDetailResponse,
+  UrlFlagListResponse,
+  UrlFlagResponse,
   UrlFlagStatResponse,
   UrlFlagTrendResponse,
+  UrlFlagUpdateRequest,
+  UrlReportCreateRequest,
+  UrlReportUpdateRequest,
   UserActivityResponse,
+  UserListResponse,
+  UserModel,
+  UserResponse,
   UserRoleStatResponse,
-  UserStatResponse
+  UserStatResponse,
+  UserUpdateRequest
 } from './models';
 
 
@@ -80,7 +122,7 @@ const rootGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<GetDefaultApiEndpoint>> => {
     return axiosInstance.get(
-      `http://localhost:8000/`,options
+      `/`,options
     );
   }
 
@@ -92,7 +134,7 @@ const healthCheckHealthGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<GetDefaultHealthCheck>> => {
     return axiosInstance.get(
-      `http://localhost:8000/health`,options
+      `/health`,options
     );
   }
 
@@ -104,7 +146,7 @@ const registerAuthRegisterPost = (
     registerRequest: RegisterRequest, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<RegisterResponse>> => {
     return axiosInstance.post(
-      `http://localhost:8000/auth/register`,
+      `/auth/register`,
       registerRequest,options
     );
   }
@@ -117,7 +159,7 @@ const createUserAuthCreatePost = (
     createUserRequest: CreateUserRequest, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<CreateUserResponse>> => {
     return axiosInstance.post(
-      `http://localhost:8000/auth/create`,
+      `/auth/create`,
       createUserRequest,options
     );
   }
@@ -130,7 +172,7 @@ const loginAuthLoginPost = (
     authLoginRequest: AuthLoginRequest, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<TokenPairResponse | PreAuthResponse>> => {
     return axiosInstance.post(
-      `http://localhost:8000/auth/login`,
+      `/auth/login`,
       authLoginRequest,options
     );
   }
@@ -143,7 +185,7 @@ const login2faAuthLogin2faPost = (
     twoFAVerifyRequest: TwoFAVerifyRequest, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<TokenPairResponse>> => {
     return axiosInstance.post(
-      `http://localhost:8000/auth/login/2fa`,
+      `/auth/login/2fa`,
       twoFAVerifyRequest,options
     );
   }
@@ -156,7 +198,7 @@ const loginProviderAuthLoginProviderPost = (
     authLoginProviderRequest: AuthLoginProviderRequest, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<TokenPairResponse | PreAuthResponse>> => {
     return axiosInstance.post(
-      `http://localhost:8000/auth/login/provider`,
+      `/auth/login/provider`,
       authLoginProviderRequest,options
     );
   }
@@ -169,7 +211,7 @@ const refreshAuthRefreshPost = (
     refreshTokenRequest: RefreshTokenRequest, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<TokenPairResponse>> => {
     return axiosInstance.post(
-      `http://localhost:8000/auth/refresh`,
+      `/auth/refresh`,
       refreshTokenRequest,options
     );
   }
@@ -182,7 +224,7 @@ const logoutAuthLogoutPost = (
     refreshTokenRequest: RefreshTokenRequest, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<BaseResponseModel>> => {
     return axiosInstance.post(
-      `http://localhost:8000/auth/logout`,
+      `/auth/logout`,
       refreshTokenRequest,options
     );
   }
@@ -195,7 +237,7 @@ const setup2faAuth2faSetupPost = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<TwoFASetupResponse>> => {
     return axiosInstance.post(
-      `http://localhost:8000/auth/2fa/setup`,undefined,options
+      `/auth/2fa/setup`,undefined,options
     );
   }
 
@@ -207,7 +249,7 @@ const enable2faAuth2faEnablePost = (
     twoFAEnableRequest: TwoFAEnableRequest, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<BaseResponseModel>> => {
     return axiosInstance.post(
-      `http://localhost:8000/auth/2fa/enable`,
+      `/auth/2fa/enable`,
       twoFAEnableRequest,options
     );
   }
@@ -220,7 +262,7 @@ const oauthDeviceInitiateAuthOauthDevicePost = (
     oAuthDeviceCodeRequest: OAuthDeviceCodeRequest, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<OAuthDeviceCodeResponse>> => {
     return axiosInstance.post(
-      `http://localhost:8000/auth/oauth/device`,
+      `/auth/oauth/device`,
       oAuthDeviceCodeRequest,options
     );
   }
@@ -233,7 +275,7 @@ const oauthDevicePollAuthOauthDevicePollPost = (
     oAuthDevicePollRequest: OAuthDevicePollRequest, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<TokenPairResponse | PreAuthResponse | BaseResponseModel>> => {
     return axiosInstance.post(
-      `http://localhost:8000/auth/oauth/device/poll`,
+      `/auth/oauth/device/poll`,
       oAuthDevicePollRequest,options
     );
   }
@@ -246,7 +288,7 @@ const oauthAuthorizeAuthOauthAuthorizePost = (
     oAuthAuthorizationRequest: OAuthAuthorizationRequest, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<OAuthAuthorizationResponse>> => {
     return axiosInstance.post(
-      `http://localhost:8000/auth/oauth/authorize`,
+      `/auth/oauth/authorize`,
       oAuthAuthorizationRequest,options
     );
   }
@@ -260,9 +302,126 @@ const oauthCallbackAuthCallbackProviderGet = (
     params: OauthCallbackAuthCallbackProviderGetParams, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<TokenPairResponse | PreAuthResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/auth/callback/${provider}`,{
+      `/auth/callback/${provider}`,{
     ...options,
         params: {...params, ...options?.params},}
+    );
+  }
+
+/**
+ * Get current user's profile information. Requires authentication.
+ * @summary Get My Profile
+ */
+const getMeAuthMeGet = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<UserModel>> => {
+    return axiosInstance.get(
+      `/auth/me`,options
+    );
+  }
+
+/**
+ * Update current user's profile information. Requires authentication.
+ * @summary Update My Profile
+ */
+const updateMeAuthMePut = (
+    userUpdateRequest: UserUpdateRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<UserModel>> => {
+    return axiosInstance.put(
+      `/auth/me`,
+      userUpdateRequest,options
+    );
+  }
+
+/**
+ * Reset current user's password. Requires current password verification.
+ * @summary Reset My Password
+ */
+const resetPasswordAuthMeResetPasswordPost = (
+    passwordResetRequest: PasswordResetRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<BaseResponseModel>> => {
+    return axiosInstance.post(
+      `/auth/me/reset-password`,
+      passwordResetRequest,options
+    );
+  }
+
+/**
+ * Get all users with pagination. Admin only.
+ * @summary [Admin] Get All Users
+ */
+const getAllUsersAuthUsersGet = (
+    params?: GetAllUsersAuthUsersGetParams, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<UserListResponse>> => {
+    return axiosInstance.get(
+      `/auth/users`,{
+    ...options,
+        params: {...params, ...options?.params},}
+    );
+  }
+
+/**
+ * Create a new user with password. Admin can create MEMBER users, Master Admin can create ADMIN users.
+ * @summary [Admin] Create User
+ */
+const createUserAuthUsersPost = (
+    adminCreateUserRequest: AdminCreateUserRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<UserResponse>> => {
+    return axiosInstance.post(
+      `/auth/users`,
+      adminCreateUserRequest,options
+    );
+  }
+
+/**
+ * Get user details by ID. Admin only.
+ * @summary [Admin] Get User by ID
+ */
+const getUserByIdAuthUsersUserIdGet = (
+    userId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<UserResponse>> => {
+    return axiosInstance.get(
+      `/auth/users/${userId}`,options
+    );
+  }
+
+/**
+ * Update user details. Master Admin can change roles, Admin cannot.
+ * @summary [Admin] Update User
+ */
+const updateUserAuthUsersUserIdPut = (
+    userId: number,
+    adminUpdateUserRequest: AdminUpdateUserRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<UserResponse>> => {
+    return axiosInstance.put(
+      `/auth/users/${userId}`,
+      adminUpdateUserRequest,options
+    );
+  }
+
+/**
+ * Delete user. Admin can delete MEMBER users, Master Admin can delete any user except other Master Admins.
+ * @summary [Admin] Delete User
+ */
+const deleteUserAuthUsersUserIdDelete = (
+    userId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<BaseResponseModel>> => {
+    return axiosInstance.delete(
+      `/auth/users/${userId}`,options
+    );
+  }
+
+/**
+ * Reset user's password. Admin can reset MEMBER passwords, Master Admin can reset any password.
+ * @summary [Admin] Reset User Password
+ */
+const resetUserPasswordAuthUsersUserIdResetPasswordPost = (
+    userId: number,
+    adminPasswordResetRequest: AdminPasswordResetRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<BaseResponseModel>> => {
+    return axiosInstance.post(
+      `/auth/users/${userId}/reset-password`,
+      adminPasswordResetRequest,options
     );
   }
 
@@ -273,42 +432,99 @@ const getServiceMlServiceGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<MLServiceResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/ml/service`,options
+      `/ml/service`,options
     );
   }
 
 /**
- * @summary Predict
+ * Predict if a URL is malicious or not using configured service (ML model or third-party)
+ * @summary Predict URL
  */
-const predictPredictionPost = (
-    params: PredictPredictionPostParams, options?: AxiosRequestConfig
+const predictPredictionPredictPost = (
+    predictionRequest: PredictionRequest, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<PredictionResponse>> => {
     return axiosInstance.post(
-      `http://localhost:8000/prediction`,undefined,{
+      `/prediction/predict`,
+      predictionRequest,options
+    );
+  }
+
+/**
+ * Get all URL reports. Requires authentication.
+ * @summary Get All Reports
+ */
+const getReportDataReportGet = (
+    params?: GetReportDataReportGetParams, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ReportListResponse>> => {
+    return axiosInstance.get(
+      `/report`,{
     ...options,
         params: {...params, ...options?.params},}
     );
   }
 
 /**
- * @summary Get Report Data
+ * Create a new URL report. Requires authentication.
+ * @summary Create Report
  */
-const getReportDataReportGet = (
-     options?: AxiosRequestConfig
- ): Promise<AxiosResponse<ReportListResponse>> => {
-    return axiosInstance.get(
-      `http://localhost:8000/report`,options
+const createReportReportPost = (
+    urlReportCreateRequest: UrlReportCreateRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ReportResponse>> => {
+    return axiosInstance.post(
+      `/report`,
+      urlReportCreateRequest,options
     );
   }
 
 /**
- * @summary Create Report
+ * Get URL reports created by the current user.
+ * @summary Get My Reports
  */
-const createReportReportPost = (
-     options?: AxiosRequestConfig
+const getMyReportsReportMeGet = (
+    params?: GetMyReportsReportMeGetParams, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ReportListResponse>> => {
+    return axiosInstance.get(
+      `/report/me`,{
+    ...options,
+        params: {...params, ...options?.params},}
+    );
+  }
+
+/**
+ * Get a specific URL report by its ID.
+ * @summary Get Report by ID
+ */
+const getReportByIdReportReportIdGet = (
+    reportId: number, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ReportResponse>> => {
-    return axiosInstance.post(
-      `http://localhost:8000/report`,undefined,options
+    return axiosInstance.get(
+      `/report/${reportId}`,options
+    );
+  }
+
+/**
+ * Update an existing URL report. Requires authentication.
+ * @summary Update Report
+ */
+const updateReportReportReportIdPut = (
+    reportId: number,
+    urlReportUpdateRequest: UrlReportUpdateRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ReportResponse>> => {
+    return axiosInstance.put(
+      `/report/${reportId}`,
+      urlReportUpdateRequest,options
+    );
+  }
+
+/**
+ * Get the action history of a specific URL report.
+ * @summary Get Report History
+ */
+const getReportHistoryReportReportIdHistoryGet = (
+    reportId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ReportListResponse>> => {
+    return axiosInstance.get(
+      `/report/${reportId}/history`,options
     );
   }
 
@@ -319,7 +535,7 @@ const getSystemStatDashboardSystemStatGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<SystemStatResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/dashboard/system-stat`,options
+      `/dashboard/system-stat`,options
     );
   }
 
@@ -330,7 +546,7 @@ const getSystemHealthDashboardSystemHealthGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<SystemHealthResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/dashboard/system-health`,options
+      `/dashboard/system-health`,options
     );
   }
 
@@ -341,7 +557,7 @@ const getSystemPerformanceDashboardSystemPerformanceGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<SystemPerformanceResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/dashboard/system-performance`,options
+      `/dashboard/system-performance`,options
     );
   }
 
@@ -352,7 +568,7 @@ const getThirdPartyStatDashboardThirdPartyStatGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ThirdPartyStatResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/dashboard/third-party-stat`,options
+      `/dashboard/third-party-stat`,options
     );
   }
 
@@ -363,7 +579,7 @@ const getUrlFlagStatDashboardUrlFlagStatGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<UrlFlagStatResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/dashboard/url-flag-stat`,options
+      `/dashboard/url-flag-stat`,options
     );
   }
 
@@ -374,7 +590,7 @@ const getUrlReportStatDashboardUrlReportStatGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ReportStatResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/dashboard/url-report-stat`,options
+      `/dashboard/url-report-stat`,options
     );
   }
 
@@ -385,7 +601,7 @@ const getApiAccessKeyStatDashboardApiAccessKeyStatGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ApiKeyStatResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/dashboard/api-access-key-stat`,options
+      `/dashboard/api-access-key-stat`,options
     );
   }
 
@@ -396,7 +612,465 @@ const getUserStatDashboardUserStatGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<UserStatResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/dashboard/user-stat`,options
+      `/dashboard/user-stat`,options
+    );
+  }
+
+/**
+ * List all third-party service configurations for the current user
+ * @summary List Third-Party Services
+ */
+const listThirdServicesSettingThirdServiceGet = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ThirdServiceResponse[]>> => {
+    return axiosInstance.get(
+      `/setting/third-service/`,options
+    );
+  }
+
+/**
+ * Create a new third-party service configuration
+ * @summary Create Third-Party Service
+ */
+const createThirdServiceSettingThirdServicePost = (
+    thirdServiceCreateRequest: ThirdServiceCreateRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ThirdServiceResponse>> => {
+    return axiosInstance.post(
+      `/setting/third-service/`,
+      thirdServiceCreateRequest,options
+    );
+  }
+
+/**
+ * Retrieve a third-party service configuration by ID
+ * @summary Get Third-Party Service
+ */
+const getThirdServiceSettingThirdServiceIdGet = (
+    id: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ThirdServiceResponse>> => {
+    return axiosInstance.get(
+      `/setting/third-service/${id}`,options
+    );
+  }
+
+/**
+ * Update a third-party service configuration
+ * @summary Update Third-Party Service
+ */
+const updateThirdServiceSettingThirdServiceIdPut = (
+    id: number,
+    thirdServiceUpdateRequest: ThirdServiceUpdateRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ThirdServiceResponse>> => {
+    return axiosInstance.put(
+      `/setting/third-service/${id}`,
+      thirdServiceUpdateRequest,options
+    );
+  }
+
+/**
+ * Soft delete a third-party service (sets is_active=False)
+ * @summary Delete Third-Party Service
+ */
+const deleteThirdServiceSettingThirdServiceIdDelete = (
+    id: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<BaseResponseModel>> => {
+    return axiosInstance.delete(
+      `/setting/third-service/${id}`,options
+    );
+  }
+
+/**
+ * Execute a third-party service with runtime variables
+ * @summary Execute Third-Party Service
+ */
+const executeThirdServiceSettingThirdServiceIdExecutePost = (
+    id: number,
+    thirdServiceExecuteRequest: ThirdServiceExecuteRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ExecuteThirdServiceSettingThirdServiceIdExecutePost200>> => {
+    return axiosInstance.post(
+      `/setting/third-service/${id}/execute`,
+      thirdServiceExecuteRequest,options
+    );
+  }
+
+/**
+ * Test a third-party service API
+ * @summary Test Third Service
+ */
+const testThirdServiceSettingThirdServiceIdRestApiTestPost = (
+    id: number,
+    thirdServiceExecuteRequest: ThirdServiceExecuteRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<TestThirdServiceSettingThirdServiceIdRestApiTestPost200>> => {
+    return axiosInstance.post(
+      `/setting/third-service/${id}/rest-api/test`,
+      thirdServiceExecuteRequest,options
+    );
+  }
+
+/**
+ * Get all service configurations for the current user
+ * @summary List Service Configurations
+ */
+const listServicesSettingServiceGet = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ServiceConfModel[]>> => {
+    return axiosInstance.get(
+      `/setting/service/`,options
+    );
+  }
+
+/**
+ * Get a specific service configuration by ID
+ * @summary Get Service Configuration
+ */
+const getServiceSettingServiceServiceIdGet = (
+    serviceId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ServiceConfModel>> => {
+    return axiosInstance.get(
+      `/setting/service/${serviceId}`,options
+    );
+  }
+
+/**
+ * Activate a service configuration
+ * @summary Activate Service
+ */
+const activateServiceSettingServiceServiceIdActivatePost = (
+    serviceId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ServiceConfModel>> => {
+    return axiosInstance.post(
+      `/setting/service/${serviceId}/activate`,undefined,options
+    );
+  }
+
+/**
+ * Deactivate a service configuration
+ * @summary Deactivate Service
+ */
+const deactivateServiceSettingServiceServiceIdDeactivatePost = (
+    serviceId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ServiceConfModel>> => {
+    return axiosInstance.post(
+      `/setting/service/${serviceId}/deactivate`,undefined,options
+    );
+  }
+
+/**
+ * Get all active service configurations
+ * @summary List Active Services
+ */
+const listActiveServicesSettingServiceActiveListGet = (
+    params?: ListActiveServicesSettingServiceActiveListGetParams, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ServiceConfModel[]>> => {
+    return axiosInstance.get(
+      `/setting/service/active/list`,{
+    ...options,
+        params: {...params, ...options?.params},}
+    );
+  }
+
+/**
+ * Get all URL flags. Requires authentication.
+ * @summary Get All URL Flags
+ */
+const getAllFlagsSettingUrlFlagGet = (
+    params?: GetAllFlagsSettingUrlFlagGetParams, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<UrlFlagListResponse>> => {
+    return axiosInstance.get(
+      `/setting/url-flag`,{
+    ...options,
+        params: {...params, ...options?.params},}
+    );
+  }
+
+/**
+ * Create a new URL flag. Requires authentication.
+ * @summary Create URL Flag
+ */
+const createFlagSettingUrlFlagPost = (
+    urlFlagCreateRequest: UrlFlagCreateRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<UrlFlagResponse>> => {
+    return axiosInstance.post(
+      `/setting/url-flag`,
+      urlFlagCreateRequest,options
+    );
+  }
+
+/**
+ * Get URL flags created by the current user.
+ * @summary Get My URL Flags
+ */
+const getMyFlagsSettingUrlFlagMeGet = (
+    params?: GetMyFlagsSettingUrlFlagMeGetParams, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<UrlFlagListResponse>> => {
+    return axiosInstance.get(
+      `/setting/url-flag/me`,{
+    ...options,
+        params: {...params, ...options?.params},}
+    );
+  }
+
+/**
+ * Get a specific URL flag by its ID.
+ * @summary Get URL Flag by ID
+ */
+const getFlagByIdSettingUrlFlagFlagIdGet = (
+    flagId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<UrlFlagResponse>> => {
+    return axiosInstance.get(
+      `/setting/url-flag/${flagId}`,options
+    );
+  }
+
+/**
+ * Update an existing URL flag. Requires authentication.
+ * @summary Update URL Flag
+ */
+const updateFlagSettingUrlFlagFlagIdPut = (
+    flagId: number,
+    urlFlagUpdateRequest: UrlFlagUpdateRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<UrlFlagResponse>> => {
+    return axiosInstance.put(
+      `/setting/url-flag/${flagId}`,
+      urlFlagUpdateRequest,options
+    );
+  }
+
+/**
+ * Delete an existing URL flag. Requires authentication.
+ * @summary Delete URL Flag
+ */
+const deleteFlagSettingUrlFlagFlagIdDelete = (
+    flagId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<BaseResponseModel>> => {
+    return axiosInstance.delete(
+      `/setting/url-flag/${flagId}`,options
+    );
+  }
+
+/**
+ * Get all access keys for the current user with pagination.
+ * @summary Get My Access Keys
+ */
+const getMyKeysSettingAccessKeyMeGet = (
+    params?: GetMyKeysSettingAccessKeyMeGetParams, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<AccessKeyListResponse>> => {
+    return axiosInstance.get(
+      `/setting/access-key/me`,{
+    ...options,
+        params: {...params, ...options?.params},}
+    );
+  }
+
+/**
+ * Create a new access key. Returns the raw key only once.
+ * @summary Create Access Key
+ */
+const createKeySettingAccessKeyPost = (
+    accessKeyCreateRequest: AccessKeyCreateRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<AccessKeyResponse>> => {
+    return axiosInstance.post(
+      `/setting/access-key`,
+      accessKeyCreateRequest,options
+    );
+  }
+
+/**
+ * Reset an access key. Old key becomes inactive, new key is generated.
+ * @summary Reset Access Key
+ */
+const resetKeySettingAccessKeyKeyIdResetPost = (
+    keyId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<AccessKeyResponse>> => {
+    return axiosInstance.post(
+      `/setting/access-key/${keyId}/reset`,undefined,options
+    );
+  }
+
+/**
+ * Get usage statistics for a specific month.
+ * @summary Get Monthly Usage
+ */
+const getUsageMonthlySettingAccessKeyKeyIdUsageMonthlyGet = (
+    keyId: number,
+    params: GetUsageMonthlySettingAccessKeyKeyIdUsageMonthlyGetParams, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<AccessKeyResponse>> => {
+    return axiosInstance.get(
+      `/setting/access-key/${keyId}/usage/monthly`,{
+    ...options,
+        params: {...params, ...options?.params},}
+    );
+  }
+
+/**
+ * Get usage statistics for a specific year.
+ * @summary Get Yearly Usage
+ */
+const getUsageYearlySettingAccessKeyKeyIdUsageYearlyGet = (
+    keyId: number,
+    params: GetUsageYearlySettingAccessKeyKeyIdUsageYearlyGetParams, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<AccessKeyResponse>> => {
+    return axiosInstance.get(
+      `/setting/access-key/${keyId}/usage/yearly`,{
+    ...options,
+        params: {...params, ...options?.params},}
+    );
+  }
+
+/**
+ * Get all-time usage statistics.
+ * @summary Get All Time Usage
+ */
+const getUsageAllTimeSettingAccessKeyKeyIdUsageGet = (
+    keyId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<AccessKeyResponse>> => {
+    return axiosInstance.get(
+      `/setting/access-key/${keyId}/usage`,options
+    );
+  }
+
+/**
+ * Get all access keys in the system. Admin only.
+ * @summary [Admin] Get All Access Keys
+ */
+const adminGetAllKeysSettingAccessKeyAdminGet = (
+    params?: AdminGetAllKeysSettingAccessKeyAdminGetParams, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<AccessKeyListResponse>> => {
+    return axiosInstance.get(
+      `/setting/access-key/admin`,{
+    ...options,
+        params: {...params, ...options?.params},}
+    );
+  }
+
+/**
+ * Create an access key for a specific user with usage limit. Admin only.
+ * @summary [Admin] Create Access Key for User
+ */
+const adminCreateKeySettingAccessKeyAdminPost = (
+    accessKeyAdminCreateRequest: AccessKeyAdminCreateRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<AccessKeyResponse>> => {
+    return axiosInstance.post(
+      `/setting/access-key/admin`,
+      accessKeyAdminCreateRequest,options
+    );
+  }
+
+/**
+ * Update an access key (set limit, activate/deactivate). Admin only.
+ * @summary [Admin] Update Access Key
+ */
+const adminUpdateKeySettingAccessKeyAdminKeyIdPut = (
+    keyId: number,
+    accessKeyAdminUpdateRequest: AccessKeyAdminUpdateRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<AccessKeyResponse>> => {
+    return axiosInstance.put(
+      `/setting/access-key/admin/${keyId}`,
+      accessKeyAdminUpdateRequest,options
+    );
+  }
+
+/**
+ * Delete an access key. Admin only.
+ * @summary [Admin] Delete Access Key
+ */
+const adminDeleteKeySettingAccessKeyAdminKeyIdDelete = (
+    keyId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<BaseResponseModel>> => {
+    return axiosInstance.delete(
+      `/setting/access-key/admin/${keyId}`,options
+    );
+  }
+
+/**
+ * Get usage statistics for any key. Admin only.
+ * @summary [Admin] Get Monthly Usage
+ */
+const adminGetUsageMonthlySettingAccessKeyAdminKeyIdUsageMonthlyGet = (
+    keyId: number,
+    params: AdminGetUsageMonthlySettingAccessKeyAdminKeyIdUsageMonthlyGetParams, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<AccessKeyResponse>> => {
+    return axiosInstance.get(
+      `/setting/access-key/admin/${keyId}/usage/monthly`,{
+    ...options,
+        params: {...params, ...options?.params},}
+    );
+  }
+
+/**
+ * Get yearly usage statistics for any key. Admin only.
+ * @summary [Admin] Get Yearly Usage
+ */
+const adminGetUsageYearlySettingAccessKeyAdminKeyIdUsageYearlyGet = (
+    keyId: number,
+    params: AdminGetUsageYearlySettingAccessKeyAdminKeyIdUsageYearlyGetParams, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<AccessKeyResponse>> => {
+    return axiosInstance.get(
+      `/setting/access-key/admin/${keyId}/usage/yearly`,{
+    ...options,
+        params: {...params, ...options?.params},}
+    );
+  }
+
+/**
+ * Get all-time usage statistics for any key. Admin only.
+ * @summary [Admin] Get All Time Usage
+ */
+const adminGetUsageAllTimeSettingAccessKeyAdminKeyIdUsageGet = (
+    keyId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<AccessKeyResponse>> => {
+    return axiosInstance.get(
+      `/setting/access-key/admin/${keyId}/usage`,options
+    );
+  }
+
+/**
+ * Get all system configuration values. Admin only.
+ * @summary [Admin] Get All System Configs
+ */
+const getAllConfigsSettingSystemConfigGet = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<SystemConfigListResponse>> => {
+    return axiosInstance.get(
+      `/setting/system-config`,options
+    );
+  }
+
+/**
+ * Get a specific system configuration by key. Admin only.
+ * @summary [Admin] Get System Config by Key
+ */
+const getConfigByKeySettingSystemConfigConfigKeyGet = (
+    configKey: string, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<SystemConfigResponse>> => {
+    return axiosInstance.get(
+      `/setting/system-config/${configKey}`,options
+    );
+  }
+
+/**
+ * Update a system configuration value by key. Admin only.
+ * @summary [Admin] Update System Config
+ */
+const updateConfigSettingSystemConfigConfigKeyPut = (
+    configKey: string,
+    systemConfigUpdateRequest: SystemConfigUpdateRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<SystemConfigResponse>> => {
+    return axiosInstance.put(
+      `/setting/system-config/${configKey}`,
+      systemConfigUpdateRequest,options
+    );
+  }
+
+/**
+ * Get all URLs waiting for retraining. Shows prediction info with user details.
+ * @summary Get Retrain Queue
+ */
+const getRetrainQueueQueueUrlGet = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<QueueListResponse>> => {
+    return axiosInstance.get(
+      `/queue/url`,options
     );
   }
 
@@ -407,7 +1081,7 @@ const getReportStatStatReportGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ReportStatResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/report`,options
+      `/stat/report`,options
     );
   }
 
@@ -418,7 +1092,7 @@ const getUrlsListStatReportListGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ReportStatListResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/report/list`,options
+      `/stat/report/list`,options
     );
   }
 
@@ -429,7 +1103,7 @@ const getUrlsTrendStatReportTrendGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ReportStatTrendResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/report/trend`,options
+      `/stat/report/trend`,options
     );
   }
 
@@ -440,7 +1114,7 @@ const getReportDetailStatReportDetailGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ReportDetailResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/report/detail`,options
+      `/stat/report/detail`,options
     );
   }
 
@@ -451,7 +1125,7 @@ const getPredictionStatStatPredictionGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<PredictionStatResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/prediction`,options
+      `/stat/prediction`,options
     );
   }
 
@@ -462,7 +1136,7 @@ const getPredictionTrendStatPredictionTrendGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<PredictionTrendResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/prediction/trend`,options
+      `/stat/prediction/trend`,options
     );
   }
 
@@ -473,7 +1147,7 @@ const getPredictionByModelStatPredictionByModelGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<PredictionByModelResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/prediction/by-model`,options
+      `/stat/prediction/by-model`,options
     );
   }
 
@@ -484,7 +1158,7 @@ const getPredictionDetailStatPredictionDetailGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<PredictionDetailResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/prediction/detail`,options
+      `/stat/prediction/detail`,options
     );
   }
 
@@ -495,7 +1169,7 @@ const getUserStatStatUserGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<UserStatResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/user`,options
+      `/stat/user`,options
     );
   }
 
@@ -506,7 +1180,7 @@ const getUserActivityStatUserActivityGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<UserActivityResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/user/activity`,options
+      `/stat/user/activity`,options
     );
   }
 
@@ -517,7 +1191,7 @@ const getUserRoleStatUserRoleGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<UserRoleStatResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/user/role`,options
+      `/stat/user/role`,options
     );
   }
 
@@ -528,7 +1202,7 @@ const getTopUsersStatUserTopGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<TopUserResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/user/top`,options
+      `/stat/user/top`,options
     );
   }
 
@@ -539,7 +1213,7 @@ const getApiKeyStatStatApiKeyGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ApiKeyStatResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/api-key`,options
+      `/stat/api-key`,options
     );
   }
 
@@ -550,7 +1224,7 @@ const getApiKeyUsageStatApiKeyUsageGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ApiKeyUsageResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/api-key/usage`,options
+      `/stat/api-key/usage`,options
     );
   }
 
@@ -561,7 +1235,7 @@ const getApiKeyTrendStatApiKeyTrendGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ApiKeyTrendResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/api-key/trend`,options
+      `/stat/api-key/trend`,options
     );
   }
 
@@ -572,7 +1246,7 @@ const getApiEndpointStatStatApiKeyEndpointGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ApiEndpointStatResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/api-key/endpoint`,options
+      `/stat/api-key/endpoint`,options
     );
   }
 
@@ -583,7 +1257,7 @@ const getThirdPartyStatStatThirdPartyGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ThirdPartyStatResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/third-party`,options
+      `/stat/third-party`,options
     );
   }
 
@@ -594,7 +1268,7 @@ const getThirdPartyServicesStatThirdPartyServicesGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ThirdPartyServiceResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/third-party/services`,options
+      `/stat/third-party/services`,options
     );
   }
 
@@ -605,7 +1279,7 @@ const getThirdPartyTrendStatThirdPartyTrendGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ThirdPartyTrendResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/third-party/trend`,options
+      `/stat/third-party/trend`,options
     );
   }
 
@@ -616,7 +1290,7 @@ const getThirdPartyErrorsStatThirdPartyErrorsGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ThirdPartyErrorResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/third-party/errors`,options
+      `/stat/third-party/errors`,options
     );
   }
 
@@ -627,7 +1301,7 @@ const getUrlFlagStatStatUrlFlagGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<UrlFlagStatResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/url-flag`,options
+      `/stat/url-flag`,options
     );
   }
 
@@ -638,7 +1312,7 @@ const getUrlFlagTrendStatUrlFlagTrendGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<UrlFlagTrendResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/url-flag/trend`,options
+      `/stat/url-flag/trend`,options
     );
   }
 
@@ -649,7 +1323,7 @@ const getUrlFlagDetailStatUrlFlagDetailGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<UrlFlagDetailResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/url-flag/detail`,options
+      `/stat/url-flag/detail`,options
     );
   }
 
@@ -660,11 +1334,11 @@ const getUrlFlagCategoryStatUrlFlagCategoryGet = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<UrlFlagCategoryResponse>> => {
     return axiosInstance.get(
-      `http://localhost:8000/stat/url-flag/category`,options
+      `/stat/url-flag/category`,options
     );
   }
 
-return {rootGet,healthCheckHealthGet,registerAuthRegisterPost,createUserAuthCreatePost,loginAuthLoginPost,login2faAuthLogin2faPost,loginProviderAuthLoginProviderPost,refreshAuthRefreshPost,logoutAuthLogoutPost,setup2faAuth2faSetupPost,enable2faAuth2faEnablePost,oauthDeviceInitiateAuthOauthDevicePost,oauthDevicePollAuthOauthDevicePollPost,oauthAuthorizeAuthOauthAuthorizePost,oauthCallbackAuthCallbackProviderGet,getServiceMlServiceGet,predictPredictionPost,getReportDataReportGet,createReportReportPost,getSystemStatDashboardSystemStatGet,getSystemHealthDashboardSystemHealthGet,getSystemPerformanceDashboardSystemPerformanceGet,getThirdPartyStatDashboardThirdPartyStatGet,getUrlFlagStatDashboardUrlFlagStatGet,getUrlReportStatDashboardUrlReportStatGet,getApiAccessKeyStatDashboardApiAccessKeyStatGet,getUserStatDashboardUserStatGet,getReportStatStatReportGet,getUrlsListStatReportListGet,getUrlsTrendStatReportTrendGet,getReportDetailStatReportDetailGet,getPredictionStatStatPredictionGet,getPredictionTrendStatPredictionTrendGet,getPredictionByModelStatPredictionByModelGet,getPredictionDetailStatPredictionDetailGet,getUserStatStatUserGet,getUserActivityStatUserActivityGet,getUserRoleStatUserRoleGet,getTopUsersStatUserTopGet,getApiKeyStatStatApiKeyGet,getApiKeyUsageStatApiKeyUsageGet,getApiKeyTrendStatApiKeyTrendGet,getApiEndpointStatStatApiKeyEndpointGet,getThirdPartyStatStatThirdPartyGet,getThirdPartyServicesStatThirdPartyServicesGet,getThirdPartyTrendStatThirdPartyTrendGet,getThirdPartyErrorsStatThirdPartyErrorsGet,getUrlFlagStatStatUrlFlagGet,getUrlFlagTrendStatUrlFlagTrendGet,getUrlFlagDetailStatUrlFlagDetailGet,getUrlFlagCategoryStatUrlFlagCategoryGet}};
+return {rootGet,healthCheckHealthGet,registerAuthRegisterPost,createUserAuthCreatePost,loginAuthLoginPost,login2faAuthLogin2faPost,loginProviderAuthLoginProviderPost,refreshAuthRefreshPost,logoutAuthLogoutPost,setup2faAuth2faSetupPost,enable2faAuth2faEnablePost,oauthDeviceInitiateAuthOauthDevicePost,oauthDevicePollAuthOauthDevicePollPost,oauthAuthorizeAuthOauthAuthorizePost,oauthCallbackAuthCallbackProviderGet,getMeAuthMeGet,updateMeAuthMePut,resetPasswordAuthMeResetPasswordPost,getAllUsersAuthUsersGet,createUserAuthUsersPost,getUserByIdAuthUsersUserIdGet,updateUserAuthUsersUserIdPut,deleteUserAuthUsersUserIdDelete,resetUserPasswordAuthUsersUserIdResetPasswordPost,getServiceMlServiceGet,predictPredictionPredictPost,getReportDataReportGet,createReportReportPost,getMyReportsReportMeGet,getReportByIdReportReportIdGet,updateReportReportReportIdPut,getReportHistoryReportReportIdHistoryGet,getSystemStatDashboardSystemStatGet,getSystemHealthDashboardSystemHealthGet,getSystemPerformanceDashboardSystemPerformanceGet,getThirdPartyStatDashboardThirdPartyStatGet,getUrlFlagStatDashboardUrlFlagStatGet,getUrlReportStatDashboardUrlReportStatGet,getApiAccessKeyStatDashboardApiAccessKeyStatGet,getUserStatDashboardUserStatGet,listThirdServicesSettingThirdServiceGet,createThirdServiceSettingThirdServicePost,getThirdServiceSettingThirdServiceIdGet,updateThirdServiceSettingThirdServiceIdPut,deleteThirdServiceSettingThirdServiceIdDelete,executeThirdServiceSettingThirdServiceIdExecutePost,testThirdServiceSettingThirdServiceIdRestApiTestPost,listServicesSettingServiceGet,getServiceSettingServiceServiceIdGet,activateServiceSettingServiceServiceIdActivatePost,deactivateServiceSettingServiceServiceIdDeactivatePost,listActiveServicesSettingServiceActiveListGet,getAllFlagsSettingUrlFlagGet,createFlagSettingUrlFlagPost,getMyFlagsSettingUrlFlagMeGet,getFlagByIdSettingUrlFlagFlagIdGet,updateFlagSettingUrlFlagFlagIdPut,deleteFlagSettingUrlFlagFlagIdDelete,getMyKeysSettingAccessKeyMeGet,createKeySettingAccessKeyPost,resetKeySettingAccessKeyKeyIdResetPost,getUsageMonthlySettingAccessKeyKeyIdUsageMonthlyGet,getUsageYearlySettingAccessKeyKeyIdUsageYearlyGet,getUsageAllTimeSettingAccessKeyKeyIdUsageGet,adminGetAllKeysSettingAccessKeyAdminGet,adminCreateKeySettingAccessKeyAdminPost,adminUpdateKeySettingAccessKeyAdminKeyIdPut,adminDeleteKeySettingAccessKeyAdminKeyIdDelete,adminGetUsageMonthlySettingAccessKeyAdminKeyIdUsageMonthlyGet,adminGetUsageYearlySettingAccessKeyAdminKeyIdUsageYearlyGet,adminGetUsageAllTimeSettingAccessKeyAdminKeyIdUsageGet,getAllConfigsSettingSystemConfigGet,getConfigByKeySettingSystemConfigConfigKeyGet,updateConfigSettingSystemConfigConfigKeyPut,getRetrainQueueQueueUrlGet,getReportStatStatReportGet,getUrlsListStatReportListGet,getUrlsTrendStatReportTrendGet,getReportDetailStatReportDetailGet,getPredictionStatStatPredictionGet,getPredictionTrendStatPredictionTrendGet,getPredictionByModelStatPredictionByModelGet,getPredictionDetailStatPredictionDetailGet,getUserStatStatUserGet,getUserActivityStatUserActivityGet,getUserRoleStatUserRoleGet,getTopUsersStatUserTopGet,getApiKeyStatStatApiKeyGet,getApiKeyUsageStatApiKeyUsageGet,getApiKeyTrendStatApiKeyTrendGet,getApiEndpointStatStatApiKeyEndpointGet,getThirdPartyStatStatThirdPartyGet,getThirdPartyServicesStatThirdPartyServicesGet,getThirdPartyTrendStatThirdPartyTrendGet,getThirdPartyErrorsStatThirdPartyErrorsGet,getUrlFlagStatStatUrlFlagGet,getUrlFlagTrendStatUrlFlagTrendGet,getUrlFlagDetailStatUrlFlagDetailGet,getUrlFlagCategoryStatUrlFlagCategoryGet}};
 export type RootGetResult = AxiosResponse<GetDefaultApiEndpoint>
 export type HealthCheckHealthGetResult = AxiosResponse<GetDefaultHealthCheck>
 export type RegisterAuthRegisterPostResult = AxiosResponse<RegisterResponse>
@@ -680,10 +1354,23 @@ export type OauthDeviceInitiateAuthOauthDevicePostResult = AxiosResponse<OAuthDe
 export type OauthDevicePollAuthOauthDevicePollPostResult = AxiosResponse<TokenPairResponse | PreAuthResponse | BaseResponseModel>
 export type OauthAuthorizeAuthOauthAuthorizePostResult = AxiosResponse<OAuthAuthorizationResponse>
 export type OauthCallbackAuthCallbackProviderGetResult = AxiosResponse<TokenPairResponse | PreAuthResponse>
+export type GetMeAuthMeGetResult = AxiosResponse<UserModel>
+export type UpdateMeAuthMePutResult = AxiosResponse<UserModel>
+export type ResetPasswordAuthMeResetPasswordPostResult = AxiosResponse<BaseResponseModel>
+export type GetAllUsersAuthUsersGetResult = AxiosResponse<UserListResponse>
+export type CreateUserAuthUsersPostResult = AxiosResponse<UserResponse>
+export type GetUserByIdAuthUsersUserIdGetResult = AxiosResponse<UserResponse>
+export type UpdateUserAuthUsersUserIdPutResult = AxiosResponse<UserResponse>
+export type DeleteUserAuthUsersUserIdDeleteResult = AxiosResponse<BaseResponseModel>
+export type ResetUserPasswordAuthUsersUserIdResetPasswordPostResult = AxiosResponse<BaseResponseModel>
 export type GetServiceMlServiceGetResult = AxiosResponse<MLServiceResponse>
-export type PredictPredictionPostResult = AxiosResponse<PredictionResponse>
+export type PredictPredictionPredictPostResult = AxiosResponse<PredictionResponse>
 export type GetReportDataReportGetResult = AxiosResponse<ReportListResponse>
 export type CreateReportReportPostResult = AxiosResponse<ReportResponse>
+export type GetMyReportsReportMeGetResult = AxiosResponse<ReportListResponse>
+export type GetReportByIdReportReportIdGetResult = AxiosResponse<ReportResponse>
+export type UpdateReportReportReportIdPutResult = AxiosResponse<ReportResponse>
+export type GetReportHistoryReportReportIdHistoryGetResult = AxiosResponse<ReportListResponse>
 export type GetSystemStatDashboardSystemStatGetResult = AxiosResponse<SystemStatResponse>
 export type GetSystemHealthDashboardSystemHealthGetResult = AxiosResponse<SystemHealthResponse>
 export type GetSystemPerformanceDashboardSystemPerformanceGetResult = AxiosResponse<SystemPerformanceResponse>
@@ -692,6 +1379,41 @@ export type GetUrlFlagStatDashboardUrlFlagStatGetResult = AxiosResponse<UrlFlagS
 export type GetUrlReportStatDashboardUrlReportStatGetResult = AxiosResponse<ReportStatResponse>
 export type GetApiAccessKeyStatDashboardApiAccessKeyStatGetResult = AxiosResponse<ApiKeyStatResponse>
 export type GetUserStatDashboardUserStatGetResult = AxiosResponse<UserStatResponse>
+export type ListThirdServicesSettingThirdServiceGetResult = AxiosResponse<ThirdServiceResponse[]>
+export type CreateThirdServiceSettingThirdServicePostResult = AxiosResponse<ThirdServiceResponse>
+export type GetThirdServiceSettingThirdServiceIdGetResult = AxiosResponse<ThirdServiceResponse>
+export type UpdateThirdServiceSettingThirdServiceIdPutResult = AxiosResponse<ThirdServiceResponse>
+export type DeleteThirdServiceSettingThirdServiceIdDeleteResult = AxiosResponse<BaseResponseModel>
+export type ExecuteThirdServiceSettingThirdServiceIdExecutePostResult = AxiosResponse<ExecuteThirdServiceSettingThirdServiceIdExecutePost200>
+export type TestThirdServiceSettingThirdServiceIdRestApiTestPostResult = AxiosResponse<TestThirdServiceSettingThirdServiceIdRestApiTestPost200>
+export type ListServicesSettingServiceGetResult = AxiosResponse<ServiceConfModel[]>
+export type GetServiceSettingServiceServiceIdGetResult = AxiosResponse<ServiceConfModel>
+export type ActivateServiceSettingServiceServiceIdActivatePostResult = AxiosResponse<ServiceConfModel>
+export type DeactivateServiceSettingServiceServiceIdDeactivatePostResult = AxiosResponse<ServiceConfModel>
+export type ListActiveServicesSettingServiceActiveListGetResult = AxiosResponse<ServiceConfModel[]>
+export type GetAllFlagsSettingUrlFlagGetResult = AxiosResponse<UrlFlagListResponse>
+export type CreateFlagSettingUrlFlagPostResult = AxiosResponse<UrlFlagResponse>
+export type GetMyFlagsSettingUrlFlagMeGetResult = AxiosResponse<UrlFlagListResponse>
+export type GetFlagByIdSettingUrlFlagFlagIdGetResult = AxiosResponse<UrlFlagResponse>
+export type UpdateFlagSettingUrlFlagFlagIdPutResult = AxiosResponse<UrlFlagResponse>
+export type DeleteFlagSettingUrlFlagFlagIdDeleteResult = AxiosResponse<BaseResponseModel>
+export type GetMyKeysSettingAccessKeyMeGetResult = AxiosResponse<AccessKeyListResponse>
+export type CreateKeySettingAccessKeyPostResult = AxiosResponse<AccessKeyResponse>
+export type ResetKeySettingAccessKeyKeyIdResetPostResult = AxiosResponse<AccessKeyResponse>
+export type GetUsageMonthlySettingAccessKeyKeyIdUsageMonthlyGetResult = AxiosResponse<AccessKeyResponse>
+export type GetUsageYearlySettingAccessKeyKeyIdUsageYearlyGetResult = AxiosResponse<AccessKeyResponse>
+export type GetUsageAllTimeSettingAccessKeyKeyIdUsageGetResult = AxiosResponse<AccessKeyResponse>
+export type AdminGetAllKeysSettingAccessKeyAdminGetResult = AxiosResponse<AccessKeyListResponse>
+export type AdminCreateKeySettingAccessKeyAdminPostResult = AxiosResponse<AccessKeyResponse>
+export type AdminUpdateKeySettingAccessKeyAdminKeyIdPutResult = AxiosResponse<AccessKeyResponse>
+export type AdminDeleteKeySettingAccessKeyAdminKeyIdDeleteResult = AxiosResponse<BaseResponseModel>
+export type AdminGetUsageMonthlySettingAccessKeyAdminKeyIdUsageMonthlyGetResult = AxiosResponse<AccessKeyResponse>
+export type AdminGetUsageYearlySettingAccessKeyAdminKeyIdUsageYearlyGetResult = AxiosResponse<AccessKeyResponse>
+export type AdminGetUsageAllTimeSettingAccessKeyAdminKeyIdUsageGetResult = AxiosResponse<AccessKeyResponse>
+export type GetAllConfigsSettingSystemConfigGetResult = AxiosResponse<SystemConfigListResponse>
+export type GetConfigByKeySettingSystemConfigConfigKeyGetResult = AxiosResponse<SystemConfigResponse>
+export type UpdateConfigSettingSystemConfigConfigKeyPutResult = AxiosResponse<SystemConfigResponse>
+export type GetRetrainQueueQueueUrlGetResult = AxiosResponse<QueueListResponse>
 export type GetReportStatStatReportGetResult = AxiosResponse<ReportStatResponse>
 export type GetUrlsListStatReportListGetResult = AxiosResponse<ReportStatListResponse>
 export type GetUrlsTrendStatReportTrendGetResult = AxiosResponse<ReportStatTrendResponse>

@@ -26,7 +26,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description, acc
       whileHover={{ y: -3 }}
       className={large ? 'md:col-span-2' : ''}
     >
-      <Card className="p-6">
+      <Card className="h-full p-6">
         <div className="text-[32px] mb-[14px]">{icon}</div>
         <Heading as="h3" variant="subtitle" className="mb-[6px]">{title}</Heading>
         <Text variant="small" className="leading-[1.6]">{description}</Text>

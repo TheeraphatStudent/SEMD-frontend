@@ -6,20 +6,16 @@ import { motion } from 'framer-motion';
 import { ROUTES } from '@/constants/routes';
 import { Badge, Button, Text, Heading, Pulse } from '@/components/ui';
 import { CheckerBox } from './CheckerBox';
-import { CheckInput, Verdict } from '@/lib/types';
+import { CheckInput } from '@/lib/types';
+import { BadgeVariant } from '@/types/badge.types';
 
 const LiveDot: React.FC = () => (
   <Pulse size="sm" variant="success" />
 );
 
-const Chip: React.FC<{ variant: Verdict; children: React.ReactNode }> = ({ variant, children }) => {
-  const badgeVariants: Record<Verdict, 'benign' | 'malicious'> = {
-    Benign: 'benign',
-    Malicious: 'malicious',
-  };
-
+const Chip: React.FC<{ variant: BadgeVariant; children: React.ReactNode }> = ({ variant, children }) => {
   return (
-    <Badge variant={badgeVariants[variant]} className="inline-flex items-center gap-[5px] rounded-full px-3 py-[5px] border shadow-sm">
+    <Badge variant={variant} className="inline-flex items-center gap-[5px] rounded-full px-3 py-[5px] border shadow-sm">
       {children}
     </Badge>
   );
@@ -79,15 +75,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCheck }) => {
 
       <CheckerBox onCheck={handleCheck} />
 
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.65, delay: 0.32 }}
         className="flex gap-2 justify-center flex-wrap mt-7"
       >
-        <Chip variant="Benign">Benign</Chip>
-        <Chip variant="Malicious">Malicious</Chip>
-      </motion.div>
+        <Chip variant="safe">Benign</Chip>
+        <Chip variant="malicious">Malicious</Chip>
+      </motion.div> */}
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}

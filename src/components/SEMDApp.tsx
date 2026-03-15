@@ -12,8 +12,7 @@ import {
   FeaturesSection,
   StatsSection,
   UseCasesSection,
-  CTASection,
-  LandingFooter,
+  LandingFooter
 } from '@/components/landing';
 import { LoadingView } from '@/components/loading/LoadingView';
 import { ResultView } from '@/components/result/ResultView';
@@ -108,7 +107,6 @@ export const SEMDApp: React.FC = () => {
       <FeaturesSection />
       <StatsSection />
       <UseCasesSection />
-      <CTASection />
       <LandingFooter />
     </main>
   );

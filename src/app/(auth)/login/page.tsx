@@ -100,7 +100,7 @@ export default function LoginPage() {
             variant="full"
             maxHeight="320px"
             showBrowserBar={true}
-            showToolbar={true}
+            showToolbar={false}
             showPagination={true}
             showFilters={true}
             animated={true}
@@ -115,12 +115,12 @@ export default function LoginPage() {
             เข้าสู่ระบบ
           </h2>
 
-          <div className="flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold text-green-700 mb-5 w-fit"
+          {/* <div className="flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold text-green-700 mb-5 w-fit"
             style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)' }}
           >
             <ShieldCheck size={14} />
             การเชื่อมต่อปลอดภัย SSL
-          </div>
+          </div> */}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input

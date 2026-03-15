@@ -47,3 +47,6 @@ export * from './animated-page';
 
 export { OTPInput } from './otp-input';
 export type { OTPInputProps } from './otp-input';
+
+export { DataTable } from './DataTable';
+export type { DataTableProps, DataTableColumn, DataTableFilter } from './DataTable';

@@ -7,6 +7,5 @@ export { FeaturesSection } from './FeaturesSection';
 export { StatsSection } from './StatsSection';
 export { UseCasesSection } from './UseCasesSection';
 export { LandingFooter } from './LandingFooter';
-export { CheckerBox } from './CheckerBox';
 export { EvaluatorSelect } from './EvaluatorSelect';
 export { InputTypeSelect } from './InputTypeSelect';

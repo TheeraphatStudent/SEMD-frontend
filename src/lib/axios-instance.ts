@@ -11,6 +11,8 @@ export const axiosInstance = axios.create({
   },
 });
 
+export default axiosInstance;
+
 const getToken = (): string | null => {
   if (typeof window === 'undefined') return null;
   return localStorage.getItem(APP_CONFIG.TOKEN_KEY);

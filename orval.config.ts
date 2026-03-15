@@ -13,12 +13,6 @@ export default defineConfig({
       mock: false,
       clean: true,
       prettier: true,
-      override: {
-        mutator: {
-          path: './src/lib/axios-instance.ts',
-          name: 'axiosInstance',
-        },
-      },
     },
   },
 });

@@ -100,7 +100,7 @@ export default function ScanPage() {
                   <p className="text-sm font-medium text-dark">{item.url}</p>
                   <p className="text-xs text-gray-primary-0">ความแม่นยำ: {(item.accuracy * 100).toFixed(1)}%</p>
                 </div>
-                <Badge variant={item.safe ? 'success' : 'danger'}>
+                <Badge variant={item.safe ? 'safe' : 'danger'}>
                   {item.safe ? 'ปลอดภัย' : 'อันตราย'}
                 </Badge>
               </div>

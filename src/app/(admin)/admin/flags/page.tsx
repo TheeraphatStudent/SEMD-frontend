@@ -95,7 +95,7 @@ export default function AdminFlagsPage() {
                   <TableCell>{flag.reason}</TableCell>
                   <TableCell>{flag.flaggedBy}</TableCell>
                   <TableCell>
-                    <Badge variant={flag.status === 'active' ? 'safe' : 'default'}>
+                    <Badge variant={flag.status === 'active' ? 'safe' : 'info'}>
                       {flag.status === 'active' ? 'ใช้งานอยู่' : 'ไม่ใช้งาน'}
                     </Badge>
                   </TableCell>

@@ -96,7 +96,7 @@ export default function PredictionResultPage() {
                   <Shield className="text-primary flex-shrink-0 mt-1" size={20} />
                   <div>
                     <p className="text-sm font-medium text-gray-primary-0">สถานะ</p>
-                    <Badge variant={isSafe ? 'success' : 'danger'} className="mt-1">
+                    <Badge variant={isSafe ? 'safe' : 'danger'} className="mt-1">
                       {isSafe ? 'ปลอดภัย' : 'อันตราย'}
                     </Badge>
                   </div>

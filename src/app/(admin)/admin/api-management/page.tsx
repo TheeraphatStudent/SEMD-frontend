@@ -81,7 +81,7 @@ export default function AdminApiManagementPage() {
                   <TableCell className="font-medium">{apiKey.user}</TableCell>
                   <TableCell>{apiKey.keyName}</TableCell>
                   <TableCell>
-                    <Badge variant={apiKey.isActive ? 'success' : 'default'}>
+                    <Badge variant={apiKey.isActive ? 'safe' : 'info'}>
                       {apiKey.isActive ? 'ใช้งานอยู่' : 'ไม่ใช้งาน'}
                     </Badge>
                   </TableCell>

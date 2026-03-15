@@ -49,9 +49,9 @@ export default function ProfilePage() {
               <div>
                 <p className="text-lg font-bold text-dark">{user?.username}</p>
                 <Badge variant={
-                  user?.role === 'master_admin' ? 'success' :
-                  user?.role === 'admin' ? 'success' :
-                  'default'
+                  user?.role === 'master_admin' ? 'master-admin' :
+                  user?.role === 'admin' ? 'admin' :
+                  'info'
                 }>
                   {user?.role === 'master_admin' ? 'Master Admin' :
                    user?.role === 'admin' ? 'Admin' :
@@ -99,7 +99,7 @@ export default function ProfilePage() {
                   <p className="text-xs text-gray-primary-0">เพิ่มความปลอดภัยให้กับบัญชีของคุณ</p>
                 </div>
               </div>
-              <Badge variant={user?.twoFactorEnabled ? 'success' : 'default'}>
+              <Badge variant={user?.twoFactorEnabled ? 'safe' : 'warning'}>
                 {user?.twoFactorEnabled ? 'เปิดใช้งาน' : 'ปิดใช้งาน'}
               </Badge>
             </div>

@@ -35,9 +35,9 @@ export default function ReportPage() {
                     <p className="text-xs text-gray-primary-0 mt-1">เหตุผล: {item.reason}</p>
                   </div>
                   <Badge variant={
-                    item.status === 'approved' ? 'success' : 
-                    item.status === 'reviewed' ? 'warning' : 
-                    'default'
+                    item.status === 'approved' ? 'safe' :
+                    item.status === 'reviewed' ? 'warning' :
+                    'info'
                   }>
                     {item.status === 'approved' ? 'อนุมัติแล้ว' : 
                      item.status === 'reviewed' ? 'กำลังตรวจสอบ' : 

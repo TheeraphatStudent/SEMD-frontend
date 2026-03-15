@@ -23,6 +23,7 @@ export default function RegisterPage() {
   const [formData, setFormData] = useState({
     email: '',
     username: '',
+    full_name: '',
     password: '',
     confirmPassword: '',
   });
@@ -70,8 +71,10 @@ export default function RegisterPage() {
 
     try {
       await register({
-        ...formData,
-        recaptchaToken: recaptchaToken || undefined,
+        username: formData.username,
+        email: formData.email,
+        full_name: formData.full_name,
+        password: formData.password,
       });
       toast.success('ลงทะเบียนสำเร็จ! กรุณาตั้งค่า 2FA');
       router.push(`/two-factor-setup?email=${encodeURIComponent(formData.email)}`);
@@ -149,6 +152,16 @@ export default function RegisterPage() {
               value={formData.username}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, username: e.target.value })}
               error={errors.username}
+              required
+            />
+
+            <Input
+              label="ชื่อ-นามสกุล"
+              type="text"
+              placeholder="ระบุชื่อ-นามสกุล"
+              value={formData.full_name}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, full_name: e.target.value })}
+              error={errors.full_name}
               required
             />
 

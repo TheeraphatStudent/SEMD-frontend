@@ -12,8 +12,15 @@ interface ResultViewProps {
   onBack: () => void;
 }
 
-const verdictConfig = {
-  Safe: {
+const verdictConfig: Record<Verdict, {
+  bannerClass: string;
+  iconRingClass: string;
+  icon: string;
+  title: string;
+  recommendations: string[];
+  extra: string;
+}> = {
+  Benign: {
     bannerClass: 'bg-gradient-to-br from-accent-light-green via-white to-accent-light-green',
     iconRingClass: 'bg-accent-light-green',
     icon: '✅',
@@ -25,19 +32,7 @@ const verdictConfig = {
     ],
     extra: 'URL นี้ผ่านการตรวจสอบจาก ML Model แล้วไม่พบลักษณะที่เป็นอันตราย อย่างไรก็ตามควรระมัดระวังการกรอกข้อมูลส่วนตัวทุกครั้ง',
   },
-  Warning: {
-    bannerClass: 'bg-gradient-to-br from-accent-light-orange via-white to-accent-light-orange',
-    iconRingClass: 'bg-accent-light-orange',
-    icon: '⚠️',
-    title: 'URL น่าสงสัย',
-    recommendations: [
-      '⚠️ URL มีลักษณะน่าสงสัย ควรระวัง',
-      '🔍 ตรวจสอบเว็บไซต์เพิ่มเติมก่อนใช้งาน',
-      '💡 อย่ากรอกข้อมูลสำคัญจนกว่าจะมั่นใจ',
-    ],
-    extra: 'URL นี้มีบางลักษณะที่อาจเป็นอันตราย แต่ยังไม่แน่ชัด ควรตรวจสอบเพิ่มเติมก่อนตัดสินใจเข้าใช้งาน',
-  },
-  Danger: {
+  Malicious: {
     bannerClass: 'bg-gradient-to-br from-accent-light-red via-white to-accent-light-red',
     iconRingClass: 'bg-accent-light-red',
     icon: '🚨',

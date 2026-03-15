@@ -6,17 +6,16 @@ import { motion } from 'framer-motion';
 import { ROUTES } from '@/constants/routes';
 import { Badge, Button, Text, Heading, Pulse } from '@/components/ui';
 import { CheckerBox } from './CheckerBox';
-import { CheckInput } from '@/lib/types';
+import { CheckInput, Verdict } from '@/lib/types';
 
 const LiveDot: React.FC = () => (
   <Pulse size="sm" variant="success" />
 );
 
-const Chip: React.FC<{ variant: 'safe' | 'danger' | 'warning'; children: React.ReactNode }> = ({ variant, children }) => {
-  const badgeVariants = {
-    safe: 'success' as const,
-    danger: 'danger' as const,
-    warning: 'warning' as const,
+const Chip: React.FC<{ variant: Verdict; children: React.ReactNode }> = ({ variant, children }) => {
+  const badgeVariants: Record<Verdict, 'benign' | 'malicious'> = {
+    Benign: 'benign',
+    Malicious: 'malicious',
   };
 
   return (
@@ -86,9 +85,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCheck }) => {
         transition={{ duration: 0.65, delay: 0.32 }}
         className="flex gap-2 justify-center flex-wrap mt-7"
       >
-        <Chip variant="safe">✅ Safe</Chip>
-        <Chip variant="danger">🚨 Danger</Chip>
-        <Chip variant="warning">⚠️ Warning</Chip>
+        <Chip variant="Benign">Benign</Chip>
+        <Chip variant="Malicious">Malicious</Chip>
       </motion.div>
 
       <motion.div

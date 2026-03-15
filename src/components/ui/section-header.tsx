@@ -39,7 +39,7 @@ export const SectionHeader = React.forwardRef<HTMLDivElement, SectionHeaderProps
             animate={animated && isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
           >
-            <Badge variant="default" className="inline-flex items-center gap-[6px] text-xs font-bold uppercase tracking-[0.1em] text-primary-dark bg-primary-light rounded-full px-3 py-[3px] border border-primary">
+            <Badge variant="info" className="inline-flex items-center gap-[6px] text-xs font-bold uppercase tracking-[0.1em] text-primary-dark bg-primary-light rounded-full px-3 py-[3px] border border-primary">
               {badge}
             </Badge>
           </motion.div>

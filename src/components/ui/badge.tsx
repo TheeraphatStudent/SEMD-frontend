@@ -4,17 +4,17 @@ import { cn } from '@/lib/utils';
 import { scaleIn } from '@/lib/motion-variants';
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: 'default' | 'success' | 'warning' | 'danger' | 'info' | 'safe' | 'admin' | 'master-admin';
+  variant?: 'benign' | 'malicious' | 'warning' | 'danger' | 'info' | 'safe' | 'admin' | 'master-admin';
   children: React.ReactNode;
   animated?: boolean;
   pulse?: boolean;
 }
 
 export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
-  ({ className, variant = 'default', children, animated = true, pulse = false, ...props }, ref) => {
+  ({ className, variant = 'benign', children, animated = true, pulse = false, ...props }, ref) => {
     const variants = {
-      default: 'bg-gray-primary-1 text-dark',
-      success: 'bg-success/20 text-success',
+      benign: 'bg-gray-primary-1 text-dark',
+      malicious: 'bg-danger/20 text-danger',
       warning: 'bg-warning/20 text-warning',
       danger: 'bg-danger/20 text-danger',
       info: 'bg-info/20 text-info',

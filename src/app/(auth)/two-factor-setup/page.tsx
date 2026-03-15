@@ -13,6 +13,7 @@ export default function TwoFactorSetupPage() {
   const searchParams = useSearchParams();
   const { enable2FA, loading } = useAuth();
   const [code, setCode] = useState('');
+  const [secret, setSecret] = useState('');
   const email = searchParams.get('email') || '';
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -23,8 +24,13 @@ export default function TwoFactorSetupPage() {
       return;
     }
 
+    if (!secret) {
+      toast.error('ไม่พบ Secret Key กรุณาลองใหม่อีกครั้ง');
+      return;
+    }
+
     try {
-      await enable2FA(code);
+      await enable2FA(secret, code);
       toast.success('เปิดใช้งาน 2FA สำเร็จ');
       router.push(ROUTES.DASHBOARD.HOME);
     } catch (error) {

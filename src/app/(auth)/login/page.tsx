@@ -39,14 +39,13 @@ export default function LoginPage() {
 
     try {
       const result = await login({ 
-        email: formData.username, 
+        username: formData.username, 
         password: formData.password,
-        recaptchaToken: recaptchaToken || undefined,
       });
 
       if (result.requiresTwoFactor) {
         toast.info('กรุณายืนยันตัวตนด้วย 2FA');
-        router.push(`/two-factor?email=${encodeURIComponent(formData.username)}`);
+        router.push(`/two-factor?token=${encodeURIComponent(result.preAuthToken || '')}`);
         return;
       }
 

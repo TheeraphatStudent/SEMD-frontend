@@ -48,7 +48,7 @@ export const EvaluatorSelect: React.FC<EvaluatorSelectProps> = ({ value, onChang
         onClick={() => setIsOpen(!isOpen)}
         className={`flex items-center gap-[6px] bg-primary-light border border-primary rounded-full px-3 py-[6px] text-[12px] font-semibold text-dark cursor-pointer whitespace-nowrap transition-all hover:bg-primary ${isOpen ? 'bg-primary border-primary-dark' : ''}`}
       >
-        <span className="text-primary-dark">{iconMap[selectedOption.icon]}</span>
+        <span className="text-primary-dark">{selectedOption.icon ? iconMap[selectedOption.icon] : null}</span>
         <span>
           {selectedOption.label}
           {selectedOption.tag && ` (${selectedOption.tag})`}
@@ -73,7 +73,7 @@ export const EvaluatorSelect: React.FC<EvaluatorSelectProps> = ({ value, onChang
                   value === option.value ? 'bg-primary-light font-bold text-primary-dark' : ''
                 }`}
               >
-                <span className="text-primary-dark">{iconMap[option.icon]}</span>
+                <span className="text-primary-dark">{option.icon ? iconMap[option.icon] : null}</span>
                 <span>{option.label}</span>
                 {option.tag && (
                   <span className="text-[10px] text-gray-primary-dark bg-gray-primary-light px-[7px] py-[2px] rounded-full ml-auto">

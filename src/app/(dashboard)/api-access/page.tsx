@@ -47,7 +47,7 @@ export default function ApiAccessPage() {
                       <p className="text-xs text-gray-primary-0">สร้างเมื่อ: {apiKey.created}</p>
                     </div>
                   </div>
-                  <Badge variant={apiKey.isActive ? 'success' : 'default'}>
+                  <Badge variant={apiKey.isActive ? 'safe' : 'info'}>
                     {apiKey.isActive ? 'ใช้งานอยู่' : 'ไม่ใช้งาน'}
                   </Badge>
                 </div>

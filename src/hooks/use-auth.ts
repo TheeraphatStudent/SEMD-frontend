@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { authService } from '@/services/auth.service';
-import { User, LoginRequest, RegisterRequest } from '@/types/auth.types';
+import { authService, User } from '@/services/auth.service';
+import { AuthLoginRequest, RegisterRequest } from '@/services/generated/models';
 
 interface AuthState {
   user: User | null;
@@ -8,14 +8,15 @@ interface AuthState {
   isLoading: boolean;
   loading: boolean;
   error: string | null;
-  
-  login: (data: LoginRequest) => Promise<{ requiresTwoFactor?: boolean }>;
+  preAuthToken: string | null;
+
+  login: (data: AuthLoginRequest) => Promise<{ requiresTwoFactor?: boolean; preAuthToken?: string }>;
   register: (data: RegisterRequest) => Promise<void>;
   logout: () => Promise<void>;
   checkAuth: () => void;
   clearError: () => void;
-  verify2FA: (email: string, code: string) => Promise<void>;
-  enable2FA: (code: string) => Promise<void>;
+  verify2FA: (preAuthToken: string, code: string) => Promise<void>;
+  enable2FA: (secret: string, code: string) => Promise<void>;
 }
 
 export const useAuth = create<AuthState>((set) => ({
@@ -24,52 +25,52 @@ export const useAuth = create<AuthState>((set) => ({
   isLoading: false,
   loading: false,
   error: null,
-  
-  login: async (data: LoginRequest) => {
+  preAuthToken: null,
+
+  login: async (data: AuthLoginRequest) => {
     set({ isLoading: true, loading: true, error: null });
     try {
-      const response = await authService.login(data);
-      
-      if (response.requiresTwoFactor) {
-        set({ isLoading: false, loading: false });
-        return { requiresTwoFactor: true };
+      const result = await authService.login(data);
+
+      if (result.requiresTwoFactor) {
+        set({ isLoading: false, loading: false, preAuthToken: result.preAuthToken });
+        return { requiresTwoFactor: true, preAuthToken: result.preAuthToken };
       }
-      
+
       set({
-        user: response.user,
         isAuthenticated: true,
         isLoading: false,
         loading: false,
       });
       return {};
     } catch (error: any) {
+      const message = error.response?.data?.message || error.message || 'เข้าสู่ระบบไม่สำเร็จ';
       set({
-        error: error.message || 'เข้าสู่ระบบไม่สำเร็จ',
+        error: message,
         isLoading: false,
         loading: false,
       });
       throw error;
     }
   },
-  
+
   register: async (data: RegisterRequest) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await authService.register(data);
+      await authService.register(data);
       set({
-        user: response.user,
-        isAuthenticated: true,
         isLoading: false,
       });
     } catch (error: any) {
+      const message = error.response?.data?.message || error.message || 'ลงทะเบียนไม่สำเร็จ';
       set({
-        error: error.message || 'ลงทะเบียนไม่สำเร็จ',
+        error: message,
         isLoading: false,
       });
       throw error;
     }
   },
-  
+
   logout: async () => {
     set({ isLoading: true });
     try {
@@ -78,50 +79,53 @@ export const useAuth = create<AuthState>((set) => ({
         user: null,
         isAuthenticated: false,
         isLoading: false,
+        preAuthToken: null,
       });
     } catch (error) {
       set({ isLoading: false });
     }
   },
-  
+
   checkAuth: () => {
     const user = authService.getUser();
     const isAuthenticated = authService.isAuthenticated();
     set({ user, isAuthenticated });
   },
-  
+
   clearError: () => set({ error: null }),
-  
-  verify2FA: async (email: string, code: string) => {
+
+  verify2FA: async (preAuthToken: string, code: string) => {
     set({ loading: true, error: null });
     try {
-      const response = await authService.verify2FA(email, code);
+      await authService.verify2FA({ pre_auth_token: preAuthToken, otp_code: code });
       set({
-        user: response.user,
         isAuthenticated: true,
         loading: false,
+        preAuthToken: null,
       });
     } catch (error: any) {
+      const message = error.response?.data?.message || error.message || 'ยืนยัน 2FA ไม่สำเร็จ';
       set({
-        error: error.message || 'ยืนยัน 2FA ไม่สำเร็จ',
+        error: message,
         loading: false,
       });
       throw error;
     }
   },
-  
-  enable2FA: async (code: string) => {
+
+  enable2FA: async (secret: string, code: string) => {
     set({ loading: true, error: null });
     try {
-      await authService.enable2FA(code);
+      await authService.enable2FA({ secret, otp_code: code });
       const user = authService.getUser();
       set({
         user: user ? { ...user, twoFactorEnabled: true } : null,
         loading: false,
       });
     } catch (error: any) {
+      const message = error.response?.data?.message || error.message || 'เปิดใช้งาน 2FA ไม่สำเร็จ';
       set({
-        error: error.message || 'เปิดใช้งาน 2FA ไม่สำเร็จ',
+        error: message,
         loading: false,
       });
       throw error;

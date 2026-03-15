@@ -31,7 +31,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description, acc
         <Heading as="h3" variant="subtitle" className="mb-[6px]">{title}</Heading>
         <Text variant="small" className="leading-[1.6]">{description}</Text>
         {accent && (
-          <Badge variant="default" className="inline-block mt-3 rounded-full px-[10px] py-[3px] bg-primary-light text-primary-dark">
+          <Badge variant="info" className="inline-block mt-3 rounded-full px-[10px] py-[3px] bg-primary-light text-primary-dark">
             {accent}
           </Badge>
         )}

@@ -23,12 +23,12 @@ const getVerdictFromUrl = (url: string): { verdict: Verdict; confidence: number 
   const isWarn = /(discount|promo|shop.*cc|suspicious)/i.test(url);
 
   if (isDanger) {
-    return { verdict: 'Danger', confidence: Math.floor(Math.random() * 15) + 82 };
+    return { verdict: 'Malicious', confidence: Math.floor(Math.random() * 15) + 82 };
   }
   if (isWarn) {
-    return { verdict: 'Warning', confidence: Math.floor(Math.random() * 20) + 60 };
+    return { verdict: 'Malicious', confidence: Math.floor(Math.random() * 20) + 60 };
   }
-  return { verdict: 'Safe', confidence: Math.floor(Math.random() * 5) + 94 };
+  return { verdict: 'Benign', confidence: Math.floor(Math.random() * 5) + 94 };
 };
 
 const getModelLabel = (evaluatorValue: string): string => {

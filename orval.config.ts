@@ -13,7 +13,12 @@ export default defineConfig({
       mock: false,
       clean: true,
       prettier: true,
-      baseUrl: 'http://localhost:8000',
+      override: {
+        mutator: {
+          path: './src/lib/axios-instance.ts',
+          name: 'axiosInstance',
+        },
+      },
     },
   },
 });

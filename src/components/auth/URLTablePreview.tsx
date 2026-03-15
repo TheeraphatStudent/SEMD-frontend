@@ -47,7 +47,7 @@ const TypeBadge: React.FC<{ type: string }> = ({ type }) => {
   };
 
   return (
-    <Badge variant="default" className={`inline-flex items-center gap-1 rounded-full px-[10px] py-[3px] text-[11px] font-bold border whitespace-nowrap ${styles[type] || ''}`}>
+    <Badge variant="info" className={`inline-flex items-center gap-1 rounded-full px-[10px] py-[3px] text-[11px] font-bold border whitespace-nowrap ${styles[type] || ''}`}>
       {typeLabels[type] || type}
     </Badge>
   );
@@ -60,7 +60,7 @@ const VerdictBadge: React.FC<{ verdict: Verdict }> = ({ verdict }) => {
   };
 
   return (
-    <Badge variant="default" className={`inline-flex items-center gap-1 rounded-full px-[10px] py-[3px] text-[11px] font-bold border whitespace-nowrap ${styles[verdict]}`}>
+    <Badge variant="info" className={`inline-flex items-center gap-1 rounded-full px-[10px] py-[3px] text-[11px] font-bold border whitespace-nowrap ${styles[verdict]}`}>
       {verdictLabels[verdict]}
     </Badge>
   );

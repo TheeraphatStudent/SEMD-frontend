@@ -28,7 +28,7 @@ const UseCaseCard: React.FC<UseCaseCardProps> = ({ icon, title, description, tag
         <div className="text-[32px] mb-[14px]">{icon}</div>
         <Heading as="h3" variant="subtitle" className="mb-[6px]">{title}</Heading>
         <Text variant="small" className="leading-[1.65]">{description}</Text>
-        <Badge variant="default" className="inline-block mt-[14px] rounded-full px-3 py-[3px] bg-secondary-light text-secondary-dark border border-secondary">
+        <Badge variant="info" className="inline-block mt-[14px] rounded-full px-3 py-[3px] bg-secondary-light text-secondary-dark border border-secondary">
           {tag}
         </Badge>
       </Card>

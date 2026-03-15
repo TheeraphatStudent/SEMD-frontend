@@ -91,7 +91,7 @@ export default function AdminUsersPage() {
                     <Badge variant={
                       user.role === 'master_admin' ? 'master-admin' :
                       user.role === 'admin' ? 'admin' :
-                      'default'
+                      'info'
                     }>
                       {user.role === 'master_admin' ? 'Master Admin' :
                        user.role === 'admin' ? 'Admin' :
@@ -99,7 +99,7 @@ export default function AdminUsersPage() {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={user.status === 'active' ? 'safe' : 'default'}>
+                    <Badge variant={user.status === 'active' ? 'safe' : 'warning'}>
                       {user.status === 'active' ? 'ใช้งานอยู่' : 'ไม่ใช้งาน'}
                     </Badge>
                   </TableCell>

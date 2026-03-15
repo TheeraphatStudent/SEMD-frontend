@@ -37,7 +37,7 @@ export default function FlagsPage() {
                 <TableRow key={flag.id}>
                   <TableCell className="font-medium">{flag.url}</TableCell>
                   <TableCell>
-                    <Badge variant={flag.isMalicious ? 'danger' : 'success'}>
+                    <Badge variant={flag.isMalicious ? 'danger' : 'safe'}>
                       {flag.isMalicious ? 'อันตราย' : 'ปลอดภัย'}
                     </Badge>
                   </TableCell>

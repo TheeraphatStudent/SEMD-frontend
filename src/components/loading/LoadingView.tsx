@@ -18,48 +18,11 @@ interface Step {
 }
 
 export const LoadingView: React.FC<LoadingViewProps> = ({ url, model, onComplete }) => {
-  const [steps, setSteps] = useState<Step[]>([
-    { id: 1, label: 'ดึงข้อมูล URL และ Feature', status: 'active' },
-    { id: 2, label: 'ส่งให้ ML Model ประเมิน', status: 'pending' },
-    { id: 3, label: 'รวบรวมผลและสร้างรายงาน', status: 'pending' },
-  ]);
-
   useEffect(() => {
-    const timers: NodeJS.Timeout[] = [];
-
-    timers.push(
-      setTimeout(() => {
-        setSteps(prev => prev.map(s => 
-          s.id === 1 ? { ...s, status: 'done' } : 
-          s.id === 2 ? { ...s, status: 'active' } : s
-        ));
-      }, 600)
-    );
-
-    timers.push(
-      setTimeout(() => {
-        setSteps(prev => prev.map(s => 
-          s.id === 2 ? { ...s, status: 'done' } : 
-          s.id === 3 ? { ...s, status: 'active' } : s
-        ));
-      }, 1500)
-    );
-
-    timers.push(
-      setTimeout(() => {
-        setSteps(prev => prev.map(s => 
-          s.id === 3 ? { ...s, status: 'done' } : s
-        ));
-      }, 2400)
-    );
-
-    timers.push(
-      setTimeout(() => {
+    setTimeout(() => {
         onComplete();
       }, 2800)
-    );
 
-    return () => timers.forEach(t => clearTimeout(t));
   }, [onComplete]);
 
   const getDotClass = (status: StepStatus) => {
@@ -92,16 +55,6 @@ export const LoadingView: React.FC<LoadingViewProps> = ({ url, model, onComplete
           ระบบกำลังดึง Feature และประเมินด้วย Machine Learning<br />
           กรุณารอสักครู่…
         </p>
-
-        <div className="flex flex-col gap-[10px] text-left">
-          {steps.map((step) => (
-            <div key={step.id} className="flex items-center gap-[10px] text-[13px] text-gray-primary-dark">
-              <div className={`w-2 h-2 rounded-full flex-shrink-0 transition-colors duration-300 ${getDotClass(step.status)}`} />
-              <span className="flex-1">{step.label}</span>
-              {step.status === 'done' && <span className="text-[14px]">✅</span>}
-            </div>
-          ))}
-        </div>
       </motion.div>
     </div>
   );

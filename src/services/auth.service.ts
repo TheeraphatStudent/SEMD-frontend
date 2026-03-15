@@ -1,134 +1,109 @@
-import { apiClient } from '@/lib/api-client';
-import { API_ENDPOINTS } from '@/constants/api-endpoints';
-import { APP_CONFIG } from '@/constants/config';
+import { api, tokenManager, saveUser, getUser, isAuthenticated } from '@/lib/api';
 import {
-  LoginRequest,
-  LoginResponse,
+  AuthLoginRequest,
   RegisterRequest,
+  TwoFAVerifyRequest,
+  TwoFAEnableRequest,
+  TokenPairResponse,
+  PreAuthResponse,
   RegisterResponse,
-  TwoFactorRequest,
-  TwoFactorResponse,
-  User,
-} from '@/types/auth.types';
+  TwoFASetupResponse,
+} from '@/services/generated/models';
+
+export interface LoginResult {
+  requiresTwoFactor: boolean;
+  accessToken?: string;
+  refreshToken?: string;
+  preAuthToken?: string;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  username: string;
+  role: string;
+  twoFactorEnabled?: boolean;
+}
+
+const isTokenPairResponse = (response: TokenPairResponse | PreAuthResponse): response is TokenPairResponse => {
+  return 'access_token' in response;
+};
 
 export const authService = {
-  async login(data: LoginRequest): Promise<LoginResponse> {
-    const response = await apiClient.post<LoginResponse>(
-      API_ENDPOINTS.AUTH.LOGIN,
-      data
-    );
-    
-    if (response.token && !response.requiresTwoFactor) {
-      apiClient.setToken(response.token);
-      apiClient.setRefreshToken(response.refreshToken);
-      this.saveUser(response.user);
+  async login(data: AuthLoginRequest): Promise<LoginResult> {
+    const response = await api.loginAuthLoginPost(data);
+    const result = response.data;
+
+    if (isTokenPairResponse(result)) {
+      tokenManager.setToken(result.access_token);
+      tokenManager.setRefreshToken(result.refresh_token);
+      return {
+        requiresTwoFactor: false,
+        accessToken: result.access_token,
+        refreshToken: result.refresh_token,
+      };
     }
-    
-    return response;
+
+    return {
+      requiresTwoFactor: true,
+      preAuthToken: result.pre_auth_token,
+    };
   },
-  
+
   async register(data: RegisterRequest): Promise<RegisterResponse> {
-    const response = await apiClient.post<RegisterResponse>(
-      API_ENDPOINTS.AUTH.REGISTER,
-      data
-    );
-    
-    if (response.token) {
-      apiClient.setToken(response.token);
-      apiClient.setRefreshToken(response.refreshToken);
-      this.saveUser(response.user);
-    }
-    
-    return response;
+    const response = await api.registerAuthRegisterPost(data);
+    return response.data;
   },
-  
-  async verifyTwoFactor(data: TwoFactorRequest): Promise<TwoFactorResponse> {
-    const response = await apiClient.post<TwoFactorResponse>(
-      API_ENDPOINTS.AUTH.VERIFY_2FA,
-      data
-    );
-    
-    if (response.token) {
-      apiClient.setToken(response.token);
-      apiClient.setRefreshToken(response.refreshToken);
-    }
-    
-    return response;
+
+  async verify2FA(data: TwoFAVerifyRequest): Promise<TokenPairResponse> {
+    const response = await api.login2faAuthLogin2faPost(data);
+    const result = response.data;
+
+    tokenManager.setToken(result.access_token);
+    tokenManager.setRefreshToken(result.refresh_token);
+
+    return result;
   },
-  
-  async enableTwoFactor(): Promise<{ qrCode: string; secret: string }> {
-    return await apiClient.post(API_ENDPOINTS.AUTH.ENABLE_2FA);
+
+  async setup2FA(): Promise<TwoFASetupResponse> {
+    const response = await api.setup2faAuth2faSetupPost();
+    return response.data;
   },
-  
+
+  async enable2FA(data: TwoFAEnableRequest): Promise<void> {
+    await api.enable2faAuth2faEnablePost(data);
+  },
+
   async logout(): Promise<void> {
     try {
-      await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
+      const refreshToken = tokenManager.getRefreshToken();
+      if (refreshToken) {
+        await api.logoutAuthLogoutPost({ refresh_token: refreshToken });
+      }
     } finally {
-      this.clearAuth();
+      tokenManager.clearAuth();
     }
   },
-  
-  async refreshToken(): Promise<{ token: string; refreshToken: string }> {
-    const refreshToken = this.getRefreshToken();
+
+  async refreshToken(): Promise<TokenPairResponse> {
+    const refreshToken = tokenManager.getRefreshToken();
     if (!refreshToken) {
       throw new Error('No refresh token available');
     }
-    
-    const response = await apiClient.post(API_ENDPOINTS.AUTH.REFRESH, {
-      refreshToken,
-    });
-    
-    if (response.token) {
-      apiClient.setToken(response.token);
-      apiClient.setRefreshToken(response.refreshToken);
-    }
-    
-    return response;
+
+    const response = await api.refreshAuthRefreshPost({ refresh_token: refreshToken });
+    const result = response.data;
+
+    tokenManager.setToken(result.access_token);
+    tokenManager.setRefreshToken(result.refresh_token);
+
+    return result;
   },
-  
-  saveUser(user: User): void {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem(APP_CONFIG.USER_KEY, JSON.stringify(user));
-  },
-  
-  getUser(): User | null {
-    if (typeof window === 'undefined') return null;
-    const userStr = localStorage.getItem(APP_CONFIG.USER_KEY);
-    return userStr ? JSON.parse(userStr) : null;
-  },
-  
-  getToken(): string | null {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem(APP_CONFIG.TOKEN_KEY);
-  },
-  
-  getRefreshToken(): string | null {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem(APP_CONFIG.REFRESH_TOKEN_KEY);
-  },
-  
-  clearAuth(): void {
-    if (typeof window === 'undefined') return;
-    localStorage.removeItem(APP_CONFIG.TOKEN_KEY);
-    localStorage.removeItem(APP_CONFIG.REFRESH_TOKEN_KEY);
-    localStorage.removeItem(APP_CONFIG.USER_KEY);
-  },
-  
-  isAuthenticated(): boolean {
-    return !!this.getToken();
-  },
-  
-  async verify2FA(email: string, code: string): Promise<TwoFactorResponse> {
-    const response = await this.verifyTwoFactor({ email, code });
-    
-    if (response.user) {
-      this.saveUser(response.user);
-    }
-    
-    return response;
-  },
-  
-  async enable2FA(code: string): Promise<void> {
-    await apiClient.post(API_ENDPOINTS.AUTH.VERIFY_2FA, { code });
-  },
+
+  saveUser,
+  getUser: getUser<User>,
+  getToken: tokenManager.getToken,
+  getRefreshToken: tokenManager.getRefreshToken,
+  clearAuth: tokenManager.clearAuth,
+  isAuthenticated,
 };

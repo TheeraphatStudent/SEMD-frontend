@@ -33,7 +33,6 @@ const userNavItems: NavItem[] = [
   { label: 'รายงาน URL', href: ROUTES.DASHBOARD.REPORT, icon: <FileText size={20} /> },
   { label: 'จัดการ Flag', href: ROUTES.DASHBOARD.FLAGS, icon: <Flag size={20} /> },
   { label: 'API Access', href: ROUTES.DASHBOARD.API_ACCESS, icon: <Key size={20} /> },
-  { label: 'API Code', href: ROUTES.DASHBOARD.API_CODE, icon: <Code size={20} /> },
   { label: 'โปรไฟล์', href: ROUTES.DASHBOARD.PROFILE, icon: <User size={20} /> },
 ];
 

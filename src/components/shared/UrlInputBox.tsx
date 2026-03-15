@@ -3,16 +3,37 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, FileText, HelpCircle, ArrowRight, X } from 'lucide-react';
-import { EvaluatorSelect } from './EvaluatorSelect';
-import { InputTypeSelect } from './InputTypeSelect';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { EvaluatorSelect } from '@/components/landing/EvaluatorSelect';
+import { InputTypeSelect } from '@/components/landing/InputTypeSelect';
 import { InputType, CheckInput } from '@/lib/types';
 import { inputTypeOptions } from '@/lib/mockData';
+import { alert } from '@/lib/alert';
 
-interface CheckerBoxProps {
-  onCheck: (input: CheckInput) => void;
+interface UrlInputBoxProps {
+  onCheck?: (input: CheckInput) => void;
+  variant?: 'landing' | 'dashboard';
+  className?: string;
+  autoFocus?: boolean;
 }
 
-export const CheckerBox: React.FC<CheckerBoxProps> = ({ onCheck }) => {
+const STORAGE_KEYS = {
+  PENDING_URL: 'semd_pending_url',
+  PENDING_FILE: 'semd_pending_file',
+  PENDING_INPUT_TYPE: 'semd_pending_input_type',
+  PENDING_EVALUATOR: 'semd_pending_evaluator',
+};
+
+export const UrlInputBox: React.FC<UrlInputBoxProps> = ({ 
+  onCheck, 
+  variant = 'landing',
+  className = '',
+  autoFocus = false
+}) => {
+  const { data: session } = useSession();
+  const router = useRouter();
+  
   const [evaluator, setEvaluator] = useState('semd-0.2');
   const [inputType, setInputType] = useState<InputType>('url');
   const [urlValue, setUrlValue] = useState('');
@@ -23,18 +44,81 @@ export const CheckerBox: React.FC<CheckerBoxProps> = ({ onCheck }) => {
 
   const currentOption = inputTypeOptions.find(opt => opt.value === inputType);
   const supportsFile = currentOption?.supportsFile ?? false;
+  const isLandingPage = variant === 'landing';
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const pendingUrl = localStorage.getItem(STORAGE_KEYS.PENDING_URL);
+      const pendingFile = localStorage.getItem(STORAGE_KEYS.PENDING_FILE);
+      const pendingInputType = localStorage.getItem(STORAGE_KEYS.PENDING_INPUT_TYPE) as InputType;
+      const pendingEvaluator = localStorage.getItem(STORAGE_KEYS.PENDING_EVALUATOR);
+
+      if (pendingUrl) {
+        setUrlValue(pendingUrl);
+        localStorage.removeItem(STORAGE_KEYS.PENDING_URL);
+      }
+      if (pendingFile) {
+        setTextValue(pendingFile);
+        localStorage.removeItem(STORAGE_KEYS.PENDING_FILE);
+      }
+      if (pendingInputType) {
+        setInputType(pendingInputType);
+        localStorage.removeItem(STORAGE_KEYS.PENDING_INPUT_TYPE);
+      }
+      if (pendingEvaluator) {
+        setEvaluator(pendingEvaluator);
+        localStorage.removeItem(STORAGE_KEYS.PENDING_EVALUATOR);
+      }
+
+      if (variant === 'dashboard' && (pendingUrl || pendingFile)) {
+        setTimeout(() => {
+          handleSubmit();
+        }, 1000);
+      }
+    }
+  }, [variant]);
+
+  const savePendingData = () => {
+    if (typeof window !== 'undefined') {
+      const value = inputType === 'url' ? urlValue.trim() : textValue.trim();
+      if (value) {
+        if (inputType === 'url') {
+          localStorage.setItem(STORAGE_KEYS.PENDING_URL, value);
+        } else {
+          localStorage.setItem(STORAGE_KEYS.PENDING_FILE, value);
+        }
+        localStorage.setItem(STORAGE_KEYS.PENDING_INPUT_TYPE, inputType);
+        localStorage.setItem(STORAGE_KEYS.PENDING_EVALUATOR, evaluator);
+      }
+    }
+  };
 
   const handleSubmit = () => {
     const value = inputType === 'url' ? urlValue.trim() : textValue.trim();
     if (!value) {
-      alert('กรุณาใส่ URL ก่อนครับ');
+      alert.warning('กรุณาใส่ข้อมูล', 'กรุณาใส่ URL หรือข้อมูลที่ต้องการตรวจสอบ');
       return;
     }
-    onCheck({
+
+    const checkInput: CheckInput = {
       url: value,
       evaluator,
       inputType,
-    });
+    };
+
+    if (isLandingPage) {
+      if (session) {
+        savePendingData();
+        router.push('/dashboard/scan');
+      } else {
+        savePendingData();
+        router.push('/login');
+      }
+    } else {
+      if (onCheck) {
+        onCheck(checkInput);
+      }
+    }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,12 +155,16 @@ export const CheckerBox: React.FC<CheckerBoxProps> = ({ onCheck }) => {
     }
   };
 
+  const motionProps = isLandingPage ? {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.65, delay: 0.24 }
+  } : {};
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.65, delay: 0.24 }}
-      className="w-full max-w-[680px]"
+      {...motionProps}
+      className={`w-full ${className}`}
     >
       <div className="flex items-center gap-2 mb-3">
         <EvaluatorSelect value={evaluator} onChange={setEvaluator} />
@@ -93,6 +181,7 @@ export const CheckerBox: React.FC<CheckerBoxProps> = ({ onCheck }) => {
                 onChange={(e) => setUrlValue(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
                 placeholder={getPlaceholder()}
+                autoFocus={autoFocus}
                 className="w-full border-none outline-none font-mono text-[13px] text-dark bg-transparent px-[10px] py-2"
               />
             ) : (

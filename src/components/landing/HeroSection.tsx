@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ROUTES } from '@/constants/routes';
 import { Badge, Button, Text, Heading, Pulse } from '@/components/ui';
-import { CheckerBox } from './CheckerBox';
+import { UrlInputBox } from '@/components/shared/UrlInputBox';
 import { CheckInput } from '@/lib/types';
 import { BadgeVariant } from '@/types/badge.types';
 
@@ -73,7 +73,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCheck }) => {
         ระบบวิเคราะห์ URL ต้องสงสัยด้วย Machine Learning ตรวจจับเว็บไซต์อันตราย ได้แม่นยำ รวดเร็ว ใช้งานง่าย
       </Text>
 
-      <CheckerBox onCheck={handleCheck} />
+      <div className='flex w-full max-w-[640px]'>
+        <UrlInputBox variant="landing" />
+      </div>
 
       {/* <motion.div
         initial={{ opacity: 0, y: 20 }}

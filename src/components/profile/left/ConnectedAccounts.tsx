@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { UserConnections } from '@/lib/profileMock';
 
@@ -44,27 +45,47 @@ export const ConnectedAccounts: React.FC<ConnectedAccountsProps> = ({
   };
 
   return (
-    <div className={cn('bg-white rounded-2xl border border-gray-primary p-4', className)}>
-      <h3 className="text-xs font-bold text-gray-primary-dark uppercase tracking-wider mb-3">
+    <motion.div 
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.4, delay: 0.2 }}
+      className={cn('bg-white rounded-2xl border border-gray-primary p-4', className)}
+    >
+      <motion.h3 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4 }}
+        className="text-xs font-bold text-gray-primary-dark uppercase tracking-wider mb-3"
+      >
         บัญชีที่เชื่อมต่อ
-      </h3>
+      </motion.h3>
       
       <div className="space-y-2">
-        {services.map((service) => {
+        {services.map((service, index) => {
           const isConnected = connections[service.key];
           
           return (
-            <div
+            <motion.div
               key={service.key}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.5 + index * 0.1 }}
               className="flex items-center justify-between py-2"
             >
               <div className="flex items-center gap-2">
-                <IconBox className={service.iconClass}>{service.icon}</IconBox>
+                <motion.div
+                  whileHover={{ rotate: 360 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <IconBox className={service.iconClass}>{service.icon}</IconBox>
+                </motion.div>
                 <span className="text-sm font-medium text-dark">{service.name}</span>
               </div>
               
-              <button
+              <motion.button
                 onClick={() => toggleConnection(service.key)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 className={cn(
                   'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold border transition-colors',
                   isConnected
@@ -72,14 +93,25 @@ export const ConnectedAccounts: React.FC<ConnectedAccountsProps> = ({
                     : 'bg-white text-gray-primary-dark border-gray-primary hover:bg-gray-primary-light'
                 )}
               >
-                {isConnected && <IconBox className="w-4 h-4 text-[8px] bg-safe text-white rounded">OK</IconBox>}
+                <AnimatePresence mode="wait">
+                  {isConnected && (
+                    <motion.div
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      exit={{ scale: 0, rotate: 180 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <IconBox className="w-4 h-4 text-[8px] bg-safe text-white rounded">OK</IconBox>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
                 {isConnected ? 'เชื่อมแล้ว' : '+ เชื่อมต่อ'}
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
           );
         })}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

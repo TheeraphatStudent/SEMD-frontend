@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
 
@@ -52,18 +53,36 @@ export const DangerZoneCard: React.FC<DangerZoneCardProps> = ({ className }) => 
   ];
 
   return (
-    <div className={cn('border-2 border-accent-light-red rounded-2xl p-5', className)}>
-      <div className="flex items-center gap-2 mb-4">
-        <IconBox className="bg-accent-light-red text-danger">!</IconBox>
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, delay: 0.4 }}
+      className={cn('border-2 border-accent-light-red rounded-2xl p-5', className)}
+    >
+      <motion.div 
+        initial={{ x: -20, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="flex items-center gap-2 mb-4"
+      >
+        <motion.div
+          animate={{ rotate: [0, -10, 10, -10, 0] }}
+          transition={{ duration: 0.5, delay: 0.6, repeat: 3 }}
+        >
+          <IconBox className="bg-accent-light-red text-danger">!</IconBox>
+        </motion.div>
         <span className="text-danger font-extrabold text-xs tracking-wide uppercase">
           Danger Zone
         </span>
-      </div>
+      </motion.div>
       
       <div className="space-y-0">
         {actions.map((action, index) => (
-          <div
+          <motion.div
             key={index}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.6 + index * 0.1 }}
             className={cn(
               'flex items-center justify-between py-3',
               index < actions.length - 1 && 'border-b border-gray-primary'
@@ -77,16 +96,18 @@ export const DangerZoneCard: React.FC<DangerZoneCardProps> = ({ className }) => 
               </div>
             </div>
             
-            <button
+            <motion.button
               onClick={action.onClick}
-              className="px-3 py-1.5 rounded-lg bg-accent-light-red text-danger text-[11px] font-semibold hover:bg-danger hover:text-white transition-colors shrink-0"
+              whileHover={{ scale: 1.05, backgroundColor: '#FF696C', color: '#FFFFFF' }}
+              whileTap={{ scale: 0.95 }}
+              className="px-3 py-1.5 rounded-lg bg-accent-light-red text-danger text-[11px] font-semibold transition-colors shrink-0"
             >
               {action.buttonText}
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

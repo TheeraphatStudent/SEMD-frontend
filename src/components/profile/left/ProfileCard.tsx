@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 interface ProfileCardProps {
@@ -26,7 +27,12 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
   className,
 }) => {
   return (
-    <div className={cn('bg-white rounded-2xl border border-gray-primary overflow-hidden shadow-xl', className)}>
+    <motion.div 
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
+      className={cn('bg-white rounded-2xl border border-gray-primary overflow-hidden shadow-xl', className)}
+    >
       <div className="relative bg-gradient-to-br from-primary-light via-primary/30 to-primary p-5 pb-6">
         <div 
           className="absolute inset-0 opacity-10"
@@ -62,18 +68,31 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
         </div>
       </div>
       
-      <div className="p-3.5 flex flex-col gap-2">
-        <button className="w-full flex items-center justify-center gap-2 bg-dark text-primary rounded-xl py-2.5 px-4 font-semibold text-sm hover:opacity-90 transition-opacity">
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.3 }}
+        className="p-3.5 flex flex-col gap-2"
+      >
+        <motion.button 
+          whileHover={{ scale: 1.02, y: -2 }}
+          whileTap={{ scale: 0.98 }}
+          className="w-full flex items-center justify-center gap-2 bg-dark text-primary rounded-xl py-2.5 px-4 font-semibold text-sm hover:opacity-90 transition-opacity"
+        >
           <IconBox className="bg-primary text-dark">EDIT</IconBox>
           แก้ไขรูปโปรไฟล์
-        </button>
+        </motion.button>
         
-        <button className="w-full flex items-center justify-center gap-2 bg-white text-danger border-[1.5px] border-accent-light-red rounded-xl py-2.5 px-4 font-semibold text-sm hover:bg-accent-light-red transition-colors">
+        <motion.button 
+          whileHover={{ scale: 1.02, y: -2 }}
+          whileTap={{ scale: 0.98 }}
+          className="w-full flex items-center justify-center gap-2 bg-white text-danger border-[1.5px] border-accent-light-red rounded-xl py-2.5 px-4 font-semibold text-sm hover:bg-accent-light-red transition-colors"
+        >
           <IconBox className="bg-accent-light-red text-danger">KEY</IconBox>
           เปลี่ยนรหัสผ่าน
-        </button>
-      </div>
-    </div>
+        </motion.button>
+      </motion.div>
+    </motion.div>
   );
 };
 

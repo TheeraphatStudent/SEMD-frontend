@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
 import { toast } from '@/hooks/use-toast';
@@ -54,7 +55,12 @@ export const PersonalInfoCard: React.FC<PersonalInfoCardProps> = ({ className })
   );
 
   return (
-    <Card variant="elevated" animated={false} className={cn('p-5', className)}>
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.5, delay: 0.2 }}
+    >
+      <Card variant="elevated" animated={false} className={cn('p-5', className)}>
       <CardHeader className="mb-4">
         <CardTitle className="text-base">ข้อมูลส่วนตัว</CardTitle>
       </CardHeader>
@@ -126,23 +132,33 @@ export const PersonalInfoCard: React.FC<PersonalInfoCardProps> = ({ className })
           </div>
         </div>
         
-        <div className="flex justify-end gap-2 mt-5">
-          <button
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="flex justify-end gap-2 mt-5"
+        >
+          <motion.button
             onClick={handleCancel}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             className="px-4 py-2 rounded-xl bg-gray-primary-light text-gray-primary-dark text-sm font-semibold hover:bg-gray-primary transition-colors"
           >
             ยกเลิก
-          </button>
-          <button
+          </motion.button>
+          <motion.button
             onClick={handleSave}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-dark text-primary text-sm font-semibold hover:opacity-90 transition-opacity"
           >
             <IconBox className="w-5 h-5 text-[8px] bg-primary text-dark">OK</IconBox>
             บันทึก
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
       </CardContent>
     </Card>
+    </motion.div>
   );
 };
 

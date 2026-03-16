@@ -1,10 +1,14 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Kanit, Krub, Mali,  } from 'next/font/google'
 import './globals.css'
 import { ToastContainer } from '@/components/ui'
 import { AuthProvider } from '@/components/providers/AuthProvider'
 
-const inter = Inter({ subsets: ['latin'] })
+const kanit = Kanit({ 
+  subsets: ['thai'],
+  weight: ['200', '300', '400', '500', '600'],
+  variable: '--font-kanit',
+})
 
 export const metadata: Metadata = {
   title: 'SEMD - Security Email & Malicious URL Detection',
@@ -17,8 +21,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="th">
-      <body className={inter.className}>
+    <html lang="th" className={`${kanit.variable}`}>
+      <body>
         <AuthProvider>
           {children}
         </AuthProvider>

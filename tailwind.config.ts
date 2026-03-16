@@ -9,8 +9,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        display: ['Outfit', 'sans-serif'],
-        body: ['Sarabun', 'sans-serif'],
+        kanit: ['var(--font-kanit)', 'sans-serif'],
+        mali: ['var(--font-mali)', 'sans-serif'],
       },
       colors: {
         amber: {

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
 
@@ -25,7 +26,12 @@ export const AccountInfoCard: React.FC<AccountInfoCardProps> = ({
   className,
 }) => {
   return (
-    <Card variant="elevated" animated={false} className={cn('p-5', className)}>
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.5, delay: 0.1 }}
+    >
+      <Card variant="elevated" animated={false} className={cn('p-5', className)}>
       <CardHeader className="mb-4">
         <CardTitle className="text-base">ข้อมูลบัญชี</CardTitle>
       </CardHeader>
@@ -79,6 +85,7 @@ export const AccountInfoCard: React.FC<AccountInfoCardProps> = ({
         </div>
       </CardContent>
     </Card>
+    </motion.div>
   );
 };
 

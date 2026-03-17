@@ -6,8 +6,8 @@ import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
 import { toast } from '@/hooks/use-toast';
 import { ROUTES } from '@/constants/routes';
-import { validators } from '@/lib/validators';
-import { Input, Button } from '@/components/ui';
+import { validators } from '@/libs/utils/validators';
+import { Input, Button, PasswordInput } from '@/components/ui';
 import { RecaptchaV3 } from '@/components/RecaptchaV3';
 import {
   AuthBackground,
@@ -19,7 +19,7 @@ import {
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { register, isLoading } = useAuth();
+  const { registerAndSetup2FA, isLoading } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     username: '',
@@ -70,16 +70,16 @@ export default function RegisterPage() {
     }
 
     try {
-      await register({
+      const setupData = await registerAndSetup2FA({
         username: formData.username,
         email: formData.email,
         full_name: formData.full_name,
         password: formData.password,
       });
       toast.success('ลงทะเบียนสำเร็จ! กรุณาตั้งค่า 2FA');
-      router.push(`/two-factor-setup?email=${encodeURIComponent(formData.email)}`);
+      router.push(`/two-factor-setup?secret=${encodeURIComponent(setupData.secret)}&qr=${encodeURIComponent(setupData.qrUri)}`);
     } catch (error: any) {
-      toast.error(error.message || 'ลงทะเบียนไม่สำเร็จ');
+      // Error is handled by useAuth hook
     }
   };
 
@@ -175,9 +175,8 @@ export default function RegisterPage() {
               required
             />
 
-            <Input
+            <PasswordInput
               label="รหัสผ่าน"
-              type="password"
               placeholder="ระบุรหัสผ่าน"
               value={formData.password}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, password: e.target.value })}
@@ -185,9 +184,8 @@ export default function RegisterPage() {
               required
             />
 
-            <Input
+            <PasswordInput
               label="ยืนยันรหัสผ่าน"
-              type="password"
               placeholder="ระบุรหัสผ่านอีกครั้ง"
               value={formData.confirmPassword}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, confirmPassword: e.target.value })}

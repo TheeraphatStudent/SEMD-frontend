@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import { fadeInUp } from '@/lib/motion-variants';
+import { cn } from '@/libs/utils/utils';
+import { fadeInUp } from '@/libs/utils/motion-variants';
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'elevated' | 'outlined';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { fadeIn } from '@/lib/motion-variants';
+import { fadeIn } from '@/libs/utils/motion-variants';
 
 export interface AnimatedPageProps {
   children: React.ReactNode;

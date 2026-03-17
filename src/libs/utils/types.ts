@@ -20,16 +20,6 @@ export interface CheckResult {
   timestamp: Date;
 }
 
-export interface URLRow {
-  id: number;
-  url: string;
-  date: string;
-  type: ThreatType;
-  verdict: Verdict;
-  conf: number;
-  reporter: string;
-}
-
 export interface EvaluatorOption {
   label: string;
   tag?: string;

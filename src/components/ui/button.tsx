@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import { tapScale, springTransition } from '@/lib/motion-variants';
+import { cn } from '@/libs/utils/utils';
+import { tapScale, springTransition } from '@/libs/utils/motion-variants';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';

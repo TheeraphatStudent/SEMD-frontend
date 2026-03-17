@@ -2,7 +2,7 @@
 
 import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { cn } from '@/libs/utils/utils';
 import { Badge } from './badge';
 import { Badge as BadgeComponent } from './badge';
 import { Heading } from './heading';

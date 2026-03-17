@@ -1,14 +1,18 @@
-import { api, tokenManager, saveUser, getUser, isAuthenticated } from '@/lib/api';
-import {
+import * as getSemdApi from '@/services/generated/semdApi';
+import { axiosInstance, tokenManager } from '@/libs/utils/axios-instance';
+import { APP_CONFIG } from '@/constants/config';
+import type {
   AuthLoginRequest,
   RegisterRequest,
   TwoFAVerifyRequest,
   TwoFAEnableRequest,
   TokenPairResponse,
-  PreAuthResponse,
-  RegisterResponse,
+  UserModel,
   TwoFASetupResponse,
+  AccessKeyResponse,
 } from '@/services/generated/models';
+
+const api = getSemdApi;
 
 export interface LoginResult {
   requiresTwoFactor: boolean;
@@ -17,22 +21,13 @@ export interface LoginResult {
   preAuthToken?: string;
 }
 
-export interface User {
-  id: string;
-  email: string;
-  username: string;
-  role: string;
-  twoFactorEnabled?: boolean;
-}
-
-const isTokenPairResponse = (response: TokenPairResponse | PreAuthResponse): response is TokenPairResponse => {
+const isTokenPairResponse = (response: any): response is TokenPairResponse => {
   return 'access_token' in response;
 };
 
 export const authService = {
   async login(data: AuthLoginRequest): Promise<LoginResult> {
-    const response = await api.loginAuthLoginPost(data);
-    const result = response.data;
+    const result = await api.loginAuthLoginPost(data);
 
     if (isTokenPairResponse(result)) {
       tokenManager.setToken(result.access_token);
@@ -46,18 +41,16 @@ export const authService = {
 
     return {
       requiresTwoFactor: true,
-      preAuthToken: result.pre_auth_token,
+      preAuthToken: (result as any).pre_auth_token,
     };
   },
 
-  async register(data: RegisterRequest): Promise<RegisterResponse> {
-    const response = await api.registerAuthRegisterPost(data);
-    return response.data;
+  async register(data: RegisterRequest): Promise<void> {
+    await api.registerAuthRegisterPost(data);
   },
 
   async verify2FA(data: TwoFAVerifyRequest): Promise<TokenPairResponse> {
-    const response = await api.login2faAuthLogin2faPost(data);
-    const result = response.data;
+    const result = await api.login2faAuthLogin2faPost(data);
 
     tokenManager.setToken(result.access_token);
     tokenManager.setRefreshToken(result.refresh_token);
@@ -66,8 +59,8 @@ export const authService = {
   },
 
   async setup2FA(): Promise<TwoFASetupResponse> {
-    const response = await api.setup2faAuth2faSetupPost();
-    return response.data;
+    const result = await api.setup2faAuth2faSetupPost();
+    return result;
   },
 
   async enable2FA(data: TwoFAEnableRequest): Promise<void> {
@@ -91,8 +84,7 @@ export const authService = {
       throw new Error('No refresh token available');
     }
 
-    const response = await api.refreshAuthRefreshPost({ refresh_token: refreshToken });
-    const result = response.data;
+    const result = await api.refreshAuthRefreshPost({ refresh_token: refreshToken });
 
     tokenManager.setToken(result.access_token);
     tokenManager.setRefreshToken(result.refresh_token);
@@ -100,10 +92,48 @@ export const authService = {
     return result;
   },
 
-  saveUser,
-  getUser: getUser<User>,
+  async getMe(): Promise<UserModel> {
+    const result = await api.getMeAuthMeGet();
+    return result;
+  },
+
+  async updateMe(data: any): Promise<UserModel> {
+    const result = await api.updateMeAuthMePut(data);
+    return result;
+  },
+
+  async createExtensionToken(): Promise<AccessKeyResponse> {
+    const result = await api.createExtensionTokenSettingAccessKeyExtensionTokenPost();
+    return result
+  },
+
+  async getOAuthAuthorizeUrl(provider: 'google' | 'github'): Promise<string> {
+    const result = await api.oauthAuthorizeAuthOauthAuthorizePost({ provider });
+    return result.authorization_url;
+  },
+
+  saveUser: (user: UserModel): void => {
+    if (typeof window === 'undefined') return;
+    const userStr = JSON.stringify(user);
+    localStorage.setItem(APP_CONFIG.USER_KEY, userStr);
+
+    const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString();
+    document.cookie = `${APP_CONFIG.USER_KEY}=${encodeURIComponent(userStr)}; expires=${expires}; path=/; SameSite=Lax`;
+  },
+
+  getUser: (): UserModel | null => {
+    if (typeof window === 'undefined') return null;
+    const userStr = localStorage.getItem(APP_CONFIG.USER_KEY);
+    return userStr ? JSON.parse(userStr) : null;
+  },
+
   getToken: tokenManager.getToken,
   getRefreshToken: tokenManager.getRefreshToken,
   clearAuth: tokenManager.clearAuth,
-  isAuthenticated,
+  
+  isAuthenticated: (): boolean => {
+    return !!tokenManager.getToken();
+  },
 };
+
+export type { UserModel };

@@ -2,12 +2,13 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { cn } from '@/libs/utils/utils';
 
 interface ProfileCardProps {
   username: string;
   email: string;
   role: string;
+  profileImgUri?: string;
   className?: string;
 }
 
@@ -24,6 +25,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
   username,
   email,
   role,
+  profileImgUri,
   className,
 }) => {
   return (
@@ -50,10 +52,18 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
               animationDuration: '6000ms',
             }}
           >
-            <div className="w-full h-full rounded-full bg-gray-primary-light flex items-center justify-center relative">
-              <span className="text-4xl font-black text-primary-dark select-none">
-                {username[0]?.toUpperCase() || 'U'}
-              </span>
+            <div className="w-full h-full rounded-full bg-gray-primary-light flex items-center justify-center relative overflow-hidden">
+              {profileImgUri ? (
+                <img 
+                  src={profileImgUri} 
+                  alt={username} 
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-4xl font-black text-primary-dark select-none">
+                  {username[0]?.toUpperCase() || 'U'}
+                </span>
+              )}
               <div className="absolute bottom-0.5 right-0.5 w-3.5 h-3.5 bg-safe rounded-full border-2 border-white" />
             </div>
           </div>

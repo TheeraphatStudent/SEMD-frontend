@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { ROUTES } from '@/constants/routes';
 import { Badge, Button, Text, Heading, Pulse } from '@/components/ui';
 import { UrlInputBox } from '@/components/shared/UrlInputBox';
-import { CheckInput } from '@/lib/types';
+import { CheckInput } from '@/libs/utils/types';
 import { BadgeVariant } from '@/types/badge.types';
 
 const LiveDot: React.FC = () => (

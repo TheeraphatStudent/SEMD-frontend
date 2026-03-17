@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { cn } from '@/libs/utils/utils';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
 
 interface AccountInfoCardProps {

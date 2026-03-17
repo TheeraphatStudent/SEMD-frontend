@@ -1,4 +1,5 @@
-import { URLRow, EvaluatorOption, InputTypeOption } from './types';
+import { URLRow } from './row';
+import { EvaluatorOption, InputTypeOption } from './types';
 
 export const  mockRows: URLRow[] = [
   { id: 1, url: 'https://www.google.com', date: '28 Feb 2026', type: 'Legitimate', verdict: 'Benign', conf: 98, reporter: 'john_doe' },

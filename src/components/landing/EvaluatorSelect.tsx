@@ -3,8 +3,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, Fish, Warehouse, ShieldCheck, Search, ChevronDown } from 'lucide-react';
-import { evaluatorOptions } from '@/lib/mockData';
-import { EvaluatorOption } from '@/lib/types';
+import { evaluatorOptions } from '@/libs/utils/mockData';
+import { EvaluatorOption } from '@/libs/utils/types';
 
 const iconMap: Record<string, React.ReactNode> = {
   'bot': <Bot size={14} />,

@@ -3,8 +3,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, FileSpreadsheet, FileText, ChevronDown } from 'lucide-react';
-import { inputTypeOptions } from '@/lib/mockData';
-import { InputType, InputTypeOption } from '@/lib/types';
+import { inputTypeOptions } from '@/libs/utils/mockData';
+import { InputType, InputTypeOption } from '@/libs/utils/types';
 
 const iconMap: Record<string, React.ReactNode> = {
   'link': <Link size={14} />,

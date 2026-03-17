@@ -50,3 +50,12 @@ export type { OTPInputProps } from './otp-input';
 
 export { DataTable } from './DataTable';
 export type { DataTableProps, DataTableColumn, DataTableFilter } from './DataTable';
+
+export { PasswordInput } from './password-input';
+export type { PasswordInputProps } from './password-input';
+
+export { QRCode } from './qr-code';
+export type { QRCodeProps } from './qr-code';
+
+export { ExtensionModal } from './ExtensionModal';
+export type { ExtensionStatus } from './ExtensionModal';

@@ -1,28 +1,21 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { cn } from '@/libs/utils/utils';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
 import { toast } from '@/hooks/use-toast';
 
 interface PersonalInfoCardProps {
+  fullName?: string;
+  birthday?: string;
   className?: string;
 }
 
 interface FormData {
-  firstName: string;
-  lastName: string;
+  fullName: string;
   birthday: string;
-  gender: string;
 }
-
-const initialForm: FormData = {
-  firstName: '',
-  lastName: '',
-  birthday: '',
-  gender: '',
-};
 
 const IconBox: React.FC<{ children: string; className?: string }> = ({ children, className }) => (
   <span className={cn(
@@ -33,15 +26,32 @@ const IconBox: React.FC<{ children: string; className?: string }> = ({ children,
   </span>
 );
 
-export const PersonalInfoCard: React.FC<PersonalInfoCardProps> = ({ className }) => {
-  const [form, setForm] = useState<FormData>(initialForm);
+export const PersonalInfoCard: React.FC<PersonalInfoCardProps> = ({ 
+  fullName = '',
+  birthday = '',
+  className 
+}) => {
+  const [form, setForm] = useState<FormData>({
+    fullName,
+    birthday,
+  });
+
+  useEffect(() => {
+    setForm({
+      fullName: fullName || '',
+      birthday: birthday || '',
+    });
+  }, [fullName, birthday]);
 
   const handleChange = (field: keyof FormData, value: string) => {
     setForm(prev => ({ ...prev, [field]: value }));
   };
 
   const handleCancel = () => {
-    setForm(initialForm);
+    setForm({
+      fullName: fullName || '',
+      birthday: birthday || '',
+    });
   };
 
   const handleSave = () => {
@@ -67,33 +77,20 @@ export const PersonalInfoCard: React.FC<PersonalInfoCardProps> = ({ className })
       
       <CardContent>
         <div className="grid grid-cols-2 gap-4">
-          <div>
+          <div className="col-span-2">
             <label className="block text-[11px] font-bold text-gray-primary-dark uppercase tracking-wider mb-1.5">
-              ชื่อ
+              ชื่อ-นามสกุล
             </label>
             <input
               type="text"
-              value={form.firstName}
-              onChange={(e) => handleChange('firstName', e.target.value)}
-              placeholder="ระบุชื่อ"
+              value={form.fullName}
+              onChange={(e) => handleChange('fullName', e.target.value)}
+              placeholder="ระบุชื่อ-นามสกุล"
               className={inputClass}
             />
           </div>
           
-          <div>
-            <label className="block text-[11px] font-bold text-gray-primary-dark uppercase tracking-wider mb-1.5">
-              นามสกุล
-            </label>
-            <input
-              type="text"
-              value={form.lastName}
-              onChange={(e) => handleChange('lastName', e.target.value)}
-              placeholder="ระบุนามสกุล"
-              className={inputClass}
-            />
-          </div>
-          
-          <div>
+          <div className="col-span-2">
             <label className="block text-[11px] font-bold text-gray-primary-dark uppercase tracking-wider mb-1.5">
               วันเกิด
             </label>
@@ -106,27 +103,6 @@ export const PersonalInfoCard: React.FC<PersonalInfoCardProps> = ({ className })
               />
               <div className="absolute left-2.5 top-1/2 -translate-y-1/2">
                 <IconBox className="w-5 h-5 text-[8px]">CAL</IconBox>
-              </div>
-            </div>
-          </div>
-          
-          <div>
-            <label className="block text-[11px] font-bold text-gray-primary-dark uppercase tracking-wider mb-1.5">
-              เพศ
-            </label>
-            <div className="relative">
-              <select
-                value={form.gender}
-                onChange={(e) => handleChange('gender', e.target.value)}
-                className={cn(inputClass, 'appearance-none pr-10 cursor-pointer')}
-              >
-                <option value="">เลือกเพศ</option>
-                <option value="male">ชาย</option>
-                <option value="female">หญิง</option>
-                <option value="unspecified">ไม่ระบุ</option>
-              </select>
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                <span className="text-gray-primary-dark text-xs">▼</span>
               </div>
             </div>
           </div>

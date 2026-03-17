@@ -1,6 +1,6 @@
 import React from 'react';
 import { LucideIcon, LucideProps } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/libs/utils/utils';
 
 export interface IconProps extends Omit<LucideProps, 'ref'> {
   icon: LucideIcon;

@@ -1,0 +1,153 @@
+
+> semd-frontend@0.1.0 dev
+> cp .env.example .env.local 2>/dev/null || echo '⚠️  Warning: .env.example not found or .env.local already exists' && echo '🚀 Starting SEMD development server...' && next dev
+
+🚀 Starting SEMD development server...
+   ▲ Next.js 14.0.0
+   - Local:        http://localhost:3000
+   - Environments: .env.local
+
+ ✓ Ready in 1499ms
+ ✓ Compiled /src/middleware in 189ms (59 modules)
+ ○ Compiling /(dashboard)/dashboard/page ...
+ ✓ Compiled /(dashboard)/dashboard/page in 5.5s (7299 modules)
+ ✓ Compiled in 463ms (2529 modules)
+ ○ Compiling /api/auth/[...nextauth]/route ...
+ ✓ Compiled /api/auth/[...nextauth]/route in 1333ms (7530 modules)
+   Reload env: .env.local
+ ✓ Compiled in 560ms (7589 modules)
+ ✓ Compiled in 208ms (5015 modules)
+ ○ Compiling /(dashboard)/profile/page ...
+ ✓ Compiled /(dashboard)/profile/page in 1122ms (7554 modules)
+ ✓ Compiled in 1646ms (7300 modules)
+ ✓ Compiled in 375ms (7300 modules)
+ ✓ Compiled in 385ms (7300 modules)
+ ✓ Compiled in 538ms (7300 modules)
+ ✓ Compiled in 313ms (7300 modules)
+ ✓ Compiled in 299ms (7300 modules)
+   Reload env: .env.local
+ ✓ Compiled in 3s (7359 modules)
+ ✓ Compiled /not-found in 310ms (7305 modules)
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 818ms (7463 modules)
+ ⨯ ./src/services/generated/semdApi.ts
+Error: Failed to read source code from /home/semd/Desktop/SEMD-frontend/src/services/generated/semdApi.ts
+
+Caused by:
+    No such file or directory (os error 2)
+
+Import trace for requested module:
+./src/services/generated/semdApi.ts
+./src/lib/api.ts
+./src/services/auth.service.ts
+./src/hooks/use-auth.ts
+./src/components/layout/sidebar.tsx
+ ⨯ ./src/services/generated/semdApi.ts
+Error: Failed to read source code from /home/semd/Desktop/SEMD-frontend/src/services/generated/semdApi.ts
+
+Caused by:
+    No such file or directory (os error 2)
+
+Import trace for requested module:
+./src/services/generated/semdApi.ts
+./src/lib/api.ts
+./src/services/auth.service.ts
+./src/hooks/use-auth.ts
+./src/components/layout/sidebar.tsx
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/home/semd/Desktop/SEMD-frontend/.next/server/vendor-chunks/lucide-react.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/lucide-react' in /home/semd/Desktop/SEMD-frontend/.next/server for build dependencies doesn't lead to expected result '/home/semd/Desktop/SEMD-frontend/.next/server/vendor-chunks/lucide-react.js', but to 'Error: Can't resolve './vendor-chunks/lucide-react' in '/home/semd/Desktop/SEMD-frontend/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/lucide-react (expected /home/semd/Desktop/SEMD-frontend/.next/server/vendor-chunks/lucide-react.js)
+<w>  at file dependencies /home/semd/Desktop/SEMD-frontend/.next/server/webpack-runtime.js
+<w>  at file /home/semd/Desktop/SEMD-frontend/.next/server/webpack-runtime.js
+<w>  at file dependencies /home/semd/Desktop/SEMD-frontend/.next/server/pages/_error.js
+<w>  at file /home/semd/Desktop/SEMD-frontend/.next/server/pages/_error.js
+<w>  at file dependencies /home/semd/Desktop/SEMD-frontend/node_modules/next/dist/server/require.js
+<w>  at file /home/semd/Desktop/SEMD-frontend/node_modules/next/dist/server/require.js
+<w>  at file dependencies /home/semd/Desktop/SEMD-frontend/node_modules/next/dist/server/load-components.js
+<w>  at file /home/semd/Desktop/SEMD-frontend/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /home/semd/Desktop/SEMD-frontend/node_modules/next/dist/build/utils.js
+<w>  at file /home/semd/Desktop/SEMD-frontend/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /home/semd/Desktop/SEMD-frontend/node_modules/next/dist/build/worker.js
+<w>  at file /home/semd/Desktop/SEMD-frontend/node_modules/next/dist/build/worker.js
+<w>  at file dependencies /home/semd/Desktop/SEMD-frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /home/semd/Desktop/SEMD-frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /home/semd/Desktop/SEMD-frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/tailwind-merge' in /home/semd/Desktop/SEMD-frontend/.next/server for build dependencies doesn't lead to expected result '/home/semd/Desktop/SEMD-frontend/.next/server/vendor-chunks/tailwind-merge.js', but to 'Error: Can't resolve './vendor-chunks/tailwind-merge' in '/home/semd/Desktop/SEMD-frontend/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/tailwind-merge (expected /home/semd/Desktop/SEMD-frontend/.next/server/vendor-chunks/tailwind-merge.js)
+<w>  at file dependencies /home/semd/Desktop/SEMD-frontend/.next/server/webpack-runtime.js
+<w>  at file /home/semd/Desktop/SEMD-frontend/.next/server/webpack-runtime.js
+<w>  at file dependencies /home/semd/Desktop/SEMD-frontend/.next/server/pages/_error.js
+<w>  at file /home/semd/Desktop/SEMD-frontend/.next/server/pages/_error.js
+<w>  at file dependencies /home/semd/Desktop/SEMD-frontend/node_modules/next/dist/server/require.js
+<w>  at file /home/semd/Desktop/SEMD-frontend/node_modules/next/dist/server/require.js
+<w>  at file dependencies /home/semd/Desktop/SEMD-frontend/node_modules/next/dist/server/load-components.js
+<w>  at file /home/semd/Desktop/SEMD-frontend/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /home/semd/Desktop/SEMD-frontend/node_modules/next/dist/build/utils.js
+<w>  at file /home/semd/Desktop/SEMD-frontend/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /home/semd/Desktop/SEMD-frontend/node_modules/next/dist/build/worker.js
+<w>  at file /home/semd/Desktop/SEMD-frontend/node_modules/next/dist/build/worker.js
+<w>  at file dependencies /home/semd/Desktop/SEMD-frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /home/semd/Desktop/SEMD-frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /home/semd/Desktop/SEMD-frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+ ✓ Compiled in 1515ms (7456 modules)
+ ⨯ ./src/services/auth.service.ts
+Error: Failed to read source code from /home/semd/Desktop/SEMD-frontend/src/services/auth.service.ts
+
+Caused by:
+    No such file or directory (os error 2)
+
+Import trace for requested module:
+./src/services/auth.service.ts
+./src/hooks/use-auth.ts
+./src/components/layout/sidebar.tsx
+ ⨯ ./src/services/auth.service.ts
+Error: Failed to read source code from /home/semd/Desktop/SEMD-frontend/src/services/auth.service.ts
+
+Caused by:
+    No such file or directory (os error 2)
+
+Import trace for requested module:
+./src/services/auth.service.ts
+./src/hooks/use-auth.ts
+./src/components/layout/sidebar.tsx
+ ✓ Compiled in 537ms (7271 modules)
+ ✓ Compiled in 1606ms (7454 modules)
+ ✓ Compiled in 538ms (7454 modules)
+ ✓ Compiled in 735ms (7468 modules)
+ ○ Compiling /not-found ...
+ ✓ Compiled /not-found in 618ms (7459 modules)
+ ✓ Compiled /_error in 303ms (7461 modules)
+ ✓ Compiled /favicon.ico/route in 229ms (4839 modules)
+ ✓ Compiled in 440ms (7503 modules)
+ ✓ Compiled in 427ms (7503 modules)
+ ✓ Compiled in 413ms (7503 modules)
+ ✓ Compiled in 629ms (7503 modules)
+ ✓ Compiled in 414ms (7503 modules)
+ ✓ Compiled in 583ms (7503 modules)
+ ✓ Compiled in 683ms (7503 modules)
+ ✓ Compiled in 473ms (7548 modules)
+ ✓ Compiled in 409ms (7503 modules)
+ ✓ Compiled in 39ms (59 modules)
+ ✓ Compiled in 720ms (7548 modules)
+node[118405]: ../src/node.cc:701:void node::ResetStdio(): Assertion `!(err != 0) || (err == -1 && (*__errno_location ()) == 1)' failed.
+ 1: 0x7229d360633c node::Abort() [/lib/x86_64-linux-gnu/libnode.so.109]
+ 2: 0x7229d36063cb  [/lib/x86_64-linux-gnu/libnode.so.109]
+ 3: 0x7229d35b88c6  [/lib/x86_64-linux-gnu/libnode.so.109]
+ 4: 0x7229d35b9926 node::TearDownOncePerProcess() [/lib/x86_64-linux-gnu/libnode.so.109]
+ 5: 0x7229d35be591 node::Start(int, char**) [/lib/x86_64-linux-gnu/libnode.so.109]
+ 6: 0x7229d282a1ca  [/lib/x86_64-linux-gnu/libc.so.6]
+ 7: 0x7229d282a28b __libc_start_main [/lib/x86_64-linux-gnu/libc.so.6]
+ 8: 0x635f8149a035 _start [node]
+Aborted (core dumped)
+Node.js[118387]: ../src/node.cc:701:void node::ResetStdio(): Assertion `!(err != 0) || (err == -1 && (*__errno_location ()) == 1)' failed.
+ 1: 0x776366e0633c node::Abort() [/lib/x86_64-linux-gnu/libnode.so.109]
+ 2: 0x776366e063cb  [/lib/x86_64-linux-gnu/libnode.so.109]
+ 3: 0x776366db88c6  [/lib/x86_64-linux-gnu/libnode.so.109]
+ 4: 0x776366047a76  [/lib/x86_64-linux-gnu/libc.so.6]
+ 5: 0x776366047bbe  [/lib/x86_64-linux-gnu/libc.so.6]
+ 6: 0x776366d2dc5d node::DefaultProcessExitHandler(node::Environment*, int) [/lib/x86_64-linux-gnu/libnode.so.109]
+ 7: 0x776366d7e729 node::Environment::Exit(int) [/lib/x86_64-linux-gnu/libnode.so.109]
+ 8: 0x77636725138e v8::internal::FunctionCallbackArguments::Call(v8::internal::CallHandlerInfo) [/lib/x86_64-linux-gnu/libnode.so.109]
+ 9: 0x7763672519b1  [/lib/x86_64-linux-gnu/libnode.so.109]
+10: 0x7763672522af v8::internal::Builtin_HandleApiCall(int, unsigned long*, v8::internal::Isolate*) [/lib/x86_64-linux-gnu/libnode.so.109]
+11: 0x7763670fc2f9  [/lib/x86_64-linux-gnu/libnode.so.109]

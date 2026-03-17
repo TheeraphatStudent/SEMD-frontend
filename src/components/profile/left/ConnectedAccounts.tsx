@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import { UserConnections } from '@/lib/profileMock';
+import { cn } from '@/libs/utils/utils';
+import { useAuth } from '@/hooks/use-auth';
 
 interface ConnectedAccountsProps {
-  initialConnections: UserConnections;
+  googleConnected: boolean;
+  githubConnected: boolean;
   className?: string;
 }
 
@@ -20,7 +21,7 @@ const IconBox: React.FC<{ children: string; className?: string }> = ({ children,
 );
 
 interface ServiceConfig {
-  key: keyof UserConnections;
+  key: 'google' | 'github';
   name: string;
   icon: string;
   iconClass: string;
@@ -32,16 +33,22 @@ const services: ServiceConfig[] = [
 ];
 
 export const ConnectedAccounts: React.FC<ConnectedAccountsProps> = ({
-  initialConnections,
+  googleConnected,
+  githubConnected,
   className,
 }) => {
-  const [connections, setConnections] = useState<UserConnections>(initialConnections);
+  const { connectOAuth } = useAuth();
 
-  const toggleConnection = (key: keyof UserConnections) => {
-    setConnections(prev => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+  const getConnectionStatus = (key: 'google' | 'github') => {
+    return key === 'google' ? googleConnected : githubConnected;
+  };
+
+  const handleConnect = async (provider: 'google' | 'github') => {
+    try {
+      await connectOAuth(provider);
+    } catch (error) {
+      console.error('OAuth connect error:', error);
+    }
   };
 
   return (
@@ -62,7 +69,7 @@ export const ConnectedAccounts: React.FC<ConnectedAccountsProps> = ({
       
       <div className="space-y-2">
         {services.map((service, index) => {
-          const isConnected = connections[service.key];
+          const isConnected = getConnectionStatus(service.key);
           
           return (
             <motion.div
@@ -83,14 +90,15 @@ export const ConnectedAccounts: React.FC<ConnectedAccountsProps> = ({
               </div>
               
               <motion.button
-                onClick={() => toggleConnection(service.key)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                onClick={() => !isConnected && handleConnect(service.key)}
+                whileHover={{ scale: isConnected ? 1 : 1.05 }}
+                whileTap={{ scale: isConnected ? 1 : 0.95 }}
+                disabled={isConnected}
                 className={cn(
                   'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold border transition-colors',
                   isConnected
-                    ? 'bg-accent-light-green text-safe border-safe'
-                    : 'bg-white text-gray-primary-dark border-gray-primary hover:bg-gray-primary-light'
+                    ? 'bg-accent-light-green text-safe border-safe cursor-default'
+                    : 'bg-white text-gray-primary-dark border-gray-primary hover:bg-gray-primary-light cursor-pointer'
                 )}
               >
                 <AnimatePresence mode="wait">

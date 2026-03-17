@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Verdict } from '@/lib/types';
+import { Verdict } from '@/libs/utils/types';
 
 interface ResultViewProps {
   url: string;

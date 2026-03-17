@@ -7,9 +7,9 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { EvaluatorSelect } from '@/components/landing/EvaluatorSelect';
 import { InputTypeSelect } from '@/components/landing/InputTypeSelect';
-import { InputType, CheckInput } from '@/lib/types';
-import { inputTypeOptions } from '@/lib/mockData';
-import { alert } from '@/lib/alert';
+import { InputType, CheckInput } from '@/libs/utils/types';
+import { inputTypeOptions } from '@/libs/utils/mockData';
+import { alert } from '@/libs/utils/alert';
 
 interface UrlInputBoxProps {
   onCheck?: (input: CheckInput) => void;

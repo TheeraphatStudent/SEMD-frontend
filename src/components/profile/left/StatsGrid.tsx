@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import { UserStats } from '@/lib/profileMock';
+import { cn } from '@/libs/utils/utils';
+import { UserStats } from '@/libs/utils/profileMock';
 
 interface StatsGridProps {
   stats: UserStats;

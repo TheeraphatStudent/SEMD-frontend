@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui';
 import { DataTable, DataTableColumn } from '@/components/ui/DataTable';
-import { mockRows, reporterColors } from '@/lib/mockData';
-import { URLRow, Verdict } from '@/lib/types';
+import { mockRows, reporterColors } from '@/libs/utils/mockData';
+import { URLRow } from '@/libs/utils/row';
+import { Verdict } from '@/libs/utils/types';
 
 interface URLTablePreviewProps {
   variant?: 'full' | 'compact';

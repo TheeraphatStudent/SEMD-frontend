@@ -9,7 +9,7 @@ import { useScan } from '@/hooks/use-scan';
 import { toast } from '@/hooks/use-toast';
 import { ROUTES } from '@/constants/routes';
 import { AlertCircle } from 'lucide-react';
-import { CheckInput } from '@/lib/types';
+import { CheckInput } from '@/libs/utils/types';
 
 export default function ScanPage() {
   const router = useRouter();

@@ -76,21 +76,21 @@ export const routeConfigs: RouteConfig[] = [
   {
     path: ROUTES.ADMIN.USERS,
     requiresAuth: true,
-    allowedRoles: [ROLE.ADMIN, ROLE.MASTER_ADMIN],
+    allowedRoles: [ROLE.ADMIN, ROLE.SUPER_ADMIN],
     redirectTo: ROUTES.DASHBOARD.HOME,
   },
   {
     path: ROUTES.ADMIN.FLAGS,
     requiresAuth: true,
-    allowedRoles: [ROLE.ADMIN, ROLE.MASTER_ADMIN],
+    allowedRoles: [ROLE.ADMIN, ROLE.SUPER_ADMIN],
     redirectTo: ROUTES.DASHBOARD.HOME,
   },
   {
     path: ROUTES.ADMIN.API_MANAGEMENT,
     requiresAuth: true,
-    allowedRoles: [ROLE.ADMIN, ROLE.MASTER_ADMIN],
+    allowedRoles: [ROLE.ADMIN, ROLE.SUPER_ADMIN],
     redirectTo: ROUTES.DASHBOARD.HOME,
-  },
+  }
 ];
 
 export const ignoredRoutes: string[] = [
@@ -101,17 +101,25 @@ export const ignoredRoutes: string[] = [
 ];
 
 export function getRouteConfig(pathname: string): RouteConfig | undefined {
+  const exactMatch = routeConfigs.find(config => config.path === pathname);
+  if (exactMatch) return exactMatch;
+
   return routeConfigs.find(config => {
     if (config.path.includes('[')) {
       const pattern = config.path.replace(/\[.*?\]/g, '[^/]+');
       const regex = new RegExp(`^${pattern}$`);
       return regex.test(pathname);
     }
-    return pathname.startsWith(config.path);
+
+
+    if (pathname.startsWith(config.path)) {
+      const remainder = pathname.slice(config.path.length);
+      return remainder === '' || remainder.startsWith('/');
+    }
+    return false;
   });
 }
 
 export function shouldIgnoreRoute(pathname: string): boolean {
-  return true;
   return ignoredRoutes.some(route => pathname.startsWith(route));
 }

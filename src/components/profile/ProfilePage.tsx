@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
-import { cn } from '@/lib/utils';
-import { mockUser, mockActivity } from '@/lib/profileMock';
+import React, { useEffect } from 'react';
+import { cn } from '@/libs/utils/utils';
+import { useAuth } from '@/hooks/use-auth';
+import { mockActivity } from '@/libs/utils/profileMock';
 
 import { ProfileCard } from './left/ProfileCard';
 import { StatsGrid } from './left/StatsGrid';
@@ -18,6 +19,23 @@ interface ProfilePageProps {
 }
 
 export const ProfilePage: React.FC<ProfilePageProps> = ({ className }) => {
+  const { user, fetchMe } = useAuth();
+
+  useEffect(() => {
+    if (!user) {
+      fetchMe();
+    }
+  }, [user, fetchMe]);
+
+  const getRoleDisplay = (role?: string) => {
+    switch (role) {
+      case 'SUPER_ADMIN': return 'Super Admin';
+      case 'ADMIN': return 'Admin';
+      case 'MEMBER': return 'Member';
+      default: return role || 'User';
+    }
+  };
+
   return (
     <main className={cn(
       'max-w-[880px] mx-auto px-5 py-8',
@@ -27,23 +45,30 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ className }) => {
     )}>
       <aside className="sticky top-0 flex flex-col gap-4 max-[680px]:static">
         <ProfileCard
-          username={mockUser.username}
-          email={mockUser.email}
-          role={mockUser.role}
+          username={user?.username || '-'}
+          email={user?.email || '-'}
+          role={getRoleDisplay(user?.role)}
+          profileImgUri={user?.profile_img_uri || undefined}
         />
         
-        <StatsGrid stats={mockUser.stats} />
+        <StatsGrid stats={{ total: 0, dangers: 0, accuracy: 0, days: 0 }} />
         
-        <ConnectedAccounts initialConnections={mockUser.connections} />
+        <ConnectedAccounts 
+          googleConnected={!!user?.gg_id}
+          githubConnected={!!user?.gh_id}
+        />
       </aside>
       
       <section className="flex flex-col gap-[18px]">
         <AccountInfoCard
-          username={mockUser.username}
-          email={mockUser.email}
+          username={user?.username || '-'}
+          email={user?.email || '-'}
         />
         
-        <PersonalInfoCard />
+        <PersonalInfoCard 
+          fullName={user?.full_name || ''}
+          birthday={user?.birthday || undefined}
+        />
         
         <RecentActivityCard activities={mockActivity} />
         

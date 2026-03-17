@@ -2,9 +2,9 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { cn } from '@/libs/utils/utils';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
-import { ActivityRow, ProfileVerdict } from '@/lib/profileMock';
+import { ActivityRow, ProfileVerdict } from '@/libs/utils/profileMock';
 
 interface RecentActivityCardProps {
   activities: ActivityRow[];

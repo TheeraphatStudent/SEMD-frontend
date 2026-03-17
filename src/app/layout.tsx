@@ -11,8 +11,8 @@ const kanit = Kanit({
 })
 
 export const metadata: Metadata = {
-  title: 'SEMD - Security Email & Malicious URL Detection',
-  description: 'ระบบตรวจจับ URL และอีเมลที่เป็นอันตราย',
+  title: 'SEMD - Suspiciour evaluate URL malicious detection ',
+  description: 'เซ็มด์ การประเมิน URL ต้องสงสัยเพื่อการตรวจจับเว็บไซต์อันตราย',
 }
 
 export default function RootLayout({

@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardContent, Badge } from '@/components/ui';
 import { useScan } from '@/hooks/use-scan';
 import { Shield, AlertTriangle, CheckCircle, ExternalLink, Calendar, User } from 'lucide-react';
-import { formatDate } from '@/lib/utils';
+import { formatDate } from '@/libs/utils/utils';
 
 export default function PredictionResultPage() {
   const params = useParams();

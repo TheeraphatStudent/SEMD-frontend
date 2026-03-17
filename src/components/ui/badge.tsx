@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import { scaleIn } from '@/lib/motion-variants';
+import { cn } from '@/libs/utils/utils';
+import { scaleIn } from '@/libs/utils/motion-variants';
 import { BadgeVariant } from '@/types/badge.types';
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {

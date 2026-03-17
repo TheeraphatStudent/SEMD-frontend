@@ -1,58 +1,40 @@
-import { api } from '@/lib/api';
-import {
-  PredictionResponse,
-} from '@/services/generated/models';
-
-export interface PredictionResult {
-  id: string;
-  url: string;
-  isMalicious: boolean;
-  accuracy: number;
-  suggested: string;
-  predictedBy: string;
-  usageBy: string;
-  fromService: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import * as api from '@/services/generated/semdApi';
+import type { PredictionRequest as ApiPredictionRequest } from '@/services/generated/models';
+import type { PredictionResult } from '@/types/scan.types';
 
 export const scanService = {
   async predictUrl(url: string): Promise<{ prediction: PredictionResult }> {
-    const response = await api.predictPredictionPost({ request: { url } });
+    const request: ApiPredictionRequest = { url };
+    const data = await api.predictPredictionPredictPost(request) as any;
     
-    const prediction: PredictionResult = {
-      id: '1',
-      url,
-      isMalicious: false,
-      accuracy: 0.95,
-      suggested: 'safe',
-      predictedBy: 'model',
-      usageBy: 'user',
-      fromService: 'semd-api',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+    return {
+      prediction: {
+        id: String(data.prediction_id ?? ''),
+        url: url,
+        isMalicious: data.is_malicious ?? false,
+        accuracy: data.confidence ?? 0,
+        suggested: data.suggested ?? '',
+        predictedBy: data.model_used ?? '',
+        usageBy: data.usage_by ?? '',
+        fromService: data.from_service ?? '',
+        createdAt: data.created_at ?? new Date().toISOString(),
+        updatedAt: data.updated_at ?? new Date().toISOString(),
+      },
     };
-    
-    return { prediction };
   },
-  
+
   async getPredictionResult(id: string): Promise<PredictionResult> {
     return {
       id,
-      url: 'https://example.com',
+      url: '',
       isMalicious: false,
-      accuracy: 0.95,
-      suggested: 'safe',
-      predictedBy: 'model',
-      usageBy: 'user',
-      fromService: 'semd-api',
+      accuracy: 0,
+      suggested: '',
+      predictedBy: '',
+      usageBy: '',
+      fromService: '',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-  },
-  
-  async checkHealth(): Promise<{ status: string }> {
-    const response = await api.healthCheckHealthGet();
-    return { status: 'ok' };
   },
 };

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Badge, Button } from '@/components/ui';
 import { DataTable, DataTableColumn } from '@/components/ui/DataTable';
 import { Key, Copy, Trash2, Eye, EyeOff } from 'lucide-react';
-import { alert } from '@/lib/alert';
+import { alert } from '@/libs/utils/alert';
 
 interface ApiKey {
   id: string;

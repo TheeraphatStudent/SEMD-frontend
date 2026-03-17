@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
+import { cn } from '@/libs/utils/utils';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/hooks/use-auth';
 import { ROLE } from '@/constants/config';
@@ -37,16 +37,16 @@ const userNavItems: NavItem[] = [
 ];
 
 const adminNavItems: NavItem[] = [
-  { label: 'จัดการผู้ใช้', href: ROUTES.ADMIN.USERS, icon: <Users size={20} />, roles: [ROLE.ADMIN, ROLE.MASTER_ADMIN] },
-  { label: 'จัดการ Flags', href: ROUTES.ADMIN.FLAGS, icon: <Shield size={20} />, roles: [ROLE.ADMIN, ROLE.MASTER_ADMIN] },
-  { label: 'จัดการ API', href: ROUTES.ADMIN.API_MANAGEMENT, icon: <Key size={20} />, roles: [ROLE.ADMIN, ROLE.MASTER_ADMIN] },
+  { label: 'จัดการผู้ใช้', href: ROUTES.ADMIN.USERS, icon: <Users size={20} />, roles: [ROLE.ADMIN, ROLE.SUPER_ADMIN] },
+  { label: 'จัดการ Flags', href: ROUTES.ADMIN.FLAGS, icon: <Shield size={20} />, roles: [ROLE.ADMIN, ROLE.SUPER_ADMIN] },
+  { label: 'จัดการ API', href: ROUTES.ADMIN.API_MANAGEMENT, icon: <Key size={20} />, roles: [ROLE.ADMIN, ROLE.SUPER_ADMIN] },
 ];
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   
-  const canAccessAdminPanel = user?.role === ROLE.ADMIN || user?.role === ROLE.MASTER_ADMIN;
+  const canAccessAdminPanel = user?.role === ROLE.ADMIN || user?.role === ROLE.SUPER_ADMIN;
   
   const handleLogout = async () => {
     await logout();
@@ -56,7 +56,7 @@ export const Sidebar: React.FC = () => {
     <aside className="w-64 h-screen bg-light border-r border-gray-primary-1 flex flex-col">
       <div className="p-6 border-b border-gray-primary-1">
         <h1 className="text-2xl font-bold text-primary">SEMD</h1>
-        <p className="text-xs text-gray-primary-0 mt-1">Security Email & Malicious URL Detection</p>
+        <p className="text-xs text-gray-primary-0 mt-1">Suspiciour evaluate URL malicious detection </p>
       </div>
       
       <nav className="flex-1 overflow-y-auto p-4">

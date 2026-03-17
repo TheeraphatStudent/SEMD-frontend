@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { staggerContainer, staggerItem } from '@/lib/motion-variants';
+import { staggerContainer, staggerItem } from '@/libs/utils/motion-variants';
 
 export interface AnimatedListProps {
   children: React.ReactNode;

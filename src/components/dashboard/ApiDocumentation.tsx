@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardHeader, CardTitle, CardContent, Button } from '@/components/ui';
 import { Copy, Code, Terminal, FileCode } from 'lucide-react';
-import { alert } from '@/lib/alert';
+import { alert } from '@/libs/utils/alert';
 
 interface CodeExample {
   language: string;

@@ -1,6 +1,6 @@
 export const APP_CONFIG = {
   APP_NAME: 'SEMD',
-  APP_DESCRIPTION: 'Security Email & Malicious URL Detection',
+  APP_DESCRIPTION: 'Suspiciour evaluate URL malicious detection ',
   APP_VERSION: '1.0.0',
   
   TOKEN_KEY: 'semd_auth_token',
@@ -19,10 +19,10 @@ export const APP_CONFIG = {
 } as const;
 
 export const ROLE = {
-  GUEST: 'guest',
-  USER: 'user',
-  ADMIN: 'admin',
-  MASTER_ADMIN: 'master_admin',
+  GUEST: 'GUEST',
+  MEMBER: 'MEMBER',
+  ADMIN: 'ADMIN',
+  SUPER_ADMIN: 'SUPER_ADMIN',
 } as const;
 
 export type Role = typeof ROLE[keyof typeof ROLE];

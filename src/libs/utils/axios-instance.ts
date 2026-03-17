@@ -9,6 +9,9 @@ export const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  validateStatus: (status) => {
+    return status >= 200 && status < 300;
+  },
 });
 
 export default axiosInstance;
@@ -23,14 +26,27 @@ const getRefreshToken = (): string | null => {
   return localStorage.getItem(APP_CONFIG.REFRESH_TOKEN_KEY);
 };
 
+const setCookie = (name: string, value: string, days: number = 7): void => {
+  if (typeof window === 'undefined') return;
+  const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
+};
+
+const deleteCookie = (name: string): void => {
+  if (typeof window === 'undefined') return;
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+};
+
 const setToken = (token: string): void => {
   if (typeof window === 'undefined') return;
   localStorage.setItem(APP_CONFIG.TOKEN_KEY, token);
+  setCookie(APP_CONFIG.TOKEN_KEY, token);
 };
 
 const setRefreshToken = (token: string): void => {
   if (typeof window === 'undefined') return;
   localStorage.setItem(APP_CONFIG.REFRESH_TOKEN_KEY, token);
+  setCookie(APP_CONFIG.REFRESH_TOKEN_KEY, token);
 };
 
 const clearAuth = (): void => {
@@ -38,6 +54,9 @@ const clearAuth = (): void => {
   localStorage.removeItem(APP_CONFIG.TOKEN_KEY);
   localStorage.removeItem(APP_CONFIG.REFRESH_TOKEN_KEY);
   localStorage.removeItem(APP_CONFIG.USER_KEY);
+  deleteCookie(APP_CONFIG.TOKEN_KEY);
+  deleteCookie(APP_CONFIG.REFRESH_TOKEN_KEY);
+  deleteCookie(APP_CONFIG.USER_KEY);
 };
 
 axiosInstance.interceptors.request.use(

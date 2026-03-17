@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import { View, CheckInput, Verdict, CheckResult } from '@/lib/types';
-import { evaluatorOptions } from '@/lib/mockData';
+import { View, CheckInput, Verdict, CheckResult } from '@/libs/utils/types';
+import { evaluatorOptions } from '@/libs/utils/mockData';
 import {
   LandingNavbar,
   HeroSection,

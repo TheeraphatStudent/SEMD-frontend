@@ -1,8 +1,8 @@
-import { getSemdApi } from '@/services/generated/semdApi';
-import { axiosInstance, tokenManager } from './axios-instance';
+import * as getSemdApi from '@/services/generated/semdApi';
+import { tokenManager } from './axios-instance';
 import { APP_CONFIG } from '@/constants/config';
 
-export const api = getSemdApi(axiosInstance);
+export const api = getSemdApi;
 
 export { tokenManager };
 

@@ -7,7 +7,7 @@ import { ShieldCheck } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { toast } from '@/hooks/use-toast';
 import { ROUTES } from '@/constants/routes';
-import { Input, Button } from '@/components/ui';
+import { Input, Button, PasswordInput } from '@/components/ui';
 import { RecaptchaV3 } from '@/components/RecaptchaV3';
 import {
   AuthBackground,
@@ -37,8 +37,7 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    try {
-      const result = await login({ 
+    const result = await login({ 
         username: formData.username, 
         password: formData.password,
       });
@@ -51,9 +50,6 @@ export default function LoginPage() {
 
       toast.success('เข้าสู่ระบบสำเร็จ');
       router.push(ROUTES.DASHBOARD.HOME);
-    } catch (error: any) {
-      toast.error(error.message || 'เข้าสู่ระบบไม่สำเร็จ');
-    }
   };
 
   const loginStats = [
@@ -132,9 +128,8 @@ export default function LoginPage() {
               required
             />
 
-            <Input
+            <PasswordInput
               label="รหัสผ่าน"
-              type="password"
               placeholder="ระบุรหัสผ่าน"
               value={formData.password}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, password: e.target.value })}

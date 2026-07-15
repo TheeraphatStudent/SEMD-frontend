@@ -1,4 +1,6 @@
-import { api, tokenManager, saveUser, getUser, isAuthenticated } from '@/lib/api';
+import { api, tokenManager, saveUser, getUser, isAuthenticated } from '@/libs/utils/api';
+import { normalizeError } from '@/libs/utils/api-error';
+import { toAuthUser, type AuthUser } from '@/libs/utils/auth-storage';
 import {
   AuthLoginRequest,
   RegisterRequest,
@@ -37,6 +39,7 @@ export const authService = {
     if (isTokenPairResponse(result)) {
       tokenManager.setToken(result.access_token);
       tokenManager.setRefreshToken(result.refresh_token);
+      await this.syncCurrentUser();
       return {
         requiresTwoFactor: false,
         accessToken: result.access_token,
@@ -61,6 +64,7 @@ export const authService = {
 
     tokenManager.setToken(result.access_token);
     tokenManager.setRefreshToken(result.refresh_token);
+    await this.syncCurrentUser();
 
     return result;
   },
@@ -72,6 +76,7 @@ export const authService = {
 
   async enable2FA(data: TwoFAEnableRequest): Promise<void> {
     await api.enable2faAuth2faEnablePost(data);
+    await this.syncCurrentUser();
   },
 
   async logout(): Promise<void> {
@@ -96,8 +101,30 @@ export const authService = {
 
     tokenManager.setToken(result.access_token);
     tokenManager.setRefreshToken(result.refresh_token);
+    await this.syncCurrentUser();
 
     return result;
+  },
+
+  async syncCurrentUser(): Promise<AuthUser> {
+    const response = await api.getMeAuthMeGet();
+    const user = toAuthUser(response.data);
+    saveUser(user);
+    return user;
+  },
+
+  async hydrateFromExternalTokens(accessToken: string, refreshToken?: string | null): Promise<AuthUser> {
+    tokenManager.setToken(accessToken);
+    if (refreshToken) {
+      tokenManager.setRefreshToken(refreshToken);
+    }
+
+    try {
+      return await this.syncCurrentUser();
+    } catch (error) {
+      tokenManager.clearAuth();
+      throw normalizeError(error);
+    }
   },
 
   saveUser,

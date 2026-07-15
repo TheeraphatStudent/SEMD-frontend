@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { authService, User } from '@/services/auth.service';
 import { AuthLoginRequest, RegisterRequest } from '@/services/generated/models';
+import { normalizeError } from '@/libs/utils/api-error';
+import { signOut } from 'next-auth/react';
 
 interface AuthState {
   user: User | null;
@@ -13,10 +15,11 @@ interface AuthState {
   login: (data: AuthLoginRequest) => Promise<{ requiresTwoFactor?: boolean; preAuthToken?: string }>;
   register: (data: RegisterRequest) => Promise<void>;
   logout: () => Promise<void>;
-  checkAuth: () => void;
+  checkAuth: () => Promise<void>;
   clearError: () => void;
   verify2FA: (preAuthToken: string, code: string) => Promise<void>;
   enable2FA: (secret: string, code: string) => Promise<void>;
+  syncExternalSession: (accessToken: string, refreshToken?: string | null) => Promise<void>;
 }
 
 export const useAuth = create<AuthState>((set) => ({
@@ -37,16 +40,18 @@ export const useAuth = create<AuthState>((set) => ({
         return { requiresTwoFactor: true, preAuthToken: result.preAuthToken };
       }
 
+      const user = authService.getUser();
       set({
+        user,
         isAuthenticated: true,
         isLoading: false,
         loading: false,
       });
       return {};
     } catch (error: any) {
-      const message = error.response?.data?.message || error.message || 'เข้าสู่ระบบไม่สำเร็จ';
+      const normalized = normalizeError(error);
       set({
-        error: message,
+        error: normalized.message,
         isLoading: false,
         loading: false,
       });
@@ -62,9 +67,9 @@ export const useAuth = create<AuthState>((set) => ({
         isLoading: false,
       });
     } catch (error: any) {
-      const message = error.response?.data?.message || error.message || 'ลงทะเบียนไม่สำเร็จ';
+      const normalized = normalizeError(error);
       set({
-        error: message,
+        error: normalized.message,
         isLoading: false,
       });
       throw error;
@@ -75,6 +80,7 @@ export const useAuth = create<AuthState>((set) => ({
     set({ isLoading: true });
     try {
       await authService.logout();
+      await signOut({ redirect: false });
       set({
         user: null,
         isAuthenticated: false,
@@ -86,10 +92,27 @@ export const useAuth = create<AuthState>((set) => ({
     }
   },
 
-  checkAuth: () => {
+  checkAuth: async () => {
     const user = authService.getUser();
-    const isAuthenticated = authService.isAuthenticated();
-    set({ user, isAuthenticated });
+    const authenticated = authService.isAuthenticated();
+
+    set({ user, isAuthenticated: authenticated });
+
+    if (!authenticated) {
+      return;
+    }
+
+    if (user) {
+      return;
+    }
+
+    try {
+      const syncedUser = await authService.syncCurrentUser();
+      set({ user: syncedUser as User, isAuthenticated: true });
+    } catch {
+      await authService.logout();
+      set({ user: null, isAuthenticated: false });
+    }
   },
 
   clearError: () => set({ error: null }),
@@ -98,15 +121,17 @@ export const useAuth = create<AuthState>((set) => ({
     set({ loading: true, error: null });
     try {
       await authService.verify2FA({ pre_auth_token: preAuthToken, otp_code: code });
+      const user = authService.getUser();
       set({
+        user,
         isAuthenticated: true,
         loading: false,
         preAuthToken: null,
       });
     } catch (error: any) {
-      const message = error.response?.data?.message || error.message || 'ยืนยัน 2FA ไม่สำเร็จ';
+      const normalized = normalizeError(error);
       set({
-        error: message,
+        error: normalized.message,
         loading: false,
       });
       throw error;
@@ -123,10 +148,32 @@ export const useAuth = create<AuthState>((set) => ({
         loading: false,
       });
     } catch (error: any) {
-      const message = error.response?.data?.message || error.message || 'เปิดใช้งาน 2FA ไม่สำเร็จ';
+      const normalized = normalizeError(error);
       set({
-        error: message,
+        error: normalized.message,
         loading: false,
+      });
+      throw error;
+    }
+  },
+
+  syncExternalSession: async (accessToken: string, refreshToken?: string | null) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const user = await authService.hydrateFromExternalTokens(accessToken, refreshToken);
+      set({
+        user: user as User,
+        isAuthenticated: true,
+        isLoading: false,
+      });
+    } catch (error) {
+      const normalized = normalizeError(error);
+      set({
+        user: null,
+        isAuthenticated: false,
+        error: normalized.message,
+        isLoading: false,
       });
       throw error;
     }

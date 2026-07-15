@@ -11,7 +11,11 @@ export interface RouteConfig {
 
 export const routeConfigs: RouteConfig[] = [
   {
-    path: '/',
+    path: ROUTES.HOME,
+    requiresAuth: false,
+  },
+  {
+    path: ROUTES.UNAUTHORIZED,
     requiresAuth: false,
   },
   {
@@ -29,14 +33,11 @@ export const routeConfigs: RouteConfig[] = [
   {
     path: '/two-factor',
     requiresAuth: false,
-    redirectIfAuthenticated: true,
-    redirectTo: ROUTES.DASHBOARD.HOME,
   },
   {
     path: '/two-factor-setup',
-    requiresAuth: false,
-    redirectIfAuthenticated: true,
-    redirectTo: ROUTES.DASHBOARD.HOME,
+    requiresAuth: true,
+    redirectTo: ROUTES.AUTH.LOGIN,
   },
   {
     path: ROUTES.DASHBOARD.HOME,
@@ -77,19 +78,19 @@ export const routeConfigs: RouteConfig[] = [
     path: ROUTES.ADMIN.USERS,
     requiresAuth: true,
     allowedRoles: [ROLE.ADMIN, ROLE.MASTER_ADMIN],
-    redirectTo: ROUTES.DASHBOARD.HOME,
+    redirectTo: ROUTES.UNAUTHORIZED,
   },
   {
     path: ROUTES.ADMIN.FLAGS,
     requiresAuth: true,
     allowedRoles: [ROLE.ADMIN, ROLE.MASTER_ADMIN],
-    redirectTo: ROUTES.DASHBOARD.HOME,
+    redirectTo: ROUTES.UNAUTHORIZED,
   },
   {
     path: ROUTES.ADMIN.API_MANAGEMENT,
     requiresAuth: true,
     allowedRoles: [ROLE.ADMIN, ROLE.MASTER_ADMIN],
-    redirectTo: ROUTES.DASHBOARD.HOME,
+    redirectTo: ROUTES.UNAUTHORIZED,
   },
 ];
 
@@ -101,17 +102,23 @@ export const ignoredRoutes: string[] = [
 ];
 
 export function getRouteConfig(pathname: string): RouteConfig | undefined {
-  return routeConfigs.find(config => {
+  const sortedRoutes = [...routeConfigs].sort((a, b) => b.path.length - a.path.length);
+
+  return sortedRoutes.find(config => {
     if (config.path.includes('[')) {
       const pattern = config.path.replace(/\[.*?\]/g, '[^/]+');
       const regex = new RegExp(`^${pattern}$`);
       return regex.test(pathname);
     }
-    return pathname.startsWith(config.path);
+
+    if (config.path === ROUTES.HOME) {
+      return pathname === ROUTES.HOME;
+    }
+
+    return pathname === config.path || pathname.startsWith(`${config.path}/`);
   });
 }
 
 export function shouldIgnoreRoute(pathname: string): boolean {
-  return true;
   return ignoredRoutes.some(route => pathname.startsWith(route));
 }

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { APP_CONFIG } from './constants/config';
 import { getRouteConfig, shouldIgnoreRoute } from './config/route-config';
+import { ROUTES } from './constants/routes';
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -46,7 +47,7 @@ export function middleware(request: NextRequest) {
     }
     
     if (!user?.role || !routeConfig.allowedRoles.includes(user.role)) {
-      const redirectUrl = routeConfig.redirectTo || '/dashboard';
+      const redirectUrl = routeConfig.redirectTo || ROUTES.UNAUTHORIZED;
       return NextResponse.redirect(new URL(redirectUrl, request.url));
     }
   }

@@ -1,3 +1,14 @@
+export type PredictionStatus =
+  | 'idle'
+  | 'validating'
+  | 'submitting'
+  | 'pending'
+  | 'safe'
+  | 'malicious'
+  | 'suspicious'
+  | 'unknown'
+  | 'failed';
+
 export interface PredictionRequest {
   url: string;
 }
@@ -5,14 +16,14 @@ export interface PredictionRequest {
 export interface PredictionResult {
   id: string;
   url: string;
-  isMalicious: boolean;
-  accuracy: number;
-  suggested: string;
+  isMalicious: boolean | null;
+  confidence: number | null;
+  status: PredictionStatus;
+  recommendation: string;
   predictedBy: string;
-  usageBy: string;
-  fromService: string;
+  responseTime: number | null;
   createdAt: string;
-  updatedAt: string;
+  details: Record<string, string | number | boolean | null>;
 }
 
 export interface PredictionResponse {

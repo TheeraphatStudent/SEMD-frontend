@@ -1,5 +1,5 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
-import { APP_CONFIG } from '@/constants/config';
+import { authStorage } from './auth-storage';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
@@ -14,30 +14,23 @@ export const axiosInstance = axios.create({
 export default axiosInstance;
 
 const getToken = (): string | null => {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem(APP_CONFIG.TOKEN_KEY);
+  return authStorage.getAccessToken();
 };
 
 const getRefreshToken = (): string | null => {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem(APP_CONFIG.REFRESH_TOKEN_KEY);
+  return authStorage.getRefreshToken();
 };
 
 const setToken = (token: string): void => {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(APP_CONFIG.TOKEN_KEY, token);
+  authStorage.setAccessToken(token);
 };
 
 const setRefreshToken = (token: string): void => {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(APP_CONFIG.REFRESH_TOKEN_KEY, token);
+  authStorage.setRefreshToken(token);
 };
 
 const clearAuth = (): void => {
-  if (typeof window === 'undefined') return;
-  localStorage.removeItem(APP_CONFIG.TOKEN_KEY);
-  localStorage.removeItem(APP_CONFIG.REFRESH_TOKEN_KEY);
-  localStorage.removeItem(APP_CONFIG.USER_KEY);
+  authStorage.clear();
 };
 
 axiosInstance.interceptors.request.use(

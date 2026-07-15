@@ -1,5 +1,6 @@
 export const ROUTES = {
   HOME: '/',
+  UNAUTHORIZED: '/unauthorized',
   
   AUTH: {
     LOGIN: '/login',
@@ -29,6 +30,7 @@ export const ROUTES = {
 
 export const PUBLIC_ROUTES = [
   ROUTES.HOME,
+  ROUTES.UNAUTHORIZED,
   ROUTES.AUTH.LOGIN,
   ROUTES.AUTH.REGISTER,
 ];

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { cn } from '@/libs/utils/utils';
 import { Search } from 'lucide-react';
 
 export interface TableProps extends React.HTMLAttributes<HTMLTableElement> {
@@ -12,10 +12,10 @@ export interface TableProps extends React.HTMLAttributes<HTMLTableElement> {
 export const Table = React.forwardRef<HTMLTableElement, TableProps>(
   ({ className, onFilterChange, ...props }, ref) => {
     return (
-      <div className="w-full overflow-auto rounded-lg border border-gray-primary-1">
+      <div className="w-full overflow-x-auto rounded-2xl border border-gray-primary-1 bg-light">
         <table
           ref={ref}
-          className={cn('w-full text-sm', className)}
+          className={cn('w-full min-w-[640px] text-sm', className)}
           {...props}
         />
       </div>
@@ -60,7 +60,7 @@ export const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttribut
         ref={ref}
         className={cn(
           'border-b border-gray-primary-1 transition-colors',
-          'hover:bg-gray-primary-2 data-[state=selected]:bg-primary-light',
+          'hover:bg-gray-primary-2/70 data-[state=selected]:bg-primary-light',
           className
         )}
         {...props}
@@ -94,7 +94,7 @@ export const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
       <th
         ref={ref}
         className={cn(
-          'h-12 px-4 text-left align-middle font-bold text-dark',
+          'h-12 px-4 text-left align-middle text-sm font-bold text-dark',
           '[&:has([role=checkbox])]:pr-0',
           filterable && 'cursor-pointer select-none',
           className
@@ -102,14 +102,14 @@ export const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
         {...props}
       >
         <div className="space-y-2">
-          <div 
+          <div
             className="flex items-center gap-2"
             onClick={() => filterable && setShowFilter(!showFilter)}
           >
             {children}
             {filterable && (
-              <Search 
-                size={14} 
+              <Search
+                size={14}
                 className={cn(
                   'transition-colors',
                   showFilter ? 'text-primary' : 'text-gray-primary-0'
@@ -117,7 +117,7 @@ export const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
               />
             )}
           </div>
-          
+
           {filterable && showFilter && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}

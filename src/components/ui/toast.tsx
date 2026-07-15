@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/libs/utils/utils';
 import { useToast, ToastType } from '@/hooks/use-toast';
 import { X, CheckCircle, AlertCircle, AlertTriangle, Info } from 'lucide-react';
 
@@ -21,12 +21,13 @@ const variants: Record<ToastType, string> = {
 
 export const ToastContainer: React.FC = () => {
   const { toasts, removeToast } = useToast();
-  
+
   return (
-    <div className="fixed top-4 right-4 z-50 space-y-2">
+    <div className="fixed top-4 right-4 z-50 space-y-2" aria-live="polite" aria-atomic="false">
       {toasts.map((toast) => (
         <div
           key={toast.id}
+          role="status"
           className={cn(
             'flex items-center gap-3 p-4 rounded-lg border shadow-xl',
             'min-w-[300px] max-w-md',
@@ -37,13 +38,14 @@ export const ToastContainer: React.FC = () => {
           <div className="flex-shrink-0">
             {icons[toast.type]}
           </div>
-          
+
           <p className="flex-1 text-sm font-medium text-dark">
             {toast.message}
           </p>
-          
+
           <button
             onClick={() => removeToast(toast.id)}
+            aria-label="ปิดข้อความแจ้งเตือน"
             className="flex-shrink-0 text-gray-primary-0 hover:text-dark transition-colors"
           >
             <X size={18} />

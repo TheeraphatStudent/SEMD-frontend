@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
-import { cn } from '@/lib/utils';
 
 export interface OTPInputProps {
   length?: number;
@@ -35,7 +34,7 @@ export const OTPInput: React.FC<OTPInputProps> = ({
 
   const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value.replace(/\D/g, '');
-    
+
     if (inputValue.length === 0) {
       const newValues = [...localValues];
       newValues[index] = '';
@@ -49,7 +48,7 @@ export const OTPInput: React.FC<OTPInputProps> = ({
       newValues[index] = inputValue;
       setLocalValues(newValues);
       onChange(newValues.join(''));
-      
+
       if (index < length - 1) {
         focusInput(index + 1);
       }
@@ -78,7 +77,7 @@ export const OTPInput: React.FC<OTPInputProps> = ({
     const newValues = pastedData.split('').concat(Array(length).fill('')).slice(0, length);
     setLocalValues(newValues);
     onChange(newValues.join(''));
-    
+
     const nextEmptyIndex = newValues.findIndex(v => !v);
     if (nextEmptyIndex >= 0) {
       focusInput(nextEmptyIndex);
@@ -106,8 +105,8 @@ export const OTPInput: React.FC<OTPInputProps> = ({
             w-[52px] h-14 text-center text-2xl font-bold
             border-2 rounded-xl outline-none transition-all duration-200
             font-display text-brown
-            ${localValues[index] 
-              ? 'border-amber-deep bg-amber-pale' 
+            ${localValues[index]
+              ? 'border-amber-deep bg-amber-pale'
               : 'border-gray-300 bg-white'
             }
             focus:border-amber focus:shadow-[0_0_0_3px_rgba(245,185,66,0.2)] focus:bg-amber-pale focus:scale-105

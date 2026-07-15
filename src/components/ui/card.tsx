@@ -1,7 +1,7 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import { fadeInUp } from '@/lib/motion-variants';
+import { motion, useReducedMotion } from 'framer-motion';
+import { cn } from '@/libs/utils/utils';
+import { fadeInUp } from '@/libs/utils/motion-variants';
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'elevated' | 'outlined';
@@ -12,26 +12,27 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ className, variant = 'default', children, animated = true, delay = 0, ...props }, ref) => {
+    const prefersReducedMotion = useReducedMotion();
     const variants = {
-      default: 'bg-light border border-gray-primary-1',
-      elevated: 'bg-light shadow-xl',
+      default: 'bg-light border border-gray-primary-1 shadow-sm',
+      elevated: 'bg-light border border-gray-primary-1 shadow-xl',
       outlined: 'bg-transparent border-2 border-primary',
     };
 
     const baseClassName = cn(
-      'rounded-lg p-6 transition-shadow duration-200',
+      'rounded-2xl p-6 transition-shadow duration-200',
       variants[variant],
       className
     );
 
-    if (!animated) {
+    if (!animated || prefersReducedMotion) {
       return (
         <div ref={ref} className={baseClassName} {...props}>
           {children}
         </div>
       );
     }
-    
+
     return (
       <motion.div
         ref={ref}
@@ -40,13 +41,13 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
         animate={fadeInUp.animate}
         exit={fadeInUp.exit}
         transition={{ type: 'tween', duration: 0.3, ease: 'easeInOut', delay }}
-        whileHover={{ 
-          y: -4, 
-          scale: 1.01,
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.12)',
-          transition: { 
-            type: 'spring', 
-            stiffness: 400, 
+        whileHover={{
+          y: -2,
+          scale: 1.005,
+          boxShadow: '0 16px 30px rgba(71, 49, 0, 0.12)',
+          transition: {
+            type: 'spring',
+            stiffness: 400,
             damping: 20,
           }
         }}

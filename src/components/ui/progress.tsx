@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { cn } from '@/libs/utils/utils';
 
 export interface ProgressProps extends React.HTMLAttributes<HTMLDivElement> {
   value: number;
@@ -27,8 +27,8 @@ const sizeClasses = {
 export const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
   ({ className, value, max = 100, variant = 'default', size = 'md', showLabel = false, animated = true, ...props }, ref) => {
     const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
-    
-    const autoVariant = variant === 'default' 
+
+    const autoVariant = variant === 'default'
       ? percentage >= 80 ? 'success' : percentage >= 60 ? 'warning' : 'danger'
       : variant;
 

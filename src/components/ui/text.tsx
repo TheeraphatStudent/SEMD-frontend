@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { cn } from '@/libs/utils/utils';
 
 export interface TextProps extends React.HTMLAttributes<HTMLParagraphElement> {
   as?: 'p' | 'span' | 'div' | 'label';

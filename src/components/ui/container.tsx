@@ -1,5 +1,5 @@
 import React from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/libs/utils/utils';
 
 export interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   as?: 'div' | 'section' | 'article' | 'main';

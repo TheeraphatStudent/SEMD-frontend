@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import { scaleIn } from '@/lib/motion-variants';
+import { scaleIn } from '@/libs/utils/motion-variants';
 import { BadgeVariant } from '@/types/badge.types';
+import { cn } from '@/libs/utils/utils';
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: BadgeVariant;
@@ -37,7 +37,7 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
         </span>
       );
     }
-    
+
     return (
       <motion.span
         ref={ref}

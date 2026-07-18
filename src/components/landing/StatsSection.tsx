@@ -1,31 +1,39 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
+import { ActivityIcon, ChartLineIcon, ShieldCheckIcon } from '@/components/icons/lucide-animated';
 import { Text, SectionHeader, Container } from '@/components/ui';
 
 interface StatItemProps {
   value: string;
   label: string;
   sub: string;
+  icon: React.ElementType;
   delay: number;
 }
 
-const StatItem: React.FC<StatItemProps> = ({ value, label, sub, delay }) => {
+const StatItem: React.FC<StatItemProps> = ({ value, label, sub, icon: Icon, delay }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 24 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay }}
-      className="flex flex-col items-center text-center py-6 px-8 min-w-[140px]"
+      initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
+      animate={isInView && !prefersReducedMotion ? { opacity: 1, y: 0 } : undefined}
+      transition={{ duration: 0.55, delay }}
+      className="rounded-[28px] border border-white/70 bg-white/92 px-6 py-6 text-left shadow-[0_20px_50px_rgba(15,23,42,0.08)]"
     >
-      <div className="text-4xl md:text-5xl font-extrabold text-dark leading-none">{value}</div>
-      <div className="text-sm font-bold text-dark mt-[6px] mb-[2px]">{label}</div>
-      <Text variant="caption" className="text-gray-primary-0">{sub}</Text>
+      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-dark text-white">
+        <Icon size={22} />
+      </div>
+      <div className="text-4xl font-extrabold leading-none tracking-tight text-dark md:text-5xl">{value}</div>
+      <div className="mt-3 text-sm font-bold uppercase tracking-[0.08em] text-primary-dark">{label}</div>
+      <Text variant="small" className="mt-2 leading-6 text-gray-primary-0">
+        {sub}
+      </Text>
     </motion.div>
   );
 };
@@ -35,32 +43,26 @@ export const StatsSection: React.FC = () => {
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
   const stats = [
-    { value: '97.8%', label: 'Accuracy', sub: 'ของ ML Model' },
-    { value: '10K+', label: 'URL ตรวจแล้ว', sub: 'และเพิ่มขึ้นทุกวัน' },
-    { value: '<2s', label: 'Response Time', sub: 'เฉลี่ยต่อการตรวจ' }
+    { value: '97.8%', label: 'Model accuracy', sub: 'ประเมินจากโมเดลหลักของ SEMD สำหรับการจำแนก URL ที่น่าสงสัย', icon: ActivityIcon },
+    { value: '10K+', label: 'URLs analyzed', sub: 'มีข้อมูลการตรวจสอบสะสมและยังคงเพิ่มขึ้นจากการใช้งานจริงอย่างต่อเนื่อง', icon: ChartLineIcon },
+    { value: '<2s', label: 'Average response', sub: 'ช่วยให้การตัดสินใจก่อนคลิกเกิดขึ้นได้ทันในงานประจำวันและการเฝ้าระวัง', icon: ShieldCheckIcon },
   ];
 
   return (
-    <section className="py-16 bg-gradient-to-br from-primary via-primary-light to-background">
+    <section ref={ref} className="bg-[linear-gradient(135deg,#1e3a5f_0%,#274a75_46%,#f3f6fb_46%,#f8fafc_100%)] py-24">
       <Container size="xl">
         <SectionHeader
-          badge="ตัวเลขที่พิสูจน์ได้"
-          title="ความแม่นยำที่ไว้วางใจได้"
+          badge="Proof points"
+          title="ตัวเลขที่ช่วยสร้างความมั่นใจก่อนนำไปใช้จริง"
+          description="เราเปลี่ยนหน้า statistics ให้ทำหน้าที่เป็น trust section มากกว่าแค่โชว์ตัวเลข"
           align="center"
           animated={isInView}
+          className="mb-14 [&_h2]:text-white [&_p]:text-slate-200 [&_span]:border-white/20 [&_span]:bg-white/10 [&_span]:text-white"
         />
 
-        <div className="flex flex-wrap justify-center items-stretch gap-4 md:gap-0 max-w-5xl mx-auto">
+        <div className="grid gap-5 md:grid-cols-3">
           {stats.map((stat, index) => (
-            <div 
-              key={index} 
-              className="relative flex-1 min-w-[200px] max-w-[280px] sm:min-w-[180px]"
-            >
-              {index > 0 && (
-                <div className="hidden md:block absolute left-0 top-[20%] bottom-[20%] w-px bg-dark/15" />
-              )}
-              <StatItem {...stat} delay={0.1 * (index + 1)} />
-            </div>
+            <StatItem key={stat.label} {...stat} delay={0.1 * (index + 1)} />
           ))}
         </div>
       </Container>

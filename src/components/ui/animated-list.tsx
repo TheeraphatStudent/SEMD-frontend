@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { staggerContainer, staggerItem } from '@/lib/motion-variants';
+import { staggerContainer, staggerItem } from '@/libs/utils/motion-variants';
 
 export interface AnimatedListProps {
   children: React.ReactNode;
@@ -8,10 +8,10 @@ export interface AnimatedListProps {
   staggerDelay?: number;
 }
 
-export const AnimatedList: React.FC<AnimatedListProps> = ({ 
-  children, 
+export const AnimatedList: React.FC<AnimatedListProps> = ({
+  children,
   className,
-  staggerDelay = 0.1 
+  staggerDelay = 0.1
 }) => {
   return (
     <motion.div
@@ -31,9 +31,9 @@ export const AnimatedList: React.FC<AnimatedListProps> = ({
   );
 };
 
-export const AnimatedListItem: React.FC<{ children: React.ReactNode; className?: string }> = ({ 
-  children, 
-  className 
+export const AnimatedListItem: React.FC<{ children: React.ReactNode; className?: string }> = ({
+  children,
+  className
 }) => {
   return (
     <motion.div

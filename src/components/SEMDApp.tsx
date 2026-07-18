@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import { View, CheckInput, Verdict, CheckResult } from '@/lib/types';
-import { evaluatorOptions } from '@/lib/mockData';
+import { View, CheckInput, Verdict, CheckResult } from '@/libs/utils/types';
 import {
   LandingNavbar,
   HeroSection,
@@ -16,6 +15,7 @@ import {
 } from '@/components/landing';
 import { LoadingView } from '@/components/loading/LoadingView';
 import { ResultView } from '@/components/result/ResultView';
+import { evaluatorOptions } from '@/libs/utils/mockData';
 
 const getVerdictFromUrl = (url: string): { verdict: Verdict; confidence: number } => {
   const isDanger = /(phish|malware|hack|free.*robux|win.*iphone|verify.*account|login\.(net|tk|xyz|io)|bank.*secure)/i.test(url);

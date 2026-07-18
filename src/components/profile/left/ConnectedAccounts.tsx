@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import { UserConnections } from '@/lib/profileMock';
+import { cn } from '@/libs/utils/utils';
+import { UserConnections } from '@/libs/utils/profileMock';
 
 interface ConnectedAccountsProps {
   initialConnections: UserConnections;
@@ -45,13 +45,13 @@ export const ConnectedAccounts: React.FC<ConnectedAccountsProps> = ({
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}
       className={cn('bg-white rounded-2xl border border-gray-primary p-4', className)}
     >
-      <motion.h3 
+      <motion.h3
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
@@ -59,11 +59,11 @@ export const ConnectedAccounts: React.FC<ConnectedAccountsProps> = ({
       >
         บัญชีที่เชื่อมต่อ
       </motion.h3>
-      
+
       <div className="space-y-2">
         {services.map((service, index) => {
           const isConnected = connections[service.key];
-          
+
           return (
             <motion.div
               key={service.key}
@@ -81,7 +81,7 @@ export const ConnectedAccounts: React.FC<ConnectedAccountsProps> = ({
                 </motion.div>
                 <span className="text-sm font-medium text-dark">{service.name}</span>
               </div>
-              
+
               <motion.button
                 onClick={() => toggleConnection(service.key)}
                 whileHover={{ scale: 1.05 }}

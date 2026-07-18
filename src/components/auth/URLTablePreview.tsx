@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui';
 import { DataTable, DataTableColumn } from '@/components/ui/DataTable';
-import { mockRows, reporterColors } from '@/lib/mockData';
-import { URLRow, Verdict } from '@/lib/types';
+import { mockRows, reporterColors } from '@/libs/utils/mockData';
+import { URLRow, Verdict } from '@/libs/utils/types';
 
 interface URLTablePreviewProps {
   variant?: 'full' | 'compact';
@@ -64,7 +64,7 @@ const VerdictBadge: React.FC<{ verdict: Verdict }> = ({ verdict }) => {
 
 const ConfidenceBar: React.FC<{ value: number }> = ({ value }) => {
   const [width, setWidth] = useState(0);
-  
+
   useEffect(() => {
     const timer = setTimeout(() => setWidth(value), 150);
     return () => clearTimeout(timer);
@@ -75,7 +75,7 @@ const ConfidenceBar: React.FC<{ value: number }> = ({ value }) => {
   return (
     <div className="flex items-center gap-[7px]">
       <div className="w-[55px] h-[5px] bg-gray-primary rounded-[3px] overflow-hidden">
-        <div 
+        <div
           className={`h-full rounded-[3px] transition-all duration-[900ms] ease-out ${colorClass}`}
           style={{ width: `${width}%` }}
         />
@@ -98,7 +98,7 @@ const URLCell: React.FC<{ url: string; variant: 'full' | 'compact' }> = ({ url, 
 
 const ReporterCell: React.FC<{ reporter: string }> = ({ reporter }) => (
   <div className="inline-flex items-center gap-1">
-    <span 
+    <span
       className="w-[22px] h-[22px] rounded-full inline-flex items-center justify-center text-[9.5px] font-extrabold text-dark mr-1"
       style={{ background: reporterColors[reporter] || '#EBE1D5' }}
     >
@@ -215,8 +215,8 @@ export const URLTablePreview: React.FC<URLTablePreviewProps> = ({
   ];
 
   const getRowBorderColor = (row: URLRow): string => {
-    return row.verdict === 'Benign' 
-      ? 'border-l-[3px] border-l-safe' 
+    return row.verdict === 'Benign'
+      ? 'border-l-[3px] border-l-safe'
       : 'border-l-[3px] border-l-danger';
   };
 

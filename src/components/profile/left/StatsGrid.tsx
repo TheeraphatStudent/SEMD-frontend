@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import { UserStats } from '@/lib/profileMock';
+import { cn } from '@/libs/utils/utils';
+import { UserStats } from '@/libs/utils/profileMock';
 
 interface StatsGridProps {
   stats: UserStats;
@@ -34,7 +34,7 @@ export const StatsGrid: React.FC<StatsGridProps> = ({ stats, className }) => {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, delay: 0.1 }}
@@ -50,7 +50,7 @@ export const StatsGrid: React.FC<StatsGridProps> = ({ stats, className }) => {
             whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 206, 105, 0.1)' }}
             className={cn('p-4 text-center transition-colors', getBorderClass(index))}
           >
-            <motion.p 
+            <motion.p
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ duration: 0.5, delay: 0.3 + index * 0.1, type: 'spring', stiffness: 200 }}

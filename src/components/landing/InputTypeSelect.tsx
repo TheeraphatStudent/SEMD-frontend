@@ -1,15 +1,15 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Link, FileSpreadsheet, FileText, ChevronDown } from 'lucide-react';
-import { inputTypeOptions } from '@/lib/mockData';
-import { InputType, InputTypeOption } from '@/lib/types';
+import { inputTypeOptions } from '@/libs/utils/mockData';
+import { InputType, InputTypeOption } from '@/libs/utils/types';
 
 const iconMap: Record<string, React.ReactNode> = {
-  'link': <Link size={14} />,
-  'file-spreadsheet': <FileSpreadsheet size={14} />,
-  'file-text': <FileText size={14} />,
+  link: <Link size={16} />,
+  'file-spreadsheet': <FileSpreadsheet size={16} />,
+  'file-text': <FileText size={16} />,
 };
 
 interface InputTypeSelectProps {
@@ -20,8 +20,9 @@ interface InputTypeSelectProps {
 export const InputTypeSelect: React.FC<InputTypeSelectProps> = ({ value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = useReducedMotion();
 
-  const selectedOption = inputTypeOptions.find(opt => opt.value === value) || inputTypeOptions[0];
+  const selectedOption = inputTypeOptions.find((opt) => opt.value === value) || inputTypeOptions[0];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -30,8 +31,19 @@ export const InputTypeSelect: React.FC<InputTypeSelectProps> = ({ value, onChang
       }
     };
 
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
   }, []);
 
   const handleSelect = (option: InputTypeOption) => {
@@ -43,38 +55,64 @@ export const InputTypeSelect: React.FC<InputTypeSelectProps> = ({ value, onChang
     <div ref={wrapperRef} className="relative z-20">
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-[6px] bg-white border border-gray-primary rounded-full px-3 py-[6px] text-[12px] font-semibold text-dark cursor-pointer whitespace-nowrap transition-all hover:border-primary hover:bg-primary-light ${isOpen ? 'border-primary bg-primary-light' : ''}`}
+        onClick={() => setIsOpen((open) => !open)}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        aria-label="เลือกรูปแบบข้อมูลที่ต้องการตรวจสอบ"
+        className={`flex min-h-11 items-center gap-2 rounded-2xl border px-3.5 py-2 text-left text-[13px] font-semibold text-dark shadow-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-dark focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+          isOpen
+            ? 'border-primary bg-primary-light'
+            : 'border-gray-primary bg-white hover:border-primary/60 hover:bg-primary-light/40'
+        }`}
       >
-        <span className="text-primary-dark">{iconMap[selectedOption.icon]}</span>
-        <span>{selectedOption.label}</span>
-        <ChevronDown size={12} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+        <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary-light text-primary-dark">
+          {iconMap[selectedOption.icon]}
+        </span>
+        <span className="flex flex-col">
+          <span>{selectedOption.label}</span>
+          <span className="text-[11px] font-normal text-gray-primary-0">รูปแบบข้อมูลนำเข้า</span>
+        </span>
+        <ChevronDown
+          size={14}
+          className={`ml-1 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+        />
       </button>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: -6 }}
+            animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+            exit={prefersReducedMotion ? undefined : { opacity: 0, y: -6 }}
             transition={{ duration: 0.18 }}
-            className="absolute top-[calc(100%+6px)] left-0 min-w-[260px] bg-white border border-gray-primary rounded-xl shadow-xl z-50 overflow-hidden"
+            className="absolute left-0 top-[calc(100%+8px)] z-50 min-w-[300px] overflow-hidden rounded-2xl border border-gray-primary bg-white shadow-2xl"
           >
-            {inputTypeOptions.map((option) => (
-              <div
-                key={option.value}
-                onClick={() => handleSelect(option)}
-                className={`flex items-start gap-3 px-4 py-3 text-[13px] font-medium cursor-pointer transition-colors border-b border-gray-primary-light last:border-b-0 hover:bg-primary-light text-left ${
-                  value === option.value ? 'bg-primary-light font-bold text-primary-dark' : ''
-                }`}
-              >
-                <span className="text-primary-dark mt-[2px]">{iconMap[option.icon]}</span>
-                <div className="text-left">
-                  <div className="font-bold">{option.label}</div>
-                  <div className="text-[11px] text-gray-primary-dark font-normal">{option.desc}</div>
-                </div>
-              </div>
-            ))}
+            <div role="listbox" aria-label="รายการรูปแบบข้อมูลที่รองรับ" className="p-2">
+              {inputTypeOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  role="option"
+                  aria-selected={value === option.value}
+                  onClick={() => handleSelect(option)}
+                  className={`flex min-h-12 w-full items-start gap-3 rounded-xl px-3 py-3 text-left transition-colors ${
+                    value === option.value
+                      ? 'bg-primary-light text-primary-dark'
+                      : 'text-dark hover:bg-primary-light/50'
+                  }`}
+                >
+                  <span className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-xl bg-primary-light text-primary-dark">
+                    {iconMap[option.icon]}
+                  </span>
+                  <span className="flex-1">
+                    <span className="block text-sm font-bold">{option.label}</span>
+                    <span className="mt-0.5 block text-[12px] font-normal leading-5 text-gray-primary-0">
+                      {option.desc}
+                    </span>
+                  </span>
+                </button>
+              ))}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

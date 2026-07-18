@@ -20,6 +20,20 @@ export const SectionHeader = React.forwardRef<HTMLDivElement, SectionHeaderProps
   ({ className, badge, title, description, align = 'center', animated = true, ...props }, ref) => {
     const internalRef = useRef(null);
     const isInView = useInView(internalRef, { once: true, margin: '-100px' });
+    const setRefs = (node: HTMLDivElement | null) => {
+      internalRef.current = node;
+
+      if (!ref) {
+        return;
+      }
+
+      if (typeof ref === 'function') {
+        ref(node);
+        return;
+      }
+
+      ref.current = node;
+    };
 
     const alignClasses = {
       left: 'text-left items-start',
@@ -29,7 +43,7 @@ export const SectionHeader = React.forwardRef<HTMLDivElement, SectionHeaderProps
 
     return (
       <div
-        ref={ref || internalRef}
+        ref={setRefs}
         className={cn('flex flex-col gap-3 mb-12', alignClasses[align], className)}
         {...props}
       >

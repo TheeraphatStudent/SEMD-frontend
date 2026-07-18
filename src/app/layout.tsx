@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
-import { Kanit, Krub, Mali,  } from 'next/font/google'
+import { Kanit } from 'next/font/google'
 import './globals.css'
 import { ToastContainer } from '@/components/ui'
 import { AuthProvider } from '@/components/providers/AuthProvider'
+import { PageTransitionShell } from '@/components/providers/PageTransitionShell'
 
 const kanit = Kanit({ 
   subsets: ['thai'],
@@ -22,9 +23,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="th" className={`${kanit.variable}`}>
-      <body>
+      <body className="overflow-x-hidden">
         <AuthProvider>
-          {children}
+          <PageTransitionShell>
+            {children}
+          </PageTransitionShell>
         </AuthProvider>
         <ToastContainer />
       </body>

@@ -9,14 +9,8 @@ import { toast } from '@/hooks/use-toast';
 import { useScan } from '@/hooks/use-scan';
 import { CheckInput } from '@/libs/utils/types';
 import { getPredictionStatusLabel, getPredictionStatusVariant } from '@/libs/utils/ui-status';
+import { scanProcessingSteps } from '@/libs/utils/mockData';
 import { AlertCircle, Loader2, ShieldCheck } from 'lucide-react';
-
-const processingSteps = [
-  'กำลังตรวจสอบรูปแบบ URL',
-  'กำลังส่ง URL ไปยังบริการตรวจสอบ',
-  'กำลังวิเคราะห์ผลลัพธ์',
-  'กำลังเตรียมคำแนะนำ',
-];
 
 export default function ScanPage() {
   const router = useRouter();
@@ -59,7 +53,7 @@ export default function ScanPage() {
           <div className="rounded-2xl border border-gray-primary-1 bg-gray-primary-2/60 px-4 py-4">
             {loading ? (
               <div className="space-y-3">
-                {processingSteps.map((step, index) => (
+                {scanProcessingSteps.map((step, index) => (
                   <div key={step} className="flex items-center gap-3 text-sm text-dark">
                     <Loader2 size={16} className={index === 0 ? 'animate-spin text-primary-dark' : 'text-primary-dark'} />
                     <span>{step}</span>

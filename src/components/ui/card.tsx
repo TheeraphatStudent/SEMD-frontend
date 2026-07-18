@@ -1,5 +1,6 @@
 import React from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useMotionEnabled } from '@/hooks/use-motion-enabled';
 import { cn } from '@/libs/utils/utils';
 import { fadeInUp } from '@/libs/utils/motion-variants';
 
@@ -12,7 +13,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ className, variant = 'default', children, animated = true, delay = 0, ...props }, ref) => {
-    const prefersReducedMotion = useReducedMotion();
+    const motionEnabled = useMotionEnabled();
     const variants = {
       default: 'bg-light border border-gray-primary-1 shadow-sm',
       elevated: 'bg-light border border-gray-primary-1 shadow-xl',
@@ -25,7 +26,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
       className
     );
 
-    if (!animated || prefersReducedMotion) {
+    if (!animated || !motionEnabled) {
       return (
         <div ref={ref} className={baseClassName} {...props}>
           {children}

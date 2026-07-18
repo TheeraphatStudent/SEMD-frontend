@@ -4,7 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { AlertTriangle, CheckCircle2, Copy, ExternalLink, ShieldAlert } from 'lucide-react';
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
-import { Verdict } from '@/lib/types';
+import { Verdict } from '@/libs/utils/types';
 
 interface ResultViewProps {
   url: string;

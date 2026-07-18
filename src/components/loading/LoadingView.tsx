@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Loader2 } from 'lucide-react';
+import { scanProcessingSteps as STEP_LABELS } from '@/libs/utils/mockData';
 
 interface LoadingViewProps {
   url: string;
@@ -11,13 +12,6 @@ interface LoadingViewProps {
 }
 
 type StepStatus = 'pending' | 'active' | 'done';
-
-const STEP_LABELS = [
-  'กำลังตรวจสอบรูปแบบ URL',
-  'กำลังส่ง URL ไปยังบริการตรวจสอบ',
-  'กำลังวิเคราะห์ผลลัพธ์',
-  'กำลังเตรียมคำแนะนำ',
-];
 
 export const LoadingView: React.FC<LoadingViewProps> = ({ url, model, onComplete }) => {
   const [activeIndex, setActiveIndex] = useState(0);

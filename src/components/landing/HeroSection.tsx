@@ -2,7 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useMotionEnabled } from '@/hooks/use-motion-enabled';
 import { Clock3, ScanSearch } from 'lucide-react';
 import { ROUTES } from '@/constants/routes';
 import {
@@ -52,7 +53,7 @@ const flowSteps = [
 ];
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ onCheck }) => {
-  const prefersReducedMotion = useReducedMotion();
+  const motionEnabled = useMotionEnabled();
 
   const handleCheck = (input: CheckInput) => {
     if (onCheck) {
@@ -78,8 +79,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCheck }) => {
       <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-12">
         <div className="mx-auto flex max-w-4xl flex-col items-center">
           <motion.div
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
-            animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+            initial={!motionEnabled ? false : { opacity: 0, y: 16 }}
+            animate={!motionEnabled ? undefined : { opacity: 1, y: 0 }}
             transition={{ duration: 0.55 }}
             className="mb-7 inline-flex min-h-11 items-center gap-2 rounded-full border border-primary/20 bg-white/85 px-4 py-2 text-[12px] font-bold tracking-[0.14em] text-primary-dark shadow-[0_12px_30px_rgba(30,58,95,0.08)] backdrop-blur"
           >
@@ -96,12 +97,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCheck }) => {
           >
             ตรวจสอบ URL ที่น่าสงสัย
             <br />
-            ก่อนที่ทีมของคุณจะคลิกพลาด
           </Heading>
 
           <Text
             variant="lead"
-            className="mx-auto mb-8 mt-5 max-w-3xl text-balance text-[17px] leading-8 text-gray-primary-0 md:text-[19px]"
+            className="mx-auto mb-8 mt-5 max-w-3xl text-balance text-md leading-8 text-gray-primary-0"
             animated
             delay={0.16}
           >
@@ -110,8 +110,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCheck }) => {
           </Text>
 
           <motion.div
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
-            animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+            initial={!motionEnabled ? false : { opacity: 0, y: 18 }}
+            animate={!motionEnabled ? undefined : { opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.22 }}
             className="mb-8 grid w-full max-w-3xl grid-cols-1 gap-3 sm:grid-cols-3"
           >
@@ -133,8 +133,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCheck }) => {
           </div>
 
           <motion.aside
-            initial={prefersReducedMotion ? false : { opacity: 0, x: 18 }}
-            animate={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}
+            initial={!motionEnabled ? false : { opacity: 0, x: 18 }}
+            animate={!motionEnabled ? undefined : { opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.28 }}
             className="rounded-[28px] border border-primary/10 bg-slate-950/[0.03] p-6 text-left shadow-[0_24px_60px_rgba(30,58,95,0.10)]"
           >
@@ -171,8 +171,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCheck }) => {
           {flowSteps.map((item, index) => (
             <motion.div
               key={item}
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
-              animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+              initial={!motionEnabled ? false : { opacity: 0, y: 16 }}
+              animate={!motionEnabled ? undefined : { opacity: 1, y: 0 }}
               transition={{ duration: 0.55, delay: 0.12 * (index + 1) }}
               className="rounded-2xl border border-primary/10 bg-white/75 px-5 py-4 shadow-sm"
             >
@@ -185,8 +185,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCheck }) => {
         </div>
 
         <motion.div
-          initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
-          animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+          initial={!motionEnabled ? false : { opacity: 0, y: 18 }}
+          animate={!motionEnabled ? undefined : { opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.4 }}
           className="flex flex-wrap justify-center gap-3"
         >

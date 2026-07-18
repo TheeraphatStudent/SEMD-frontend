@@ -36,6 +36,7 @@ export const UrlInputBox: React.FC<UrlInputBoxProps> = ({
   const { isAuthenticated } = useAuth();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const handleSubmitRef = useRef<() => void>(() => {});
 
   const [evaluator, setEvaluator] = useState('semd-0.2');
   const [inputType, setInputType] = useState<InputType>('url');
@@ -78,7 +79,7 @@ export const UrlInputBox: React.FC<UrlInputBoxProps> = ({
 
     if (variant === 'dashboard' && (pendingUrl || pendingFile)) {
       setTimeout(() => {
-        handleSubmit();
+        handleSubmitRef.current();
       }, 500);
     }
   }, [variant]);
@@ -137,6 +138,8 @@ export const UrlInputBox: React.FC<UrlInputBoxProps> = ({
 
     alert.warning('ไม่พบปลายทางการตรวจสอบ', 'ระบบยังไม่พร้อมรับคำขอจากช่องกรอกนี้');
   };
+
+  handleSubmitRef.current = handleSubmit;
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

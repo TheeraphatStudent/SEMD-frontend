@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { motion, useInView, useReducedMotion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
+import { useMotionEnabled } from '@/hooks/use-motion-enabled';
 import { ActivityIcon, ChartLineIcon, ShieldCheckIcon } from '@/components/icons/lucide-animated';
 import { Text, SectionHeader, Container } from '@/components/ui';
 
@@ -16,13 +17,13 @@ interface StatItemProps {
 const StatItem: React.FC<StatItemProps> = ({ value, label, sub, icon: Icon, delay }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
-  const prefersReducedMotion = useReducedMotion();
+  const motionEnabled = useMotionEnabled();
 
   return (
     <motion.div
       ref={ref}
-      initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
-      animate={isInView && !prefersReducedMotion ? { opacity: 1, y: 0 } : undefined}
+      initial={!motionEnabled ? false : { opacity: 0, y: 24 }}
+      animate={isInView && motionEnabled ? { opacity: 1, y: 0 } : undefined}
       transition={{ duration: 0.55, delay }}
       className="rounded-[28px] border border-white/70 bg-white/92 px-6 py-6 text-left shadow-[0_20px_50px_rgba(15,23,42,0.08)]"
     >

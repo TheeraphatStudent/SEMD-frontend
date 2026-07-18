@@ -50,6 +50,13 @@ export const inputTypeOptions: InputTypeOption[] = [
   },
 ];
 
+export const scanProcessingSteps: string[] = [
+  'กำลังตรวจสอบรูปแบบ URL',
+  'กำลังส่ง URL ไปยังบริการตรวจสอบ',
+  'กำลังวิเคราะห์ผลลัพธ์',
+  'กำลังเตรียมคำแนะนำ',
+];
+
 export const reporterColors: Record<string, string> = {
   john_doe: '#FFCE69',
   analyst_k: '#D3DFFF',

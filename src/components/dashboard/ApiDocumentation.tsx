@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardHeader, CardTitle, CardContent, Button } from '@/components/ui';
 import { Copy, Code, Terminal, FileCode } from 'lucide-react';
-import { alert } from '@/lib/alert';
+import { alert } from '@/libs/utils/alert';
 
 interface CodeExample {
   language: string;
@@ -16,7 +16,7 @@ const codeExamples: CodeExample[] = [
   {
     language: 'cURL',
     icon: <Terminal size={16} />,
-    code: `curl -X POST https://api.semd.app/v1/check \\
+    code: `curl -X POST "$NEXT_PUBLIC_API_BASE_URL/prediction/predict" \\
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -d '{"url": "https://example.com"}'`
@@ -24,7 +24,7 @@ const codeExamples: CodeExample[] = [
   {
     language: 'JavaScript',
     icon: <FileCode size={16} />,
-    code: `const response = await fetch('https://api.semd.app/v1/check', {
+    code: `const response = await fetch(\`\${process.env.NEXT_PUBLIC_API_BASE_URL}/prediction/predict\`, {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ console.log(result);`
     icon: <Code size={16} />,
     code: `import requests
 
-url = "https://api.semd.app/v1/check"
+url = "https://your-api-host/prediction/predict"
 headers = {
     "Content-Type": "application/json",
     "Authorization": "Bearer YOUR_API_KEY"
@@ -59,11 +59,15 @@ print(result)`
 ];
 
 const responseExample = `{
-  "verdict": "Safe",
-  "confidence": 0.978,
-  "type": "Legitimate",
-  "url": "https://example.com",
-  "checked_at": "2026-03-15T18:36:00Z"
+  "status": 200,
+  "message": "Prediction completed",
+  "data": {
+    "id": "prediction-id",
+    "url": "https://example.com",
+    "is_malicious": false,
+    "confidence": 0.97,
+    "predicted_at": "2026-07-15T10:30:00Z"
+  }
 }`;
 
 export const ApiDocumentation: React.FC = () => {
@@ -89,8 +93,10 @@ export const ApiDocumentation: React.FC = () => {
       <CardContent className="space-y-6">
         <div className="bg-primary-light border border-primary rounded-lg p-4">
           <p className="text-sm text-primary-dark">
-            ใช้ API Key ในส่วน Authorization header เพื่อเข้าถึง SEMD API 
-            ทุกครั้งที่ส่งคำขอ commit ณ repository สาธารณะ
+            ใช้ API Key ในส่วน `Authorization: Bearer ...` เพื่อเรียก endpoint ที่ backend เปิดไว้จริง และอ้างอิง `NEXT_PUBLIC_API_BASE_URL` จาก environment เดียวกับแอปนี้
+          </p>
+          <p className="mt-2 text-sm text-primary-dark">
+            หาก backend แสดงค่า secret เพียงครั้งเดียว อย่าลืมคัดลอกและจัดเก็บทันที เพราะ frontend จะไม่สร้าง key ปลอมขึ้นมาแทน
           </p>
         </div>
 
@@ -100,11 +106,10 @@ export const ApiDocumentation: React.FC = () => {
               <button
                 key={example.language}
                 onClick={() => setActiveTab(index)}
-                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === index
-                    ? 'border-primary text-primary-dark bg-primary-light/50'
-                    : 'border-transparent text-gray-primary-0 hover:text-dark hover:border-gray-primary'
-                }`}
+                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === index
+                  ? 'border-primary text-primary-dark bg-primary-light/50'
+                  : 'border-transparent text-gray-primary-0 hover:text-dark hover:border-gray-primary'
+                  }`}
               >
                 {example.icon}
                 {example.language}
@@ -141,7 +146,7 @@ export const ApiDocumentation: React.FC = () => {
         </div>
 
         <div>
-          <h4 className="text-sm font-semibold text-dark mb-3">Response ตัวอย่างในรูปแบบ JSON ดังนี้</h4>
+          <h4 className="text-sm font-semibold text-dark mb-3">ตัวอย่าง response ที่คุณจะได้รับ</h4>
           <div className="relative">
             <div className="bg-dark rounded-lg overflow-hidden">
               <div className="flex items-center justify-between px-4 py-2 bg-gray-800 border-b border-gray-700">
@@ -166,15 +171,19 @@ export const ApiDocumentation: React.FC = () => {
           <div className="bg-gray-primary-2 rounded-lg p-4">
             <h5 className="font-semibold text-dark mb-2">Base URL</h5>
             <code className="text-sm bg-white px-2 py-1 rounded border">
-              https://api.semd.app/v1
+              {process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}
             </code>
           </div>
           <div className="bg-gray-primary-2 rounded-lg p-4">
-            <h5 className="font-semibold text-dark mb-2">Rate Limit</h5>
+            <h5 className="font-semibold text-dark mb-2">Endpoint</h5>
             <p className="text-sm text-gray-primary-0">
-              10,000 requests ต่อเดือน
+              `POST /prediction/predict`
             </p>
           </div>
+        </div>
+
+        <div className="rounded-2xl border border-gray-primary-1 bg-light px-4 py-4 text-sm text-gray-primary-0">
+          หาก request ล้มเหลว ควรจัดการ error message ให้บอกได้ว่าเกิดอะไรขึ้นและควรแก้ไขอย่างไร เช่น URL ไม่ถูกต้อง เซสชันหมดอายุ หรือเกิน rate limit
         </div>
       </CardContent>
     </Card>

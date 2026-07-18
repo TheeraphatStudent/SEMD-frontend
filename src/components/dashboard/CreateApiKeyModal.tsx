@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui';
 import { X, Key } from 'lucide-react';
-import { alert } from '@/lib/alert';
+import { alert } from '@/libs/utils/alert';
 
 interface CreateApiKeyModalProps {
   isOpen: boolean;
@@ -24,17 +24,17 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!keyName.trim()) {
       alert.warning('กรุณาใส่ชื่อ Key', 'กรุณาใส่ชื่อสำหรับ API Key');
       return;
     }
 
     setIsLoading(true);
-    
+
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       const newApiKey = {
         id: Date.now().toString(),
         name: keyName,
@@ -47,11 +47,11 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
       };
 
       alert.success('สร้าง API Key สำเร็จ', 'API Key ใหม่ถูกสร้างเรียบร้อยแล้ว');
-      
+
       if (onSuccess) {
         onSuccess(newApiKey);
       }
-      
+
       handleClose();
     } catch (error) {
       alert.error('เกิดข้อผิดพลาด', 'ไม่สามารถสร้าง API Key ได้');

@@ -39,7 +39,12 @@ export function isValidUrl(url: string): boolean {
     new URL(url);
     return true;
   } catch {
-    return false;
+    try {
+      new URL(`https://${url}`);
+      return true;
+    } catch {
+      return false;
+    }
   }
 }
 

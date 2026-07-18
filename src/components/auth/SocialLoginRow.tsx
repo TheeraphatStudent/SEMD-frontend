@@ -80,6 +80,7 @@ export const SocialLoginRow: React.FC<SocialLoginRowProps> = ({
         onClick={handleGithubLogin}
         disabled={isGoogleLoading || isGithubLoading}
         title="GitHub"
+        aria-label="ดำเนินการด้วย GitHub"
         className="h-[46px] w-[46px] p-0"
       >
         {isGithubLoading ? (

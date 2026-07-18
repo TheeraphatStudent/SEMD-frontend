@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { cn } from '@/lib/utils';
-import { mockUser, mockActivity } from '@/lib/profileMock';
+import { cn } from '@/libs/utils/utils';
+import { mockUser, mockActivity } from '@/libs/utils/profileMock';
 
 import { ProfileCard } from './left/ProfileCard';
 import { StatsGrid } from './left/StatsGrid';
@@ -31,22 +31,22 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ className }) => {
           email={mockUser.email}
           role={mockUser.role}
         />
-        
+
         <StatsGrid stats={mockUser.stats} />
-        
+
         <ConnectedAccounts initialConnections={mockUser.connections} />
       </aside>
-      
+
       <section className="flex flex-col gap-[18px]">
         <AccountInfoCard
           username={mockUser.username}
           email={mockUser.email}
         />
-        
+
         <PersonalInfoCard />
-        
+
         <RecentActivityCard activities={mockActivity} />
-        
+
         <DangerZoneCard />
       </section>
     </main>

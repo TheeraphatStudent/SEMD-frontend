@@ -2,6 +2,8 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { AlertTriangle, CheckCircle2, Copy, ExternalLink, ShieldAlert } from 'lucide-react';
+import { Button, Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
 import { Verdict } from '@/lib/types';
 
 interface ResultViewProps {
@@ -13,37 +15,39 @@ interface ResultViewProps {
 }
 
 const verdictConfig: Record<Verdict, {
-  bannerClass: string;
-  iconRingClass: string;
-  icon: string;
+  tone: string;
+  badge: string;
   title: string;
-  recommendations: string[];
-  extra: string;
+  summary: string;
+  nextSteps: string[];
+  detail: string;
+  icon: React.ReactNode;
 }> = {
   Benign: {
-    bannerClass: 'bg-gradient-to-br from-accent-light-green via-white to-accent-light-green',
-    iconRingClass: 'bg-accent-light-green',
-    icon: '✅',
-    title: 'URL ปลอดภัย',
-    recommendations: [
-      '✅ URL นี้ถูกตรวจสอบแล้วและปลอดภัย',
-      '✅ คุณสามารถเข้าชม URL นี้ได้',
-      '⚠️ แต่ควรระมัดระวังเสมอเมื่อกรอกข้อมูลส่วนตัว',
+    tone: 'bg-gradient-to-br from-accent-light-green via-white to-accent-light-green',
+    badge: 'border-safe/20 bg-safe/10 text-safe',
+    title: 'ไม่พบสัญญาณอันตรายจากการตรวจสอบครั้งนี้',
+    summary: 'ผลการตรวจสอบนี้ช่วยลดความเสี่ยงเบื้องต้น แต่ยังไม่สามารถรับประกันความปลอดภัยได้ทั้งหมด',
+    nextSteps: [
+      'ตรวจสอบชื่อโดเมนให้ตรงกับเว็บไซต์ที่คุณตั้งใจเปิด',
+      'หลีกเลี่ยงการกรอกข้อมูลสำคัญ หากเว็บไซต์ไม่คุ้นเคย',
+      'หากพฤติกรรมของหน้าเว็บดูผิดปกติ ควรหยุดใช้งานทันที',
     ],
-    extra: 'URL นี้ผ่านการตรวจสอบจาก ML Model แล้วไม่พบลักษณะที่เป็นอันตราย อย่างไรก็ตามควรระมัดระวังการกรอกข้อมูลส่วนตัวทุกครั้ง',
+    detail: 'SEMD ไม่พบสัญญาณอันตรายชัดเจนจากข้อมูลที่ใช้ตรวจสอบครั้งนี้',
+    icon: <CheckCircle2 size={56} className="text-safe" />,
   },
   Malicious: {
-    bannerClass: 'bg-gradient-to-br from-accent-light-red via-white to-accent-light-red',
-    iconRingClass: 'bg-accent-light-red',
-    icon: '🚨',
-    title: 'URL อันตราย',
-    recommendations: [
-      '🚫 ห้ามเข้าเว็บไซต์นี้โดยเด็ดขาด',
-      '🔒 อย่ากรอกข้อมูลส่วนตัวหรือรหัสผ่าน',
-      '⚠️ แจ้งเตือนผู้ส่งลิงก์ให้ทราบ',
-      '🛡️ แสกน Malware บนเครื่องของคุณ',
+    tone: 'bg-gradient-to-br from-accent-light-red via-white to-accent-light-red',
+    badge: 'border-danger/20 bg-danger/10 text-danger',
+    title: 'URL นี้อาจไม่ปลอดภัย',
+    summary: 'ผลการตรวจสอบระบุว่าลิงก์นี้มีความเสี่ยงสูง และไม่ควรเปิดต่อจนกว่าจะยืนยันความน่าเชื่อถือได้',
+    nextSteps: [
+      'อย่าเปิดเว็บไซต์นี้ต่อ',
+      'อย่ากรอกอีเมล รหัสผ่าน หรือข้อมูลการชำระเงิน',
+      'ปิดหน้าเว็บและรายงานลิงก์นี้หากจำเป็น',
     ],
-    extra: 'URL นี้มีลักษณะที่ตรงกับ Pattern ของเว็บไซต์ Phishing หรือ Malware ที่ระบบตรวจพบ ควรหลีกเลี่ยงและไม่แชร์ลิงก์นี้ต่อ',
+    detail: 'รูปแบบของ URL หรือผลตอบกลับจากบริการตรวจสอบมีลักษณะที่ใกล้เคียงเว็บไซต์อันตรายหรือหลอกลวง',
+    icon: <ShieldAlert size={56} className="text-danger" />,
   },
 };
 
@@ -56,112 +60,108 @@ export const ResultView: React.FC<ResultViewProps> = ({
 }) => {
   const config = verdictConfig[verdict];
   const now = new Date();
-  const dateStr = now.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
-  const timeStr = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-  const displayUrl = url.length > 60 ? url.substring(0, 57) + '…' : url;
+  const timeLabel = now.toLocaleString('th-TH', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      // Keep this action best-effort on the landing flow.
+    }
+  };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,#FFF6E4,#FFFCEB)] p-6 pt-20 gap-5">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-[680px] bg-white rounded-[20px] shadow-xl border border-gray-primary overflow-hidden"
-      >
-        <div className={`${config.bannerClass} px-8 py-9 flex flex-col items-center text-center relative overflow-hidden`}>
-          <div className={`w-[72px] h-[72px] rounded-full ${config.iconRingClass} flex items-center justify-center text-[34px] mb-4 shadow-[0_0_0_6px_rgba(255,255,255,0.7)]`}>
-            {config.icon}
-          </div>
-          <h2 className="text-[26px] font-extrabold mb-1 text-dark">{config.title}</h2>
-          <p className="text-[15px] text-gray-primary-dark">
-            ความแม่นยำ: <b className="text-dark">{confidence}%</b>
-          </p>
-          <div className="flex items-center gap-[6px] mt-[14px] font-mono text-[12.5px] text-secondary-dark bg-white/70 px-[14px] py-[5px] rounded-lg max-w-full break-all">
-            🔗 {displayUrl}
-          </div>
-          <p className="text-[11px] text-gray-primary-dark mt-[6px]">
-            ตรวจสอบเมื่อ {dateStr} เวลา {timeStr}
-          </p>
-        </div>
+    <div className="min-h-screen bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,#FFF6E4,#FFFCEB)] px-4 pb-12 pt-24">
+      <div className="mx-auto flex max-w-4xl flex-col gap-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
+          <Card variant="elevated" className={config.tone}>
+            <CardContent className="space-y-6 pt-8 text-center">
+              <div className="mx-auto inline-flex h-24 w-24 items-center justify-center rounded-full bg-white/70 shadow-sm">
+                {config.icon}
+              </div>
+              <div className="space-y-3">
+                <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${config.badge}`}>
+                  ความเชื่อมั่น {confidence}%
+                </span>
+                <h1 className="text-3xl font-extrabold text-dark sm:text-4xl">{config.title}</h1>
+                <p className="mx-auto max-w-2xl text-base leading-relaxed text-gray-primary-0">{config.summary}</p>
+              </div>
+              <div className="rounded-2xl border border-gray-primary-1 bg-white/80 px-4 py-4 text-left">
+                <p className="text-sm font-semibold text-dark">URL ที่ตรวจสอบ</p>
+                <p className="mt-2 break-all font-mono text-sm text-gray-primary-0">{url}</p>
+                <p className="mt-2 text-xs text-gray-primary-0">ตรวจสอบเมื่อ {timeLabel}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-        <div className="p-6 grid grid-cols-2 gap-4">
-          <div className="bg-gray-primary-light rounded-xl p-[18px]">
-            <h4 className="text-[11px] font-extrabold text-gray-primary-dark uppercase tracking-wider mb-[14px]">
-              รายละเอียดการตรวจสอบ
-            </h4>
-            <div className="flex flex-col gap-[10px]">
-              <div className="flex items-start gap-[10px]">
-                <span className="text-[14px] flex-shrink-0 mt-[1px]">🔘</span>
-                <div>
-                  <div className="text-[11px] text-gray-primary-dark">สถานะ</div>
-                  <div className="text-[13.5px] font-bold">{config.title}</div>
-                </div>
-              </div>
-              <div className="flex items-start gap-[10px]">
-                <span className="text-[14px] flex-shrink-0 mt-[1px]">👤</span>
-                <div>
-                  <div className="text-[11px] text-gray-primary-dark">ตรวจสอบโดย</div>
-                  <div className="text-[13.5px] font-bold">{model}</div>
-                </div>
-              </div>
-              <div className="flex items-start gap-[10px]">
-                <span className="text-[14px] flex-shrink-0 mt-[1px]">📅</span>
-                <div>
-                  <div className="text-[11px] text-gray-primary-dark">วันที่ตรวจสอบ</div>
-                  <div className="text-[13.5px] font-bold">{now.toLocaleDateString('th-TH')} {timeStr}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gray-primary-light rounded-xl p-[18px]">
-            <h4 className="text-[11px] font-extrabold text-gray-primary-dark uppercase tracking-wider mb-[14px]">
-              คำแนะนำ
-            </h4>
-            <div className="flex flex-col gap-[7px]">
-              {config.recommendations.map((rec, idx) => (
-                <div key={idx} className="flex items-start gap-2 text-[13px] text-gray-primary-dark leading-relaxed">
-                  <span className="flex-shrink-0 mt-[1px]">{rec.substring(0, 2)}</span>
-                  <span>{rec.substring(2)}</span>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <Card variant="elevated">
+            <CardHeader>
+              <CardTitle>ควรทำอะไรต่อ</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {config.nextSteps.map((step) => (
+                <div key={step} className="flex items-start gap-3 rounded-2xl border border-gray-primary-1 bg-light px-4 py-3">
+                  <AlertTriangle size={16} className="mt-1 text-primary-dark" />
+                  <p className="text-sm leading-relaxed text-dark">{step}</p>
                 </div>
               ))}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
+
+          <Card variant="elevated">
+            <CardHeader>
+              <CardTitle>รายละเอียดการประเมิน</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 text-sm text-gray-primary-0">
+              <div className="rounded-2xl border border-gray-primary-1 bg-light px-4 py-4">
+                <p className="font-semibold text-dark">คำอธิบายสั้น ๆ</p>
+                <p className="mt-2 leading-relaxed">{config.detail}</p>
+              </div>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div className="rounded-2xl border border-gray-primary-1 bg-light px-4 py-4">
+                  <p className="text-xs uppercase tracking-wide">แหล่งตรวจสอบ</p>
+                  <p className="mt-2 font-medium text-dark">{model}</p>
+                </div>
+                <div className="rounded-2xl border border-gray-primary-1 bg-light px-4 py-4">
+                  <p className="text-xs uppercase tracking-wide">ข้อควรทราบ</p>
+                  <p className="mt-2 font-medium text-dark">
+                    {verdict === 'Benign' ? 'ยังควรตรวจสอบโดเมนด้วยตัวเองก่อนกรอกข้อมูลสำคัญ' : 'หลีกเลี่ยงการเปิดต่อจนกว่าจะยืนยันแหล่งที่มาได้'}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="w-full max-w-[680px] bg-white rounded-[14px] p-5 shadow-sm border-2 border-primary"
-      >
-        <h4 className="text-[11px] font-extrabold text-primary-dark uppercase tracking-wider mb-[10px]">
-          คำแนะนำเพิ่มเติม
-        </h4>
-        <p className="text-[13.5px] text-gray-primary-dark leading-relaxed">
-          {config.extra}
-        </p>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        className="flex gap-3 w-full max-w-[680px]"
-      >
-        <button
-          onClick={onBack}
-          className="flex-1 bg-white text-dark border-[1.5px] border-gray-primary px-3 py-3 rounded-[10px] text-[14px] font-semibold cursor-pointer transition-colors hover:bg-gray-primary-light"
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.1 }}
+          className="flex flex-col gap-3 sm:flex-row"
         >
-          ◀ หน้าหลัก
-        </button>
-        <button
-          className="flex-1 bg-secondary-dark text-white border-none px-3 py-3 rounded-[10px] text-[14px] font-bold cursor-pointer transition-opacity hover:opacity-90"
-        >
-          ✈️ แชร์ผลลัพธ์
-        </button>
-      </motion.div>
+          <Button type="button" variant="outline" className="sm:flex-1" onClick={onBack}>
+            กลับไปตรวจสอบ URL อื่น
+          </Button>
+          <Button type="button" variant="secondary" className="sm:flex-1" onClick={() => void handleCopy()}>
+            <Copy size={16} />
+            คัดลอก URL นี้
+          </Button>
+          <a href={url} target="_blank" rel="noopener noreferrer" className="sm:flex-1">
+            <Button type="button" variant={verdict === 'Benign' ? 'primary' : 'danger'} className="w-full">
+              <ExternalLink size={16} />
+              {verdict === 'Benign' ? 'เปิดลิงก์ในแท็บใหม่' : 'เปิดต่อด้วยความระมัดระวัง'}
+            </Button>
+          </a>
+        </motion.div>
+      </div>
     </div>
   );
 };

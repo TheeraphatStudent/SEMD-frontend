@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
 import { toast } from '@/hooks/use-toast';
 import { ROUTES } from '@/constants/routes';
-import { validators } from '@/lib/validators';
 import { Input, Button } from '@/components/ui';
 import { RecaptchaV3 } from '@/components/RecaptchaV3';
 import {
@@ -16,6 +15,7 @@ import {
   StatsStrip,
   URLTablePreview,
 } from '@/components/auth';
+import { validators } from '@/libs/utils/validators';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -125,7 +125,7 @@ export default function RegisterPage() {
           </div>
 
           {/* <StatsStrip stats={registerStats} /> */}
-          <URLTablePreview 
+          <URLTablePreview
             variant="full"
             maxHeight="320px"
             showBrowserBar={true}

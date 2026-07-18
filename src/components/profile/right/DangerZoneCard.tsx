@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { cn } from '@/libs/utils/utils';
 import { toast } from '@/hooks/use-toast';
 
 interface DangerZoneCardProps {
@@ -53,13 +53,13 @@ export const DangerZoneCard: React.FC<DangerZoneCardProps> = ({ className }) => 
   ];
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, delay: 0.4 }}
       className={cn('border-2 border-accent-light-red rounded-2xl p-5', className)}
     >
-      <motion.div 
+      <motion.div
         initial={{ x: -20, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ delay: 0.5 }}
@@ -75,7 +75,7 @@ export const DangerZoneCard: React.FC<DangerZoneCardProps> = ({ className }) => 
           Danger Zone
         </span>
       </motion.div>
-      
+
       <div className="space-y-0">
         {actions.map((action, index) => (
           <motion.div
@@ -95,7 +95,7 @@ export const DangerZoneCard: React.FC<DangerZoneCardProps> = ({ className }) => 
                 <p className="text-[11px] text-gray-primary-dark mt-0.5">{action.description}</p>
               </div>
             </div>
-            
+
             <motion.button
               onClick={action.onClick}
               whileHover={{ scale: 1.05, backgroundColor: '#FF696C', color: '#FFFFFF' }}

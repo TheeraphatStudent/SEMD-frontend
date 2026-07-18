@@ -1,35 +1,42 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
+import { Building2, GraduationCap, Shield, UserRound } from 'lucide-react';
 import { Card, Badge, Heading, Text, SectionHeader, Container } from '@/components/ui';
 
 interface UseCaseCardProps {
-  icon: string;
+  icon: React.ElementType;
   title: string;
   description: string;
   tag: string;
   delay: number;
 }
 
-const UseCaseCard: React.FC<UseCaseCardProps> = ({ icon, title, description, tag, delay }) => {
+const UseCaseCard: React.FC<UseCaseCardProps> = ({ icon: Icon, title, description, tag, delay }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 24 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay }}
-      whileHover={{ y: -3 }}
-      className="w-full h-full"
+      initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
+      animate={isInView && !prefersReducedMotion ? { opacity: 1, y: 0 } : undefined}
+      transition={{ duration: 0.55, delay }}
+      className="h-full"
     >
-      <Card className="h-full p-7 cursor-pointer flex flex-col">
-        <div className="text-[32px] mb-[14px]">{icon}</div>
-        <Heading as="h3" variant="subtitle" className="mb-[6px]">{title}</Heading>
-        <Text variant="small" className="leading-[1.65] flex-1">{description}</Text>
-        <Badge variant="info" className="inline-block mt-[14px] rounded-full px-3 py-[3px] bg-secondary-light text-secondary-dark border border-secondary self-start">
+      <Card className="flex h-full flex-col rounded-[28px] border-secondary/10 bg-white p-7 shadow-[0_20px_45px_rgba(15,23,42,0.06)]">
+        <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary/10 text-secondary-dark">
+          <Icon size={22} />
+        </div>
+        <Heading as="h3" variant="section" className="mb-2 text-left text-[22px]">
+          {title}
+        </Heading>
+        <Text variant="small" className="flex-1 leading-7">
+          {description}
+        </Text>
+        <Badge variant="info" className="mt-5 inline-flex self-start rounded-full border border-secondary/10 bg-secondary/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-secondary-dark">
           {tag}
         </Badge>
       </Card>
@@ -43,49 +50,46 @@ export const UseCasesSection: React.FC = () => {
 
   const useCases = [
     {
-      icon: '🔐',
-      title: 'SOC Team / IT Security',
-      description: 'ตรวจสอบ URL ต้องสงสัยจำนวนมากได้รวดเร็ว จัดการเป็นทีม และ Export รายงานเพื่อส่งต่อ',
-      tag: 'Dashboard + Team',
+      icon: Shield,
+      title: 'SOC team และฝ่าย IT security',
+      description: 'ใช้ตรวจสอบลิงก์ต้องสงสัยจำนวนมากอย่างรวดเร็ว พร้อมเก็บผลลัพธ์เพื่อนำไปอ้างอิงหรือส่งต่อใน incident workflow',
+      tag: 'Team workflow',
     },
     {
-      icon: '🏢',
-      title: 'องค์กรและ IT Admin',
-      description: 'ป้องกันพนักงานจากการคลิกลิงก์อันตราย ตรวจสอบก่อน deploy หรือแชร์ลิงก์ภายใน',
-      tag: 'Bulk Check + Report',
+      icon: Building2,
+      title: 'องค์กรและ IT admin',
+      description: 'ช่วยคัดกรองลิงก์ก่อนส่งต่อให้พนักงาน ลูกค้า หรือผู้ใช้ภายในองค์กร ลดความเสี่ยงจาก human error ในงานประจำวัน',
+      tag: 'Operational safety',
     },
     {
-      icon: '🎓',
-      title: 'นักวิจัย / นักศึกษา Cybersecurity',
-      description: 'ศึกษา pattern ของ URL อันตราย ดู Confidence Score และ Feature ที่ Model ใช้ตัดสิน',
-      tag: 'Score + Feature Insight',
+      icon: GraduationCap,
+      title: 'นักวิจัยและผู้เรียนด้าน cybersecurity',
+      description: 'ดู confidence score และ pattern เชิงวิเคราะห์เพื่อทำความเข้าใจว่าระบบใช้สัญญาณใดในการประเมินความเสี่ยงของ URL',
+      tag: 'Learning insight',
     },
     {
-      icon: '👤',
-      title: 'บุคคลทั่วไป',
-      description: 'ตรวจลิงก์ก่อนกด ไม่ว่าจะมาจาก SMS, Line, อีเมล หรือโซเชียลมีเดีย ปลอดภัยในทุกคลิก',
-      tag: 'Quick URL Check',
+      icon: UserRound,
+      title: 'บุคคลทั่วไปที่ต้องเช็กลิงก์ด่วน',
+      description: 'เหมาะกับลิงก์จาก SMS, อีเมล, LINE หรือโซเชียลมีเดียที่ยังไม่แน่ใจว่าจะปลอดภัยพอให้เปิดหรือไม่',
+      tag: 'Fast check',
     },
   ];
 
   return (
-    <section id="usecases" className="py-20 bg-primary-light">
+    <section id="usecases" ref={ref} className="bg-[linear-gradient(180deg,#fff9ef_0%,#f8fafc_100%)] py-24">
       <Container size="xl">
         <SectionHeader
-          badge="เหมาะสำหรับใคร"
-          title="SEMD ช่วยได้ทุกกลุ่ม"
+          badge="Use cases"
+          title="เหมาะกับทั้งงานรายบุคคลและ workflow ของทีม"
+          description="เราเปลี่ยน section นี้ให้สื่อ role-based value ชัดขึ้น เพื่อให้ผู้ใช้รู้ทันทีว่าตัวเองอยู่ในกลุ่มไหน"
           align="center"
           animated={isInView}
+          className="mb-14"
         />
 
-        <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           {useCases.map((useCase, index) => (
-            <div 
-              key={index} 
-              className="w-full sm:w-[calc(50%-8px)] flex"
-            >
-              <UseCaseCard {...useCase} delay={0.1 * (index + 1)} />
-            </div>
+            <UseCaseCard key={useCase.title} {...useCase} delay={0.1 * (index + 1)} />
           ))}
         </div>
       </Container>

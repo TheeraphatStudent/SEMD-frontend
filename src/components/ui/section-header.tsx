@@ -18,7 +18,7 @@ export interface SectionHeaderProps extends React.HTMLAttributes<HTMLDivElement>
 
 export const SectionHeader = React.forwardRef<HTMLDivElement, SectionHeaderProps>(
   ({ className, badge, title, description, align = 'center', animated = true, ...props }, ref) => {
-    const internalRef = useRef(null);
+    const internalRef = useRef<HTMLDivElement | null>(null);
     const isInView = useInView(internalRef, { once: true, margin: '-100px' });
     const setRefs = (node: HTMLDivElement | null) => {
       internalRef.current = node;

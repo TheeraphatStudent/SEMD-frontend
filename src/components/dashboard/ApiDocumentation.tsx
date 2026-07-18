@@ -171,7 +171,7 @@ export const ApiDocumentation: React.FC = () => {
           <div className="bg-gray-primary-2 rounded-lg p-4">
             <h5 className="font-semibold text-dark mb-2">Base URL</h5>
             <code className="text-sm bg-white px-2 py-1 rounded border">
-              {process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}
+              {process.env.NEXT_PUBLIC_API_BASE_URL || 'http://server:8000'}
             </code>
           </div>
           <div className="bg-gray-primary-2 rounded-lg p-4">

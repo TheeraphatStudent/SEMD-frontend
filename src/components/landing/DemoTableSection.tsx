@@ -14,7 +14,7 @@ export const DemoTableSection: React.FC = () => {
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
-    <section ref={ref} id="demo" className="py-20 bg-background">
+    <section ref={ref} id="demo" className="bg-[linear-gradient(180deg,#f8fafc_0%,#fff9ef_100%)] py-24">
       <Container size="xl">
         <SectionHeader
           badge={
@@ -33,7 +33,7 @@ export const DemoTableSection: React.FC = () => {
           initial={{ opacity: 0, y: 24 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="mt-9"
+          className="mt-9 overflow-hidden rounded-[32px] border border-primary/10 bg-white p-3 shadow-[0_28px_70px_rgba(15,23,42,0.08)] sm:p-5"
         >
           <URLTablePreview
             variant="full"

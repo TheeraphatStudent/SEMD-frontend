@@ -3,7 +3,9 @@
 import React, { useRef } from 'react';
 import Link from 'next/link';
 import { motion, useInView } from 'framer-motion';
+import { useMotionEnabled } from '@/hooks/use-motion-enabled';
 import { ROUTES } from '@/constants/routes';
+import { ArrowRightIcon, ShieldCheckIcon } from '@/components/icons/lucide-animated';
 import { Button, Text, Heading, Container } from '@/components/ui';
 
 // ─── Reusable ambient orb ─────────────────────────────────────────────────────
@@ -113,6 +115,7 @@ const NAV_GROUPS = [
 export const LandingFooter: React.FC = () => {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-60px' });
+  const motionEnabled = useMotionEnabled();
 
   return (
     <footer
@@ -122,9 +125,11 @@ export const LandingFooter: React.FC = () => {
       style={{ background: 'linear-gradient(135deg, #1a1206 0%, #2d1f08 40%, #1c2a1e 100%)' }}
     >
       <DotGrid />
-      <Orb size={500} x="-8%"  y="-30%" color="rgba(180,120,20,0.40)" duration={9} />
-      <Orb size={380} x="65%"  y="10%"  color="rgba(20,90,50,0.35)"   duration={11} delay={1.5} />
-      <Orb size={240} x="40%"  y="50%"  color="rgba(200,140,30,0.20)" duration={7}  delay={0.8} />
+      <div className={motionEnabled ? '' : 'hidden'}>
+        <Orb size={500} x="-8%"  y="-30%" color="rgba(180,120,20,0.40)" duration={9} />
+        <Orb size={380} x="65%"  y="10%"  color="rgba(20,90,50,0.35)"   duration={11} delay={1.5} />
+        <Orb size={240} x="40%"  y="50%"  color="rgba(200,140,30,0.20)" duration={7}  delay={0.8} />
+      </div>
       <div aria-hidden className="absolute inset-0 pointer-events-none" style={{ background: 'rgba(0,0,0,0.30)' }} />
 
       <div className="relative z-10 pt-24 pb-16">
@@ -141,8 +146,8 @@ export const LandingFooter: React.FC = () => {
             <span className="relative flex h-2 w-2">
               <motion.span
                 className="absolute inline-flex h-full w-full rounded-full bg-green-400"
-                animate={{ scale: [1, 1.8], opacity: [0.7, 0] }}
-                transition={{ duration: 1.2, repeat: Infinity, ease: 'easeOut' }}
+                animate={motionEnabled ? { scale: [1, 1.8], opacity: [0.7, 0] } : undefined}
+                transition={motionEnabled ? { duration: 1.2, repeat: Infinity, ease: 'easeOut' } : undefined}
               />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
             </span>
@@ -194,16 +199,20 @@ export const LandingFooter: React.FC = () => {
             <motion.span
               aria-hidden
               className="absolute inset-0 rounded-xl bg-primary/40 blur-xl"
-              animate={{ opacity: [0.4, 0.8, 0.4], scale: [0.95, 1.1, 0.95] }}
-              transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
+              animate={motionEnabled ? { opacity: [0.4, 0.8, 0.4], scale: [0.95, 1.1, 0.95] } : undefined}
+              transition={motionEnabled ? { duration: 2.8, repeat: Infinity, ease: 'easeInOut' } : undefined}
             />
             <Link href={ROUTES.AUTH.REGISTER}>
               <Button
                 variant="primary"
                 size="lg"
-                className="relative shadow-2xl hover:scale-[1.04] active:scale-[0.98] transition-transform duration-150"
+                className="group relative shadow-2xl transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-[0_20px_45px_rgba(161,98,7,0.28)] active:scale-[0.98]"
               >
-                เริ่มใช้งานเลย →
+                <ShieldCheckIcon size={18} />
+                เริ่มใช้งานเลย
+                <span className="transition-transform duration-200 group-hover:translate-x-0.5">
+                  <ArrowRightIcon size={18} />
+                </span>
               </Button>
             </Link>
           </motion.div>
@@ -234,6 +243,9 @@ export const LandingFooter: React.FC = () => {
               }}
             >
               <div className="flex items-center gap-2 mb-1">
+                <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-white/10 text-white ring-1 ring-white/15">
+                  <ShieldCheckIcon size={18} />
+                </span>
                 <span className="text-primary font-extrabold text-lg tracking-tight">SEMD</span>
                 <span
                   className="text-[10px] font-semibold px-1.5 py-0.5 rounded

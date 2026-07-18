@@ -4,8 +4,8 @@ import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ROUTES } from '@/constants/routes';
+import { ArrowRightIcon, ShieldCheckIcon } from '@/components/icons/lucide-animated';
 import { Button } from '@/components/ui';
-import { Icon, Shield } from '@/components/ui';
 
 interface NavLink {
   href: string;
@@ -36,10 +36,12 @@ export const LandingNavbar: React.FC = () => {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="sticky top-0 z-50 bg-background/85 backdrop-blur-md border-b border-gray-primary-1 px-6 md:px-12 h-[60px] flex items-center justify-between"
+      className="sticky top-0 z-50 flex h-[68px] items-center justify-between border-b border-gray-primary-1 bg-background/88 px-6 backdrop-blur-md md:px-12"
     >
-      <Link href="/" className="flex items-center gap-2 text-[22px] font-extrabold text-dark">
-        {/* <Icon icon={Shield} variant="primary" size={28} /> */}
+      <Link href="/" className="flex items-center gap-3 text-[22px] font-extrabold text-dark">
+        <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary-dark text-white shadow-sm">
+          <ShieldCheckIcon size={18} />
+        </span>
         <span className="text-primary-dark">SEMD</span>
       </Link>
 
@@ -53,7 +55,8 @@ export const LandingNavbar: React.FC = () => {
 
       <Link href={ROUTES.AUTH.LOGIN}>
         <Button variant="primary" size="sm">
-          ลองใช้ฟรี →
+          ลองใช้ฟรี
+          <ArrowRightIcon size={16} />
         </Button>
       </Link>
     </motion.nav>

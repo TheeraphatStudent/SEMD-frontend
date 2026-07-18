@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { motion, useInView, useReducedMotion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
+import { useMotionEnabled } from '@/hooks/use-motion-enabled';
 import { EyeOff } from 'lucide-react';
 import { BadgeAlertIcon, ShieldCheckIcon } from '@/components/icons/lucide-animated';
 import { Card, Badge, Heading, Text, SectionHeader, Container } from '@/components/ui';
@@ -25,13 +26,13 @@ const ProblemCard: React.FC<ProblemCardProps> = ({
 }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
-  const prefersReducedMotion = useReducedMotion();
+  const motionEnabled = useMotionEnabled();
 
   return (
     <motion.div
       ref={ref}
-      initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
-      animate={isInView && !prefersReducedMotion ? { opacity: 1, y: 0 } : undefined}
+      initial={!motionEnabled ? false : { opacity: 0, y: 24 }}
+      animate={isInView && motionEnabled ? { opacity: 1, y: 0 } : undefined}
       transition={{ duration: 0.55, delay }}
       className="h-full"
     >

@@ -98,7 +98,7 @@ export const SEMDApp: React.FC = () => {
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-dvh overflow-x-hidden bg-background">
       <LandingNavbar />
       <HeroSection onCheck={handleCheck} />
       <ProblemSection />

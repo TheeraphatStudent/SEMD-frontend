@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Github } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 import { Button } from '@/components/ui';
 
@@ -34,7 +33,6 @@ export const SocialLoginRow: React.FC<SocialLoginRowProps> = ({
   callbackUrl = '/dashboard',
 }) => {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [isGithubLoading, setIsGithubLoading] = useState(false);
 
   const handleGoogleLogin = async () => {
     try {
@@ -47,24 +45,13 @@ export const SocialLoginRow: React.FC<SocialLoginRowProps> = ({
     }
   };
 
-  const handleGithubLogin = async () => {
-    try {
-      setIsGithubLoading(true);
-      await signIn('github', { callbackUrl });
-    } catch (error) {
-      console.error('GitHub login error:', error);
-    } finally {
-      setIsGithubLoading(false);
-    }
-  };
-
   return (
     <div className="flex gap-2.5">
       <Button
         type="button"
         variant="outline"
         onClick={handleGoogleLogin}
-        disabled={isGoogleLoading || isGithubLoading}
+        disabled={isGoogleLoading}
         className="flex-[3] h-[46px] gap-2"
       >
         {isGoogleLoading ? (
@@ -73,21 +60,6 @@ export const SocialLoginRow: React.FC<SocialLoginRowProps> = ({
           <GoogleIcon />
         )}
         ดำเนินการด้วย Google
-      </Button>
-      <Button
-        type="button"
-        variant="outline"
-        onClick={handleGithubLogin}
-        disabled={isGoogleLoading || isGithubLoading}
-        title="GitHub"
-        aria-label="ดำเนินการด้วย GitHub"
-        className="h-[46px] w-[46px] p-0"
-      >
-        {isGithubLoading ? (
-          <span className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
-        ) : (
-          <Github size={20} />
-        )}
       </Button>
     </div>
   );

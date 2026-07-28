@@ -3,7 +3,7 @@ export const mockUser = {
   email: 'th33raphat@semd.com',
   role: 'Analyst' as const,
   stats: { total: 142, dangers: 23, accuracy: 97, days: 14 },
-  connections: { google: true, github: false },
+  connections: { google: true },
 };
 
 export type ProfileVerdict = 'Safe' | 'Danger' | 'Warning';
@@ -31,7 +31,6 @@ export interface UserStats {
 
 export interface UserConnections {
   google: boolean;
-  github: boolean;
 }
 
 export interface MockUserData {

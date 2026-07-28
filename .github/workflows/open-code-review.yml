@@ -151,6 +151,21 @@ jobs:
             exit 1
           fi
 
+          llm_test_output="$RUNNER_TEMP/open-code-review-llm-test.log"
+          llm_test_error="$RUNNER_TEMP/open-code-review-llm-test-error.log"
+          if ! ocr llm test >"$llm_test_output" 2>"$llm_test_error"; then
+            if grep -Eqi '(unauthori[sz]ed|authentication|invalid.*(api.?key|token)|401)' "$llm_test_output" "$llm_test_error"; then
+              echo '::error::OpenCodeReview LLM preflight could not authenticate to OpenRouter.'
+            elif grep -Eqi '(rate.?limit|quota|too many requests|429)' "$llm_test_output" "$llm_test_error"; then
+              echo '::error::OpenCodeReview LLM preflight is rate-limited or quota-limited.'
+            elif grep -Eqi '(model.*(unavailable|not found)|unavailable.*model|404)' "$llm_test_output" "$llm_test_error"; then
+              echo '::error::OpenCodeReview LLM preflight could not access the configured model.'
+            else
+              echo '::error::OpenCodeReview LLM preflight failed with a non-sensitive diagnostic classification.'
+            fi
+            exit 1
+          fi
+
           review_output="$RUNNER_TEMP/open-code-review.md"
           review_error="$RUNNER_TEMP/open-code-review-error.log"
           if ! ocr review --from "$BASE_SHA" --to "$HEAD_SHA" --audience agent >"$review_output" 2>"$review_error"; then
@@ -263,5 +278,7 @@ jobs:
           set -euo pipefail
           rm -f \
             "$RUNNER_TEMP/open-code-review-changed-files.txt" \
+            "$RUNNER_TEMP/open-code-review-llm-test.log" \
+            "$RUNNER_TEMP/open-code-review-llm-test-error.log" \
             "$RUNNER_TEMP/open-code-review.md" \
             "$RUNNER_TEMP/open-code-review-error.log"

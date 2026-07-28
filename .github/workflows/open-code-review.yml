@@ -98,7 +98,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          command -v git node npm bash curl
+          command -v git node npm bash curl sha256sum
           git_version="$(git version | awk '{print $3}')"
           if [[ "$(printf '%s\n2.41.0\n' "$git_version" | sort -V | head -n1)" != '2.41.0' ]]; then
             echo "::error::Git 2.41 or newer is required; found $git_version."
@@ -160,8 +160,18 @@ jobs:
               echo '::error::The configured OpenRouter free model is rate-limited or quota-limited.'
             elif grep -Eqi '(model.*(unavailable|not found)|unavailable.*model|404)' "$review_error"; then
               echo '::error::The configured OpenRouter free model is unavailable.'
+            elif grep -Eqi '(context.?length|token.?limit|payload too large|request entity too large|413)' "$review_error"; then
+              echo '::error::OpenCodeReview input exceeds the configured model context limit.'
+            elif grep -Eqi '(timeout|timed out|deadline exceeded|context deadline)' "$review_error"; then
+              echo '::error::OpenCodeReview timed out while waiting for OpenRouter.'
+            elif grep -Eqi '(internal server error|service unavailable|bad gateway|gateway timeout|5[0-9]{2})' "$review_error"; then
+              echo '::error::OpenRouter or its selected free-model provider returned a server error.'
+            elif grep -Eqi '(bad request|unsupported|invalid request|400)' "$review_error"; then
+              echo '::error::OpenRouter rejected the OpenCodeReview request.'
             else
-              echo '::error::OpenCodeReview review execution failed. Check the associated job logs for non-sensitive diagnostics.'
+              error_bytes="$(wc -c < "$review_error")"
+              error_fingerprint="$(sha256sum "$review_error" | awk '{print $1}')"
+              echo "::error::OpenCodeReview review execution failed with an unclassified non-sensitive diagnostic fingerprint ${error_fingerprint} (${error_bytes} bytes)."
             fi
             exit 1
           fi

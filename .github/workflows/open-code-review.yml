@@ -145,6 +145,7 @@ jobs:
           OCR_USE_ANTHROPIC: "false"
         run: |
           set -euo pipefail
+          echo 'OCR_REVIEW_STARTED=true' >> "$GITHUB_ENV"
           if [[ -z "${OCR_LLM_TOKEN:-}" ]]; then
             echo '::error::OPENROUTER_API_KEY is unavailable; OpenCodeReview cannot authenticate to OpenRouter.'
             exit 1
@@ -152,7 +153,6 @@ jobs:
 
           review_output="$RUNNER_TEMP/open-code-review.md"
           review_error="$RUNNER_TEMP/open-code-review-error.log"
-          echo 'OCR_REVIEW_STARTED=true' >> "$GITHUB_ENV"
           if ! ocr review --from "$BASE_SHA" --to "$HEAD_SHA" --audience agent >"$review_output" 2>"$review_error"; then
             if grep -Eqi '(unauthori[sz]ed|authentication|invalid.*(api.?key|token)|401)' "$review_error"; then
               echo '::error::OpenRouter authentication failed during OpenCodeReview.'

@@ -1,6 +1,5 @@
 import NextAuth, { NextAuthOptions, Account, User } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
-import GitHubProvider from 'next-auth/providers/github';
 import { JWT } from 'next-auth/jwt';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000';
@@ -14,7 +13,7 @@ interface BackendAuthResponse {
 }
 
 async function authenticateWithBackend(
-  provider: 'google' | 'github',
+  provider: 'google',
   providerAccessToken: string
 ): Promise<BackendAuthResponse> {
   const response = await fetch(`${BACKEND_URL}/auth/login/provider`, {
@@ -42,10 +41,6 @@ const authOptions: NextAuthOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
-    GitHubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-    }),
   ],
   callbacks: {
     async signIn({ user, account }) {
@@ -56,8 +51,8 @@ const authOptions: NextAuthOptions = {
     },
     async jwt({ token, account, user }): Promise<JWT> {
       if (account && user) {
-        const provider = account.provider as 'google' | 'github';
-        
+        const provider = account.provider as 'google';
+
         try {
           const backendAuth = await authenticateWithBackend(
             provider,

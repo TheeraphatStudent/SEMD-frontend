@@ -158,7 +158,7 @@ export default function ProfilePageRoute() {
                 </div>
                 <div className="rounded-2xl border border-gray-primary-1 bg-light px-4 py-4 text-sm text-gray-primary-0">
                   <p className="font-semibold text-dark">บัญชีที่เชื่อมต่อ</p>
-                  <p className="mt-1">การเชื่อมต่อ Google หรือ GitHub จะขึ้นอยู่กับการรองรับจาก backend และ NextAuth configuration ที่ใช้งานอยู่</p>
+                  <p className="mt-1">การเชื่อมต่อ Google จะขึ้นอยู่กับการรองรับจาก backend และ NextAuth configuration ที่ใช้งานอยู่</p>
                 </div>
               </div>
               <div className="flex justify-end">

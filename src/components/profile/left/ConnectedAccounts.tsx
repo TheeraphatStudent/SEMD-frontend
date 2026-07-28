@@ -28,7 +28,6 @@ interface ServiceConfig {
 
 const services: ServiceConfig[] = [
   { key: 'google', name: 'Google', icon: 'G', iconClass: 'bg-red-50 text-red-500' },
-  { key: 'github', name: 'GitHub', icon: 'GH', iconClass: 'bg-gray-primary-light text-dark' },
 ];
 
 export const ConnectedAccounts: React.FC<ConnectedAccountsProps> = ({

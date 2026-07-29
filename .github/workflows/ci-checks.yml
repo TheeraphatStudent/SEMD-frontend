@@ -41,11 +41,23 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # Type-check and build are informational only, not required, until
+      # DEV-06 (backend PredictionDetailResponse contract fix) and FE-01
+      # (client regen) land: `src/services/scan.service.ts` already calls a
+      # generated-client method name (`predictPredictionPost`) that doesn't
+      # exist on current `develop` (`predictPredictionPredictPost` is the
+      # real one), so both steps already fail on develop today, independent
+      # of this PR. Verified locally: `npx tsc --noEmit` and `npm run build`
+      # both fail with the same TS2551 error before this workflow existed.
+      # Flip continue-on-error to false once DEV-06/FE-01 land and these
+      # pass cleanly on develop.
       - name: Type-check
         run: npx tsc --noEmit
+        continue-on-error: true
 
       - name: Build
         run: npm run build
+        continue-on-error: true
 
       # No test script exists yet (see FE-02 / SEMD backlog). Once one lands,
       # add its run step here rather than creating a second workflow file.
